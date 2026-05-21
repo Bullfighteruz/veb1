@@ -685,6 +685,7 @@ nav.nav-links a:hover { color: var(--white); }
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; -ms-overflow-style: none;
   padding-bottom: 0.5rem; cursor: grab;
+  user-select: none; -webkit-user-select: none;
 }
 .steps-track:active { cursor: grabbing; }
 .steps-track::-webkit-scrollbar { display: none; }
@@ -791,16 +792,16 @@ nav.nav-links a:hover { color: var(--white); }
   font-size: 0.875rem; font-weight: 700; color: var(--green);
   font-variant-numeric: tabular-nums;
 }
-.deck-chart-svg-wrap { position: relative; height: 140px; }
+.deck-chart-svg-wrap { position: relative; height: 180px; }
 .deck-chart-svg { width: 100%; height: 100%; display: block; }
 .deck-progress-bar { margin-top: 0.75rem; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
 .deck-progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--red), var(--amber), var(--green)); transition: width 0.7s var(--ease-out); width: 0; }
 .deck-labels { display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.28); }
 
 /* Nav arrows */
-.deck-nav { display: flex; flex-direction: column; justify-content: space-between; gap: 0.75rem; }
-.deck-nav-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
-@media (min-width: 1024px) { .deck-nav-buttons { grid-template-columns: 1fr; } }
+.deck-nav { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5rem; }
+.deck-nav-buttons { display: flex; flex-direction: row; gap: 0.75rem; justify-content: center; align-items: center; }
+@media (min-width: 1024px) { .deck-nav-buttons { flex-direction: column; gap: 1rem; } }
 .deck-btn {
   width: 3rem; height: 3rem; border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.1);
@@ -1315,6 +1316,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .step-card {
+  cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   background: rgba(16, 18, 23, 0.42) !important;
   opacity: 0.78 !important;
@@ -1610,7 +1612,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
   transition: all 0.5s;
 }
 .deck-chart-svg-wrap {
-  position: relative; height: 128px !important; margin-top: 1rem; z-index: 2;
+  position: relative; height: 180px !important; margin-top: 1rem; z-index: 2;
 }
 .svg-node {
   cursor: pointer;
@@ -2186,9 +2188,6 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
           <div class="step-card-inner">
             <div class="step-card-header">
               <span class="step-sys-tag">Step 01</span>
-              <div class="step-status">
-                <span class="step-status-dot"></span>
-              </div>
             </div>
 
             <div class="step-card-body">
@@ -2223,9 +2222,6 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
           <div class="step-card-inner">
             <div class="step-card-header">
               <span class="step-sys-tag">Step 02</span>
-              <div class="step-status">
-                <span class="step-status-dot"></span>
-              </div>
             </div>
 
             <div class="step-card-body">
@@ -2261,9 +2257,6 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
           <div class="step-card-inner">
             <div class="step-card-header">
               <span class="step-sys-tag">Step 03</span>
-              <div class="step-status">
-                <span class="step-status-dot"></span>
-              </div>
             </div>
 
             <div class="step-card-body">
@@ -2304,7 +2297,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
           <span class="l-bracket bottom-right"></span>
 
           <div class="deck-telemetry-hdr" style="width: 100%; display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-            <span class="deck-status-dot"></span>
+            <!-- Corner dot removed -->
           </div>
 
           <div style="position: relative; flex: 1; display: flex; align-items: center; justify-content: center; height: 14rem; width: 14rem;">
@@ -2393,7 +2386,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
           </div>
           
           <div class="deck-chart-svg-wrap">
-            <svg class="deck-chart-svg" id="deck-svg" viewBox="0 0 680 128" aria-hidden="true" style="overflow: visible;">
+            <svg class="deck-chart-svg" id="deck-svg" viewBox="0 0 680 180" aria-hidden="true" style="overflow: visible;">
               <defs>
                 <linearGradient id="vel-grad" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stop-color="#FF4D4D"/>
@@ -2411,32 +2404,32 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               </defs>
 
               <!-- Technical horizontal coordinate lines -->
-              <line x1="30" x2="650" y1="40" y2="40" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
-              <line x1="30" x2="650" y1="68" y2="68" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
-              <line x1="30" x2="650" y1="96" y2="96" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
+              <line x1="30" x2="650" y1="30" y2="30" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
+              <line x1="30" x2="650" y1="80" y2="80" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
+              <line x1="30" x2="650" y1="130" y2="130" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
 
               <!-- Area glow under the curve -->
-              <path d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40 L 622 114 L 58 114 Z" fill="url(#area-glow-grad)" style="transition: all 0.7s;" />
+              <path d="M 58 130 C 180 130, 220 80, 340 80 S 500 30, 622 30 L 622 150 L 58 150 Z" fill="url(#area-glow-grad)" style="transition: all 0.7s;" />
 
               <!-- Main Dotted Guide Line -->
-              <path d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="5 7" stroke-linecap="round"/>
+              <path d="M 58 130 C 180 130, 220 80, 340 80 S 500 30, 622 30" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="5 7" stroke-linecap="round"/>
 
               <!-- Underlaying static corridor path with gradient -->
-              <path d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40" fill="none" stroke="url(#vel-grad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.08;"/>
+              <path d="M 58 130 C 180 130, 220 80, 340 80 S 500 30, 622 30" fill="none" stroke="url(#vel-grad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.08;"/>
 
               <!-- Segment 1 comet trail -->
               <g id="comet-seg-1" style="display: none;">
                 <!-- Trail 2 -->
                 <circle r="3.5" fill="#FF4D4D" opacity="0.25" filter="url(#glow-f)">
-                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="0s" />
+                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 130 C 180 130, 220 80, 340 80" begin="0s" />
                 </circle>
                 <!-- Trail 1 -->
                 <circle r="2.5" fill="#FFB347" opacity="0.6" filter="url(#glow-f)">
-                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.06s" />
+                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 130 C 180 130, 220 80, 340 80" begin="-0.06s" />
                 </circle>
                 <!-- White-hot head -->
                 <circle r="1.5" fill="#FFFFFF" opacity="0.95">
-                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.12s" />
+                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 130 C 180 130, 220 80, 340 80" begin="-0.12s" />
                 </circle>
               </g>
 
@@ -2444,15 +2437,15 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               <g id="comet-seg-2" style="display: none;">
                 <!-- Trail 2 -->
                 <circle r="3.5" fill="#FFB347" opacity="0.25" filter="url(#glow-f)">
-                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="0s" />
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 80 C 460 80, 500 30, 622 30" begin="0s" />
                 </circle>
                 <!-- Trail 1 -->
                 <circle r="2.5" fill="#00F0B0" opacity="0.6" filter="url(#glow-f)">
-                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.05s" />
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 80 C 460 80, 500 30, 622 30" begin="-0.05s" />
                 </circle>
                 <!-- White-hot head -->
                 <circle r="1.5" fill="#FFFFFF" opacity="0.95">
-                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.10s" />
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 80 C 460 80, 500 30, 622 30" begin="-0.10s" />
                 </circle>
               </g>
 
@@ -2460,56 +2453,56 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               
               <!-- Node 0: Current -->
               <g id="deck-point-0" class="svg-node" onclick="scrollToStep(0)">
-                <line x1="58" x2="58" y1="96" y2="114" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="2 2" class="node-laser" style="opacity: 0.25;"/>
-                <circle cx="58" cy="96" r="5" fill="none" stroke="#FF4D4D" stroke-width="1.5" class="radar-pulse-1" style="display:none;">
+                <line x1="58" x2="58" y1="130" y2="150" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="2 2" class="node-laser" style="opacity: 0.25;"/>
+                <circle cx="58" cy="130" r="5" fill="none" stroke="#FF4D4D" stroke-width="1.5" class="radar-pulse-1" style="display:none;">
                   <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" />
                 </circle>
-                <circle cx="58" cy="96" r="5" fill="none" stroke="#FF4D4D" stroke-width="1.2" class="radar-pulse-2" style="display:none;">
+                <circle cx="58" cy="130" r="5" fill="none" stroke="#FF4D4D" stroke-width="1.2" class="radar-pulse-2" style="display:none;">
                   <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
                   <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
                 </circle>
-                <circle cx="58" cy="96" r="7" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring"/>
-                <circle cx="58" cy="96" r="3" fill="#0A0F15" class="node-core"/>
-                <text x="58" y="124" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">64D</text>
+                <circle cx="58" cy="130" r="7" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring"/>
+                <circle cx="58" cy="130" r="3" fill="#0A0F15" class="node-core"/>
+                <text x="58" y="162" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">64D</text>
               </g>
 
               <!-- Node 1: Industry Average -->
               <g id="deck-point-1" class="svg-node" onclick="scrollToStep(1)">
-                <line x1="340" x2="340" y1="68" y2="114" stroke="#FFB347" stroke-width="1.5" stroke-dasharray="3 1" class="node-laser" style="opacity: 0.8;"/>
-                <circle cx="340" cy="68" r="5" fill="none" stroke="#FFB347" stroke-width="1.5" class="radar-pulse-1">
+                <line x1="340" x2="340" y1="80" y2="150" stroke="#FFB347" stroke-width="1.5" stroke-dasharray="3 1" class="node-laser" style="opacity: 0.8;"/>
+                <circle cx="340" cy="80" r="5" fill="none" stroke="#FFB347" stroke-width="1.5" class="radar-pulse-1">
                   <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" />
                 </circle>
-                <circle cx="340" cy="68" r="5" fill="none" stroke="#FFB347" stroke-width="1.2" class="radar-pulse-2">
+                <circle cx="340" cy="80" r="5" fill="none" stroke="#FFB347" stroke-width="1.2" class="radar-pulse-2">
                   <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
                   <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
                 </circle>
-                <circle cx="340" cy="68" r="11" fill="none" stroke="#FFB347" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring">
-                  <animateTransform attributeName="transform" type="rotate" from="0 340 68" to="360 340 68" dur="18s" repeatCount="indefinite" />
+                <circle cx="340" cy="80" r="11" fill="none" stroke="#FFB347" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring">
+                  <animateTransform attributeName="transform" type="rotate" from="0 340 80" to="360 340 80" dur="18s" repeatCount="indefinite" />
                 </circle>
-                <circle cx="340" cy="68" r="4.5" fill="#FFFFFF" stroke="#FFB347" stroke-width="2.5" style="filter: drop-shadow(0 0 3px #FFB347);" class="node-core"/>
-                <text x="340" y="124" text-anchor="middle" fill="#FFB347" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">55D</text>
+                <circle cx="340" cy="80" r="4.5" fill="#FFFFFF" stroke="#FFB347" stroke-width="2.5" style="filter: drop-shadow(0 0 3px #FFB347);" class="node-core"/>
+                <text x="340" y="162" text-anchor="middle" fill="#FFB347" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">55D</text>
               </g>
 
               <!-- Node 2: Revu Target -->
               <g id="deck-point-2" class="svg-node" onclick="scrollToStep(2)">
-                <line x1="622" x2="622" y1="40" y2="114" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="2 2" class="node-laser" style="opacity: 0.25;"/>
-                <circle cx="622" cy="40" r="5" fill="none" stroke="#00F0B0" stroke-width="1.5" class="radar-pulse-1" style="display:none;">
+                <line x1="622" x2="622" y1="30" y2="150" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="2 2" class="node-laser" style="opacity: 0.25;"/>
+                <circle cx="622" cy="30" r="5" fill="none" stroke="#00F0B0" stroke-width="1.5" class="radar-pulse-1" style="display:none;">
                   <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" />
                 </circle>
-                <circle cx="622" cy="40" r="5" fill="none" stroke="#00F0B0" stroke-width="1.2" class="radar-pulse-2" style="display:none;">
+                <circle cx="622" cy="30" r="5" fill="none" stroke="#00F0B0" stroke-width="1.2" class="radar-pulse-2" style="display:none;">
                   <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
                   <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
                 </circle>
-                <circle cx="622" cy="40" r="7" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring"/>
-                <circle cx="622" cy="40" r="3" fill="#0A0F15" class="node-core"/>
-                <text x="622" y="124" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">42D</text>
+                <circle cx="622" cy="30" r="7" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring"/>
+                <circle cx="622" cy="30" r="3" fill="#0A0F15" class="node-core"/>
+                <text x="622" y="162" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">42D</text>
               </g>
 
               <!-- Tactical Radar Target Lock Over active node -->
-              <g id="deck-target-lock" transform="translate(340, 68)" class="pointer-events-none" style="transition: transform 0.5s;">
+              <g id="deck-target-lock" transform="translate(340, 80)" class="pointer-events-none" style="transition: transform 0.5s;">
                 <circle cx="0" cy="0" r="16" fill="none" stroke="#FFB347" stroke-width="0.8" stroke-dasharray="4 8">
                   <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="24s" repeatCount="indefinite" />
                 </circle>
@@ -2523,17 +2516,22 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
           </div>
           <div class="deck-progress-bar"><div class="deck-progress-fill" id="deck-progress" style="width: 50%;"></div></div>
           <div class="deck-labels"><span>Start</span><span>Industry Average</span><span>Optimal Target</span></div>
+
+          <!-- Dynamic contextual description block -->
+          <div class="deck-chart-insight-wrap" style="position: relative; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.04); min-height: 52px; display: flex; align-items: center;">
+            <p id="deck-chart-insight" style="font-size: 11.5px; line-height: 1.5; color: rgba(255, 255, 255, 0.45); margin: 0; transition: opacity 0.3s;"></p>
+          </div>
         </div>
 
         <!-- Right: nav buttons -->
-        <div class="deck-nav" style="display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; border-radius: 22px; border: 1px solid rgba(255,255,255,0.06); background: rgba(16,18,23,0.5); padding: 1rem; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: relative; overflow: hidden; --active-color: var(--amber); --active-rgb: 255, 179, 71;">
+        <div class="deck-nav" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5rem; border-radius: 22px; border: 1px solid rgba(255,255,255,0.06); background: rgba(16,18,23,0.5); padding: 1.25rem; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: relative; overflow: hidden; --active-color: var(--amber); --active-rgb: 255, 179, 71;">
           <!-- L-brackets -->
           <span class="l-bracket top-left"></span>
           <span class="l-bracket top-right"></span>
           <span class="l-bracket bottom-left"></span>
           <span class="l-bracket bottom-right"></span>
 
-          <div class="deck-nav-buttons" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+          <div class="deck-nav-buttons">
             <!-- Prev Button -->
             <button
               type="button"
@@ -3247,7 +3245,7 @@ const steps = [
   { label:'Revu Target', days:42, margin:2400, color:'#00F0B0', name:'Target', rgb:'0, 240, 176' }
 ];
 const pathPoints = [
-  { x:58, y:96 }, { x:340, y:68 }, { x:622, y:40 }
+  { x:58, y:130 }, { x:340, y:80 }, { x:622, y:30 }
 ];
 let activeStep = 1;
 let transformSeen = false;
@@ -3271,6 +3269,18 @@ function updateDeck(idx, animate = true) {
   const pct = idx === 0 ? 35 : idx === 1 ? 60 : 100;
   if (deckGaugePercent) {
     deckGaugePercent.textContent = pct + '%';
+  }
+
+  // Update dynamic benchmark insights text
+  const deckInsight = $('#deck-chart-insight');
+  if (deckInsight) {
+    if (idx === 0) {
+      deckInsight.innerHTML = `<span style="font-weight: 700; color: #FF4D4D; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.375rem;">[Baseline Drag]</span>Slow capital recycling increases holding costs, interest drag, and depreciation risks. Every day a vehicle sits on the lot, it loses retail margin potential.`;
+    } else if (idx === 1) {
+      deckInsight.innerHTML = `<span style="font-weight: 700; color: #FFB347; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.375rem;">[Market Avg]</span>Standard local channels yield average turn times. High dealer competition for common inventory keeps acquisitions costly and floorplan cycles locked.`;
+    } else if (idx === 2) {
+      deckInsight.innerHTML = `<span style="font-weight: 700; color: #00F0B0; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.375rem;">[Revu Target]</span>Pre-sold buyer matching enables direct-to-retail transport, cutting floorplan duration to 42 days, minimizing lot time, and maximizing cash cycle speed.`;
+    }
   }
   if (deckGaugeCircle) {
     // Arc length for M 23.13 76.87 A 38 38 0 1 1 76.87 76.87 is 179.07
@@ -3453,7 +3463,7 @@ function scrollToStep(idx, behavior='smooth') {
   stepsTrack.scrollTo({ left: Math.max(0, offset), behavior });
 }
 
-// Mouse spotlight tracking on step cards
+// Mouse spotlight tracking and click handlers on step cards
 $$('.step-card').forEach((card, idx) => {
   card.addEventListener('mousemove', e => {
     const rect = card.getBoundingClientRect();
@@ -3462,6 +3472,11 @@ $$('.step-card').forEach((card, idx) => {
     const spotlight = card.querySelector('.step-spotlight');
     if (spotlight) {
       spotlight.style.background = `radial-gradient(200px circle at ${x}px ${y}px, ${steps[idx].color}15, transparent 80%)`;
+    }
+  });
+  card.addEventListener('click', () => {
+    if (!isDragging) {
+      scrollToStep(idx);
     }
   });
 });
@@ -3473,27 +3488,42 @@ deckNext.addEventListener('click', () => scrollToStep(Math.min(2, activeStep+1))
 let scrollRaf2 = null;
 stepsTrack.addEventListener('scroll', () => {
   if (isProgrammaticScroll) return;
+  const maxScrollLeft = stepsTrack.scrollWidth - stepsTrack.clientWidth;
+  if (maxScrollLeft <= 20) return; // Bypass if not scrollable
+
   if (scrollRaf2) cancelAnimationFrame(scrollRaf2);
   scrollRaf2 = requestAnimationFrame(() => {
+    const scrollLeft = stepsTrack.scrollLeft;
     const cards = $$('[data-step]', stepsTrack);
-    const center = stepsTrack.scrollLeft + stepsTrack.clientWidth/2;
-    let nearest=0, nearestDist=Infinity;
-    cards.forEach((c,i) => {
-      const dist = Math.abs(c.offsetLeft + c.offsetWidth/2 - center);
-      if (dist<nearestDist) { nearestDist=dist; nearest=i; }
-    });
+    let nearest = activeStep;
+
+    if (scrollLeft <= 20) {
+      nearest = 0;
+    } else if (scrollLeft >= maxScrollLeft - 20) {
+      nearest = cards.length - 1;
+    } else {
+      const center = scrollLeft + stepsTrack.clientWidth/2;
+      let nearestDist = Infinity;
+      cards.forEach((c,i) => {
+        const dist = Math.abs(c.offsetLeft + c.offsetWidth/2 - center);
+        if (dist<nearestDist) { nearestDist=dist; nearest=i; }
+      });
+    }
+
     if (nearest !== activeStep) { activeStep=nearest; updateDeck(nearest); }
   });
 }, { passive:true });
 
 // Drag to scroll
 let drag = { active:false, x:0, sl:0 };
+let isDragging = false;
 stepsTrack.addEventListener('mousedown', e => {
   if (programmaticScrollTimeout) {
     clearTimeout(programmaticScrollTimeout);
     programmaticScrollTimeout = null;
   }
   isProgrammaticScroll = false;
+  isDragging = false;
   drag={active:true,x:e.clientX,sl:stepsTrack.scrollLeft};
 });
 stepsTrack.addEventListener('touchstart', () => {
@@ -3502,18 +3532,44 @@ stepsTrack.addEventListener('touchstart', () => {
     programmaticScrollTimeout = null;
   }
   isProgrammaticScroll = false;
+  isDragging = false;
 }, { passive: true });
+stepsTrack.addEventListener('dragstart', e => e.preventDefault());
+
 window.addEventListener('mousemove', e => {
   if (!drag.active) return;
+  if (e.buttons === 0) {
+    const delta = e.clientX - drag.x;
+    drag.active = false;
+    if (isDragging) {
+      if (Math.abs(delta)>60) scrollToStep(clamp(activeStep+(delta<0?1:-1),0,2));
+      else scrollToStep(activeStep);
+    }
+    return;
+  }
   e.preventDefault();
-  stepsTrack.scrollLeft = drag.sl - (e.clientX - drag.x);
+  const delta = e.clientX - drag.x;
+  if (Math.abs(delta) > 15) {
+    isDragging = true;
+  }
+  stepsTrack.scrollLeft = drag.sl - delta;
 }, { passive:false });
+
 window.addEventListener('mouseup', e => {
   if (!drag.active) return;
   const delta = e.clientX - drag.x;
   drag.active = false;
-  if (Math.abs(delta)>60) scrollToStep(clamp(activeStep+(delta<0?1:-1),0,2));
-  else scrollToStep(activeStep);
+  if (isDragging) {
+    if (Math.abs(delta)>60) scrollToStep(clamp(activeStep+(delta<0?1:-1),0,2));
+    else scrollToStep(activeStep);
+  }
+});
+
+window.addEventListener('blur', () => {
+  if (drag.active) {
+    drag.active = false;
+    isDragging = false;
+  }
 });
 
 // Intersection observer for transformation section

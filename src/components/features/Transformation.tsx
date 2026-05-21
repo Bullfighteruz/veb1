@@ -96,6 +96,7 @@ export default function Transformation() {
   const hasInitializedRef = useRef(false);
   const isProgrammaticScrollRef = useRef(false);
   const programmaticScrollTimeoutRef = useRef<any>(null);
+  const isDraggingRef = useRef(false);
   const dragRef = useRef({
     active: false,
     startX: 0,
@@ -121,7 +122,20 @@ export default function Transformation() {
       const cards = getCards(track);
       if (!cards.length) return INITIAL_STEP;
 
-      const center = track.scrollLeft + track.clientWidth / 2;
+      const maxScrollLeft = track.scrollWidth - track.clientWidth;
+      if (maxScrollLeft <= 20) {
+        return activeIndexRef.current;
+      }
+
+      const scrollLeft = track.scrollLeft;
+      if (scrollLeft <= 20) {
+        return 0;
+      }
+      if (scrollLeft >= maxScrollLeft - 20) {
+        return cards.length - 1;
+      }
+
+      const center = scrollLeft + track.clientWidth / 2;
       let nearestIndex = 0;
       let nearestDistance = Infinity;
 
@@ -193,6 +207,8 @@ export default function Transformation() {
 
     const syncFromScroll = () => {
       if (isProgrammaticScrollRef.current) return;
+      const maxScrollLeft = track.scrollWidth - track.clientWidth;
+      if (maxScrollLeft <= 20) return;
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
         commitStep(getNearestStep(track));
@@ -219,12 +235,42 @@ export default function Transformation() {
 
     track.addEventListener("scroll", syncFromScroll, { passive: true });
     window.addEventListener("resize", recenter);
+
+    const handleWindowMouseMove = (e: globalThis.MouseEvent) => {
+      if (!dragRef.current.active) return;
+      if (e.buttons === 0) {
+        finishDrag(e.clientX);
+        return;
+      }
+      e.preventDefault();
+      moveDrag(e.clientX);
+    };
+
+    const handleWindowMouseUp = (e: globalThis.MouseEvent) => {
+      if (!dragRef.current.active) return;
+      finishDrag(e.clientX);
+    };
+
+    const handleWindowBlur = () => {
+      if (dragRef.current.active) {
+        dragRef.current.active = false;
+        isDraggingRef.current = false;
+      }
+    };
+
+    window.addEventListener("mousemove", handleWindowMouseMove, { passive: false });
+    window.addEventListener("mouseup", handleWindowMouseUp);
+    window.addEventListener("blur", handleWindowBlur);
+
     observer.observe(section);
     requestAnimationFrame(() => scrollToStep(INITIAL_STEP, "auto"));
 
     return () => {
       track.removeEventListener("scroll", syncFromScroll);
       window.removeEventListener("resize", recenter);
+      window.removeEventListener("mousemove", handleWindowMouseMove);
+      window.removeEventListener("mouseup", handleWindowMouseUp);
+      window.removeEventListener("blur", handleWindowBlur);
       observer.disconnect();
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       if (programmaticScrollTimeoutRef.current) {
@@ -242,6 +288,7 @@ export default function Transformation() {
       programmaticScrollTimeoutRef.current = null;
     }
     isProgrammaticScrollRef.current = false;
+    isDraggingRef.current = false;
 
     dragRef.current = {
       active: true,
@@ -256,6 +303,9 @@ export default function Transformation() {
     if (!track || !drag.active) return;
 
     const delta = clientX - drag.startX;
+    if (Math.abs(delta) > 15) {
+      isDraggingRef.current = true;
+    }
     track.scrollLeft = drag.startScrollLeft - delta;
   };
 
@@ -267,25 +317,17 @@ export default function Transformation() {
     const delta = clientX - drag.startX;
     dragRef.current.active = false;
 
-    if (Math.abs(delta) > 56) {
-      scrollToStep(activeIndexRef.current + (delta < 0 ? 1 : -1));
-    } else {
-      scrollToStep(getNearestStep(track));
+    if (isDraggingRef.current) {
+      if (Math.abs(delta) > 56) {
+        scrollToStep(activeIndexRef.current + (delta < 0 ? 1 : -1));
+      } else {
+        scrollToStep(getNearestStep(track));
+      }
     }
   };
 
   const onMouseDown = (event: MouseEvent<HTMLDivElement>) => {
     beginDrag(event.clientX);
-  };
-
-  const onMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active) return;
-    event.preventDefault();
-    moveDrag(event.clientX);
-  };
-
-  const onMouseUp = (event: MouseEvent<HTMLDivElement>) => {
-    finishDrag(event.clientX);
   };
 
   const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
@@ -356,16 +398,14 @@ export default function Transformation() {
         {/* Carousel Track */}
         <div
           ref={trackRef}
-          className="scrollbar-none mt-16 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-4 active:cursor-grabbing md:gap-7 lg:gap-8 lg:pb-0"
-          style={{ touchAction: "pan-y", scrollPaddingInline: "1px" }}
+          className="scrollbar-none mt-16 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-4 active:cursor-grabbing md:gap-7 lg:gap-8 lg:pb-0 select-none"
+          style={{ touchAction: "pan-y", scrollPaddingInline: "1px", userSelect: "none", WebkitUserSelect: "none" }}
           onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseUp}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
           onTouchCancel={onTouchEnd}
+          onDragStart={(e) => e.preventDefault()}
         >
           {STEPS.map((step, index) => {
             const isActive = activeIndex === index;
@@ -377,6 +417,11 @@ export default function Transformation() {
                 isActive={isActive}
                 days={isActive ? Math.round(animatedDays) : step.days}
                 margin={isActive ? Math.round(animatedMargin) : step.margin}
+                onClick={() => {
+                  if (!isDraggingRef.current) {
+                    scrollToStep(index);
+                  }
+                }}
               />
             );
           })}
@@ -411,12 +456,14 @@ function StepCard({
   isActive,
   days,
   margin,
+  onClick,
 }: {
   step: (typeof STEPS)[number];
   index: number;
   isActive: boolean;
   days: number;
   margin: number;
+  onClick?: () => void;
 }) {
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -445,10 +492,11 @@ function StepCard({
       data-step-card
       aria-current={isActive ? "step" : undefined}
       style={style}
+      onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group relative flex min-h-[390px] flex-[0_0_86vw] snap-center flex-col overflow-hidden rounded-[28px] border p-8 transition-[background,border-color,box-shadow,opacity,transform] duration-500 will-change-transform hover:scale-[1.02] md:min-h-[410px] md:flex-[0_0_46vw] md:px-8 md:py-9 lg:min-h-[450px] lg:flex-[0_0_calc((100%-4rem)/3)] lg:px-10 lg:py-10 ${
+      className={`group relative flex min-h-[390px] flex-[0_0_86vw] snap-center flex-col overflow-hidden rounded-[28px] border p-8 transition-[background,border-color,box-shadow,opacity,transform] duration-500 will-change-transform hover:scale-[1.02] md:min-h-[410px] md:flex-[0_0_46vw] md:px-8 md:py-9 lg:min-h-[450px] lg:flex-[0_0_calc((100%-4rem)/3)] lg:px-10 lg:py-10 cursor-pointer ${
         isActive
           ? "bg-[rgba(16,18,23,0.72)] opacity-100"
           : "bg-[rgba(16,18,23,0.42)] opacity-78"
@@ -495,14 +543,6 @@ function StepCard({
           <span className="text-[10px] font-mono tracking-widest text-white/40 uppercase">
             Step 0{index + 1}
           </span>
-          <div className="flex items-center gap-1.5">
-            <span 
-              className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${
-                isActive ? "animate-pulse" : "bg-white/10"
-              }`}
-              style={isActive ? { backgroundColor: step.color, boxShadow: `0 0 10px ${step.color}` } : undefined}
-            />
-          </div>
         </div>
 
         <div className="mt-6 flex-1 flex flex-col justify-between">
@@ -579,9 +619,9 @@ function ControlDeck({
 }) {
   const progressWidth = `${(activeIndex / (STEPS.length - 1)) * 100}%`;
   const points = [
-    { x: 58, y: 96 },
-    { x: 340, y: 68 },
-    { x: 622, y: 40 },
+    { x: 58, y: 130 },
+    { x: 340, y: 80 },
+    { x: 622, y: 30 },
   ];
   const activePoint = points[activeIndex] ?? points[0];
   const activePct = activeIndex === 0 ? 35 : activeIndex === 1 ? 60 : 100;
@@ -603,7 +643,7 @@ function ControlDeck({
           <span className="absolute right-0 bottom-0 block h-3.5 w-3.5 border-r-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
 
           <div className="w-full flex items-center justify-end mb-4">
-            <span className="flex h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: activeStep.color, boxShadow: `0 0 8px ${activeStep.color}` }} />
+            {/* Corner dot removed */}
           </div>
 
           {/* SVG Radial Gauge */}
@@ -643,18 +683,18 @@ function ControlDeck({
                 const rEnd = 39;
                 return (
                   <line
-                    key={i}
-                    x1="50"
-                    y1={50 - rEnd}
-                    x2="50"
-                    y2={50 - rStart}
-                    stroke={isActiveTick ? activeStep.color : "rgba(255, 255, 255, 0.08)"}
-                    strokeWidth={isMajor ? "1.5" : "1"}
-                    transform={`rotate(${angle + 90} 50 50)`}
-                    style={{
-                      transition: "stroke 0.5s ease",
-                    }}
-                  />
+                     key={i}
+                     x1="50"
+                     y1={50 - rEnd}
+                     x2="50"
+                     y2={50 - rStart}
+                     stroke={isActiveTick ? activeStep.color : "rgba(255, 255, 255, 0.08)"}
+                     strokeWidth={isMajor ? "1.5" : "1"}
+                     transform={`rotate(${angle + 90} 50 50)`}
+                     style={{
+                       transition: "stroke 0.5s ease",
+                     }}
+                   />
                 );
               })}
 
@@ -746,8 +786,8 @@ function ControlDeck({
           </div>
 
           {/* SVG Visualizer */}
-          <div className="relative h-[128px]">
-            <svg viewBox="0 0 680 128" className="h-full w-full overflow-visible" aria-hidden>
+          <div className="relative h-[180px]">
+            <svg viewBox="0 0 680 180" className="h-full w-full overflow-visible" aria-hidden>
               <defs>
                 <linearGradient id="transformationGlowGrad" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#FF4D4D" />
@@ -768,7 +808,7 @@ function ControlDeck({
               </defs>
 
               {/* Technical horizontal coordinate lines */}
-              {[40, 68, 96].map((lineY, i) => (
+              {[30, 80, 130].map((lineY, i) => (
                 <line
                   key={i}
                   x1="30"
@@ -782,14 +822,14 @@ function ControlDeck({
 
               {/* Gradient glow area under the curve */}
               <path
-                d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40 L 622 114 L 58 114 Z"
+                d="M 58 130 C 180 130, 220 80, 340 80 S 500 30, 622 30 L 622 150 L 58 150 Z"
                 fill="url(#area-glow-grad)"
                 className="transition-all duration-700"
               />
 
               {/* Main Dotted Guide Line */}
               <path
-                d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40"
+                d="M 58 130 C 180 130, 220 80, 340 80 S 500 30, 622 30"
                 fill="none"
                 stroke="rgba(255,255,255,0.08)"
                 strokeWidth="1.5"
@@ -799,7 +839,7 @@ function ControlDeck({
 
               {/* Underlaying static corridor path with gradient */}
               <path
-                d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40"
+                d="M 58 130 C 180 130, 220 80, 340 80 S 500 30, 622 30"
                 fill="none"
                 stroke="url(#transformationGlowGrad)"
                 strokeWidth="3.5"
@@ -813,15 +853,15 @@ function ControlDeck({
                 <g>
                   {/* Trail 2 */}
                   <circle r="3.5" fill="#FF4D4D" opacity="0.25" filter="url(#transformationGlow)">
-                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="0s" />
+                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 130 C 180 130, 220 80, 340 80" begin="0s" />
                   </circle>
                   {/* Trail 1 */}
                   <circle r="2.5" fill="#FFB347" opacity="0.6" filter="url(#transformationGlow)">
-                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.06s" />
+                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 130 C 180 130, 220 80, 340 80" begin="-0.06s" />
                   </circle>
                   {/* White-hot head */}
                   <circle r="1.5" fill="#FFFFFF" opacity="0.95">
-                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.12s" />
+                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 130 C 180 130, 220 80, 340 80" begin="-0.12s" />
                   </circle>
                 </g>
               )}
@@ -831,15 +871,15 @@ function ControlDeck({
                 <g>
                   {/* Trail 2 */}
                   <circle r="3.5" fill="#FFB347" opacity="0.25" filter="url(#transformationGlow)">
-                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="0s" />
+                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 80 C 460 80, 500 30, 622 30" begin="0s" />
                   </circle>
                   {/* Trail 1 */}
                   <circle r="2.5" fill="#00F0B0" opacity="0.6" filter="url(#transformationGlow)">
-                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.05s" />
+                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 80 C 460 80, 500 30, 622 30" begin="-0.05s" />
                   </circle>
                   {/* White-hot head */}
                   <circle r="1.5" fill="#FFFFFF" opacity="0.95">
-                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.10s" />
+                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 80 C 460 80, 500 30, 622 30" begin="-0.10s" />
                   </circle>
                 </g>
               )}
@@ -856,7 +896,7 @@ function ControlDeck({
                       x1={point.x}
                       x2={point.x}
                       y1={point.y}
-                      y2="114"
+                      y2="150"
                       stroke={isActive ? step.color : "rgba(255,255,255,0.06)"}
                       strokeWidth={isActive ? "1.5" : "1"}
                       strokeDasharray={isActive ? "3 1" : "2 2"}
@@ -919,7 +959,7 @@ function ControlDeck({
                     {/* Node tick text at bottom */}
                     <text
                       x={point.x}
-                      y="124"
+                      y="162"
                       textAnchor="middle"
                       fill={isActive ? step.color : "rgba(255,255,255,0.32)"}
                       fontSize="9"
@@ -968,17 +1008,41 @@ function ControlDeck({
             <span>Industry Average</span>
             <span>Optimal Target</span>
           </div>
+
+          {/* Dynamic contextual description block */}
+          <div className="relative mt-4 pt-3.5 border-t border-white/[0.04] min-h-[56px] flex items-center">
+            <p className="text-[11.5px] leading-relaxed text-white/45 transition-all duration-300">
+              {activeIndex === 0 && (
+                <>
+                  <span className="font-bold text-[#FF4D4D] uppercase tracking-wider mr-1.5">[Baseline Drag]</span>
+                  Slow capital recycling increases holding costs, interest drag, and depreciation risks. Every day a vehicle sits on the lot, it loses retail margin potential.
+                </>
+              )}
+              {activeIndex === 1 && (
+                <>
+                  <span className="font-bold text-[#FFB347] uppercase tracking-wider mr-1.5">[Market Avg]</span>
+                  Standard local channels yield average turn times. High dealer competition for common inventory keeps acquisitions costly and floorplan cycles locked.
+                </>
+              )}
+              {activeIndex === 2 && (
+                <>
+                  <span className="font-bold text-[#00F0B0] uppercase tracking-wider mr-1.5">[Revu Target]</span>
+                  Pre-sold buyer matching enables direct-to-retail transport, cutting floorplan duration to 42 days, minimizing lot time, and maximizing cash cycle speed.
+                </>
+              )}
+            </p>
+          </div>
         </div>
 
         {/* Right Column: HUD Interactive slider deck buttons */}
-        <div className="flex flex-col justify-between gap-4 rounded-[22px] border border-white/[0.06] bg-[#101217]/50 p-4 backdrop-blur-md relative overflow-hidden">
+        <div className="flex flex-col justify-center items-center gap-6 rounded-[22px] border border-white/[0.06] bg-[#101217]/50 p-5 backdrop-blur-md relative overflow-hidden">
           {/* L-brackets */}
           <span className="absolute left-0 top-0 block h-3.5 w-3.5 border-l-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
           <span className="absolute right-0 top-0 block h-3.5 w-3.5 border-r-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
           <span className="absolute left-0 bottom-0 block h-3.5 w-3.5 border-l-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
           <span className="absolute right-0 bottom-0 block h-3.5 w-3.5 border-r-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
 
-          <div className="flex items-center justify-center gap-3 lg:flex-col lg:justify-between">
+          <div className="flex items-center justify-center gap-3 lg:flex-col lg:gap-4">
             <button
               type="button"
               onClick={onPrev}
