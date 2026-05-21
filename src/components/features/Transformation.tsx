@@ -579,8 +579,7 @@ function ControlDeck({
           <span className="absolute left-0 bottom-0 block h-3.5 w-3.5 border-l-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
           <span className="absolute right-0 bottom-0 block h-3.5 w-3.5 border-r-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
 
-          <div className="w-full text-[9px] font-mono tracking-widest text-white/35 flex items-center justify-between mb-4">
-            <span>// TELEMETRY.EFFICIENCY</span>
+          <div className="w-full flex items-center justify-end mb-4">
             <span className="flex h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: activeStep.color, boxShadow: `0 0 8px ${activeStep.color}` }} />
           </div>
 
@@ -672,13 +671,7 @@ function ControlDeck({
               />
             </svg>
             
-            {/* Value Indicator (Central percentage) */}
-            <div className="absolute flex flex-col items-center justify-center translate-y-7">
-              <span className="font-display text-base font-black text-white leading-none tabular-nums tracking-tight">
-                {activePct}%
-              </span>
-              <span className="text-[6.5px] font-mono tracking-widest text-white/30 uppercase mt-0.5">SPEED</span>
-            </div>
+
           </div>
         </div>
 
@@ -696,23 +689,9 @@ function ControlDeck({
           </div>
 
           <div className="relative mb-2 flex items-center justify-between gap-4">
-            <div>
-              <div className="text-[9px] font-mono tracking-widest text-white/35 flex items-center gap-1.5">
-                <span>// VELOCITY CORRIDOR GRAPH</span>
-                <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/40">SYS_V2.0</span>
-              </div>
-            </div>
-            <div 
-              className="hidden rounded-full border px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase tabular-nums transition-all duration-500 sm:block"
-              style={{
-                color: activeStep.color,
-                borderColor: `${activeStep.color}30`,
-                backgroundColor: `${activeStep.color}08`,
-                boxShadow: `0 0 10px ${activeStep.color}05`,
-              }}
-            >
-              {activeStep.days}d active
-            </div>
+            <h4 className="text-[11px] font-bold tracking-wider text-white/60 uppercase">
+              Velocity Corridor
+            </h4>
           </div>
 
           {/* SVG Visualizer */}
@@ -933,10 +912,10 @@ function ControlDeck({
               style={{ width: isReady ? progressWidth : "0%" }}
             />
           </div>
-          <div className="relative mt-2 flex justify-between text-[8px] font-mono font-bold uppercase tracking-widest text-white/20">
-            <span>[YOU // START]</span>
-            <span>[INDUSTRY // WALK]</span>
-            <span>[REVU // OPTIMAL]</span>
+          <div className="relative mt-2 flex justify-between text-[8.5px] font-bold uppercase tracking-wider text-white/25">
+            <span>Start</span>
+            <span>Industry Average</span>
+            <span>Optimal Target</span>
           </div>
         </div>
 
@@ -1072,7 +1051,7 @@ function ImpactPanel({
         
         {/* Label underneath */}
         <div className="text-[9.5px] font-bold uppercase tracking-[0.18em] text-white/35 mt-3 leading-relaxed">
-          // {label.toUpperCase()}
+          {label.toUpperCase()}
         </div>
       </div>
 

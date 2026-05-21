@@ -2303,8 +2303,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
           <span class="l-bracket bottom-left"></span>
           <span class="l-bracket bottom-right"></span>
 
-          <div class="deck-telemetry-hdr" style="width: 100%;">
-            <span>// TELEMETRY.EFFICIENCY</span>
+          <div class="deck-telemetry-hdr" style="width: 100%; display: flex; justify-content: flex-end; margin-bottom: 1rem;">
             <span class="deck-status-dot"></span>
           </div>
 
@@ -2368,10 +2367,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               <circle id="deck-gauge-pin" cx="50" cy="50" r="5" fill="#101217" stroke="#FFB347" stroke-width="1.5" style="transition: stroke 0.5s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
               <circle cx="50" cy="50" r="1.8" fill="#FFFFFF" />
             </svg>
-            <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(28px);">
-              <span id="deck-gauge-percent" style="font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums;">60%</span>
-              <span style="font-family: monospace; font-size: 6.5px; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-top: 2px;">SPEED</span>
-            </div>
+
           </div>
         </div>
 
@@ -2385,15 +2381,11 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
 
           <div class="deck-chart-grid-overlay"></div>
 
-          <div class="deck-chart-head" style="display: flex; align-items: center; justify-content: space-between;">
+          <div class="deck-chart-head" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
             <div>
-              <div class="deck-chart-eyebrow-row">
-                <span class="deck-chart-eyebrow" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.35);">// VELOCITY CORRIDOR GRAPH</span>
-                <span class="deck-sys-badge">SYS_V2.0</span>
-              </div>
+              <h4 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.6); margin: 0 0 4px 0;">Velocity Corridor</h4>
               <div class="deck-chart-desc">64 days to 42 days, without benchmark confusion</div>
             </div>
-            <div class="deck-chart-pill" id="deck-pill" style="border: 1px solid rgba(255, 179, 71, 0.3); background-color: rgba(255, 179, 71, 0.08); box-shadow: 0 0 10px rgba(255, 179, 71, 0.05); color: var(--amber); font-family: monospace; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 4px 12px; text-transform: uppercase;">55d active</div>
           </div>
           
           <div class="deck-chart-svg-wrap">
@@ -2526,7 +2518,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
             </svg>
           </div>
           <div class="deck-progress-bar"><div class="deck-progress-fill" id="deck-progress" style="width: 50%;"></div></div>
-          <div class="deck-labels"><span>[YOU // START]</span><span>[INDUSTRY // WALK]</span><span>[REVU // OPTIMAL]</span></div>
+          <div class="deck-labels"><span>Start</span><span>Industry Average</span><span>Optimal Target</span></div>
         </div>
 
         <!-- Right: nav buttons -->
@@ -2589,7 +2581,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               </div>
             </div>
             <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.35); margin-top: 0.75rem;">
-              // DAYS SAVED
+              DAYS SAVED
             </div>
           </div>
           <div style="margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.02); font-size: 10.5px; color: rgba(255,255,255,0.45); line-height: 1.5;">
@@ -2614,7 +2606,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               </div>
             </div>
             <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.35); margin-top: 0.75rem;">
-              // TURNOVER
+              TURNOVER
             </div>
           </div>
           <div style="margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.02); font-size: 10.5px; color: rgba(255,255,255,0.45); line-height: 1.5;">
@@ -2640,7 +2632,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               </div>
             </div>
             <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.35); margin-top: 0.75rem;">
-              // MARGIN LIFT
+              MARGIN LIFT
             </div>
           </div>
           <div style="margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.02); font-size: 10.5px; color: rgba(255,255,255,0.45); line-height: 1.5;">
@@ -3312,13 +3304,17 @@ function updateDeck(idx, animate = true) {
   
   if (deckDays) deckDays.textContent = s.days;
   
-  deckPill.textContent = s.days + 'd active';
-  deckPill.style.color = s.color;
-  deckPill.style.borderColor = `${s.color}30`;
-  deckPill.style.backgroundColor = `${s.color}08`;
-  deckPill.style.boxShadow = `0 0 10px ${s.color}05`;
+  if (deckPill) {
+    deckPill.textContent = s.days + 'd active';
+    deckPill.style.color = s.color;
+    deckPill.style.borderColor = `${s.color}30`;
+    deckPill.style.backgroundColor = `${s.color}08`;
+    deckPill.style.boxShadow = `0 0 10px ${s.color}05`;
+  }
   
-  deckProgress.style.width = ((idx / 2) * 100) + '%';
+  if (deckProgress) {
+    deckProgress.style.width = ((idx / 2) * 100) + '%';
+  }
 
   // Update panels dynamic active variables
   $$('.deck-panel, .deck-chart-panel, .deck-nav').forEach(p => {
