@@ -660,8 +660,11 @@ function ControlDeck({
 
               {/* Rotating Needle (pointing along positive x-axis and rotated dynamically) */}
               <g 
-                transform={`rotate(${135 + (activePct / 100) * 270} 50 50)`}
-                style={{ transition: "transform 1s cubic-bezier(0.4, 0, 0.2, 1)" }}
+                style={{
+                  transform: `rotate(${135 + (activePct / 100) * 270}deg)`,
+                  transformOrigin: "50px 50px",
+                  transition: "transform 1s cubic-bezier(0.4, 0, 0.2, 1)"
+                }}
               >
                 <polygon
                   points="47,50 50,48.5 78,50 50,51.5"

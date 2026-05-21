@@ -2359,7 +2359,7 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(495 50 50)" style="transition: stroke 0.5s ease;" />
 
               <!-- Rotating Needle -->
-              <g id="deck-gauge-needle" transform="rotate(297 50 50)" style="transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);">
+              <g id="deck-gauge-needle" style="transform: rotate(297deg); transform-origin: 50px 50px; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);">
                 <polygon points="47,50 50,48.5 78,50 50,51.5" fill="#FFB347" style="filter: drop-shadow(0 0 3px rgba(255,179,71,0.6)); transition: fill 0.5s ease;" />
               </g>
 
@@ -3281,7 +3281,7 @@ function updateDeck(idx, animate = true) {
   const deckGaugeNeedle = $('#deck-gauge-needle');
   if (deckGaugeNeedle) {
     const angle = 135 + (pct / 100) * 270;
-    deckGaugeNeedle.setAttribute('transform', `rotate(${angle} 50 50)`);
+    deckGaugeNeedle.style.transform = `rotate(${angle}deg)`;
     const polygon = deckGaugeNeedle.querySelector('polygon');
     if (polygon) {
       polygon.setAttribute('fill', s.color);
