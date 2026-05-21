@@ -595,7 +595,7 @@ function ControlDeck({
       <div className="grid gap-4 lg:grid-cols-[minmax(220px,0.72fr)_minmax(0,1.7fr)_auto] lg:items-stretch">
         
         {/* Left Column: Active Benchmark Status */}
-        <div className="relative overflow-hidden rounded-[22px] border border-white/[0.06] bg-[#101217]/50 p-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] flex flex-col items-center min-h-[220px]">
+        <div className="relative overflow-hidden rounded-[22px] border border-white/[0.06] bg-[#101217]/50 p-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] flex flex-col items-center min-h-[320px]">
           {/* L-brackets */}
           <span className="absolute left-0 top-0 block h-3.5 w-3.5 border-l-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
           <span className="absolute right-0 top-0 block h-3.5 w-3.5 border-r-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
@@ -607,7 +607,7 @@ function ControlDeck({
           </div>
 
           {/* SVG Radial Gauge */}
-          <div className="relative flex-1 flex items-center justify-center h-36 w-36">
+          <div className="relative flex-1 flex items-center justify-center h-56 w-56">
             <svg viewBox="0 0 100 100" className="h-full w-full">
               {/* Background swept track */}
               <path
@@ -661,10 +661,10 @@ function ControlDeck({
               {/* Center Text Readout */}
               <text
                 x="50"
-                y="69"
+                y="68"
                 textAnchor="middle"
                 fill="#FFFFFF"
-                fontSize="14"
+                fontSize="16"
                 fontFamily="Space Grotesk, sans-serif"
                 fontWeight="800"
               >
@@ -672,10 +672,10 @@ function ControlDeck({
               </text>
               <text
                 x="50"
-                y="78"
+                y="77"
                 textAnchor="middle"
                 fill="rgba(255, 255, 255, 0.35)"
-                fontSize="6.2"
+                fontSize="7"
                 fontFamily="Space Grotesk, sans-serif"
                 fontWeight="700"
                 letterSpacing="0.1em"
