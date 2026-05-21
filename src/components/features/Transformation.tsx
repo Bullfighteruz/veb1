@@ -51,8 +51,6 @@ const IMPACT = [
 ] as const;
 
 const INITIAL_STEP = 1;
-const MAX_DAYS = 90;
-
 function formatCurrency(value: number) {
   return `$${Math.round(value).toLocaleString()}`;
 }
@@ -354,39 +352,16 @@ export default function Transformation() {
           })}
         </div>
 
-        <div className="mt-5 grid gap-5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => scrollToStep(activeIndex - 1)}
-              disabled={!canGoPrev}
-              aria-label="Previous benchmark"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.025] text-white/62 transition hover:border-rev-green/35 hover:bg-rev-green/[0.06] hover:text-white disabled:pointer-events-none disabled:opacity-30"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollToStep(activeIndex + 1)}
-              disabled={!canGoNext}
-              aria-label="Next benchmark"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.025] text-white/62 transition hover:border-rev-green/35 hover:bg-rev-green/[0.06] hover:text-white disabled:pointer-events-none disabled:opacity-30"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-
-          <Timeline
-            activeIndex={activeIndex}
-            activeDays={activeStep.days}
-            isReady={sectionSeen}
-            onSelect={(index) => scrollToStep(index)}
-          />
-
-          <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/38 lg:text-right">
-            Drag / scroll / swipe - watch the needle move with you.
-          </div>
-        </div>
+        <ControlDeck
+          activeIndex={activeIndex}
+          activeStep={activeStep}
+          isReady={sectionSeen}
+          canGoPrev={canGoPrev}
+          canGoNext={canGoNext}
+          onPrev={() => scrollToStep(activeIndex - 1)}
+          onNext={() => scrollToStep(activeIndex + 1)}
+          onSelect={(index) => scrollToStep(index)}
+        />
 
         <div className="reveal mt-9 grid gap-4 md:grid-cols-3">
           {IMPACT.map((item) => (
@@ -484,80 +459,241 @@ function StepCard({
   );
 }
 
-function Timeline({
+function ControlDeck({
   activeIndex,
-  activeDays,
+  activeStep,
   isReady,
+  canGoPrev,
+  canGoNext,
+  onPrev,
+  onNext,
   onSelect,
 }: {
   activeIndex: number;
-  activeDays: number;
+  activeStep: (typeof STEPS)[number];
   isReady: boolean;
+  canGoPrev: boolean;
+  canGoNext: boolean;
+  onPrev: () => void;
+  onNext: () => void;
   onSelect: (index: number) => void;
 }) {
-  const activePosition = (activeDays / MAX_DAYS) * 100;
+  const progressWidth = `${(activeIndex / (STEPS.length - 1)) * 100}%`;
+  const points = [
+    { x: 58, y: 96 },
+    { x: 340, y: 68 },
+    { x: 622, y: 40 },
+  ];
+  const activePath = points
+    .slice(0, activeIndex + 1)
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+    .join(" ");
+  const activePoint = points[activeIndex] ?? points[0];
 
   return (
-    <div className="rounded-[22px] border border-white/[0.075] bg-[rgba(20,22,27,0.46)] px-5 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-[8px]">
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/36">
-            Timeline ruler
-          </div>
-          <div className="mt-1 font-display text-lg font-semibold text-white/86">
-            0 to 90 days to sell
-          </div>
-        </div>
-        <div className="rounded-full border border-rev-green/20 bg-rev-green/[0.08] px-3 py-1.5 font-display text-sm font-semibold tabular-nums text-rev-green">
-          {activeDays}d active
-        </div>
-      </div>
-
-      <div className="relative h-16 px-2">
-        <div className="absolute left-2 right-2 top-7 h-px bg-white/12" />
-        <div
-          className="absolute left-2 top-7 h-px bg-gradient-to-r from-rev-green via-[#FFB347] to-[#FF4D4D] transition-[width] duration-700 ease-out"
-          style={{ width: isReady ? `calc(${activePosition}% - 0.5rem)` : "0%" }}
-        />
-
-        {STEPS.map((step, index) => {
-          const position = (step.days / MAX_DAYS) * 100;
-          const isActive = activeIndex === index;
-
-          return (
-            <button
-              key={step.label}
-              type="button"
-              onClick={() => onSelect(index)}
-              aria-label={`Select ${step.label}`}
-              aria-current={isActive ? "step" : undefined}
-              className="absolute top-7 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rev-green/60"
-              style={{ left: `${position}%`, color: step.color }}
-            >
+    <div
+      data-control-deck
+      className="mt-7 overflow-hidden rounded-[30px] border border-white/[0.085] bg-[linear-gradient(135deg,rgba(20,22,27,0.78),rgba(8,11,16,0.64))] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-[12px]"
+    >
+      <div className="grid gap-4 lg:grid-cols-[minmax(220px,0.72fr)_minmax(0,1.7fr)_auto] lg:items-stretch">
+        <div className="relative overflow-hidden rounded-[22px] border border-white/[0.065] bg-white/[0.025] p-5">
+          <div className="pointer-events-none absolute -right-12 -top-16 h-40 w-40 rounded-full bg-rev-green/10 blur-3xl" />
+          <div className="relative">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/36">
+              Active benchmark
+            </div>
+            <div className="mt-3 font-display text-2xl font-semibold leading-tight text-white">
+              {activeStep.label}
+            </div>
+            <div className="mt-1 text-[0.84rem] text-white/48">Passenger-car retail velocity</div>
+            <div className="mt-6 flex items-end gap-3">
               <span
-                className={`h-3 w-3 rounded-full border transition ${
-                  isActive ? "scale-125 bg-current shadow-[0_0_24px_currentColor]" : "bg-[#0A0C10]"
-                }`}
-              />
-              <span className="mt-3 whitespace-nowrap font-display text-[11px] font-semibold uppercase tracking-[0.14em] text-white/48">
-                {step.days}d
+                className="font-display text-5xl font-semibold leading-none tabular-nums"
+                style={{ color: activeStep.color }}
+              >
+                {activeStep.days}d
               </span>
-            </button>
-          );
-        })}
-
-        <div
-          className="absolute top-7 h-10 w-px -translate-y-1/2 bg-rev-green transition-[left] duration-500 ease-out"
-          style={{ left: `${activePosition}%` }}
-          aria-hidden
-        >
-          <span className="absolute -top-2 left-1/2 h-0 w-0 -translate-x-1/2 border-x-[5px] border-b-[8px] border-x-transparent border-b-rev-green" />
+              <span className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/36">
+                to sell
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="flex justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-white/30">
-        <span>0</span>
-        <span>90 days</span>
+        <div className="relative min-h-[190px] overflow-hidden rounded-[22px] border border-white/[0.065] bg-[#0A0F15]/70 px-5 py-5">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.16]">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.28)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.28)_1px,transparent_1px)] bg-[length:44px_44px]" />
+          </div>
+          <div className="relative mb-2 flex items-center justify-between gap-4">
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/34">
+                Velocity corridor
+              </div>
+              <div className="mt-1 text-[0.84rem] text-white/52">64 days to 48 days, without benchmark confusion</div>
+            </div>
+            <div className="hidden rounded-full border border-rev-green/20 bg-rev-green/[0.08] px-3 py-1.5 font-display text-sm font-semibold tabular-nums text-rev-green sm:block">
+              {activeStep.days}d active
+            </div>
+          </div>
+
+          <div className="relative h-[128px]">
+            <svg viewBox="0 0 680 128" className="h-full w-full" aria-hidden>
+              <defs>
+                <linearGradient id="transformationPath" x1="58" y1="96" x2="622" y2="40" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="#FF4D4D" />
+                  <stop offset="0.52" stopColor="#FFB347" />
+                  <stop offset="1" stopColor="#00FFAA" />
+                </linearGradient>
+                <filter id="transformationGlow" x="-20%" y="-90%" width="140%" height="280%">
+                  <feGaussianBlur stdDeviation="5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <path
+                d="M 58 96 L 340 68 L 622 40"
+                fill="none"
+                stroke="rgba(255,255,255,0.14)"
+                strokeWidth="2"
+                strokeDasharray="6 10"
+                strokeLinecap="round"
+              />
+              <path
+                d={activePath || "M 58 96"}
+                fill="none"
+                stroke="url(#transformationPath)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                filter="url(#transformationGlow)"
+                style={{
+                  strokeDasharray: 620,
+                  strokeDashoffset: isReady ? 0 : 620,
+                  transition: "stroke-dashoffset 850ms cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
+              />
+              {points.map((point, index) => {
+                const step = STEPS[index];
+                const isActive = activeIndex === index;
+
+                return (
+                  <g key={step.label}>
+                    <line
+                      x1={point.x}
+                      x2={point.x}
+                      y1={point.y + 16}
+                      y2="116"
+                      stroke="rgba(255,255,255,0.09)"
+                      strokeWidth="1"
+                    />
+                    <circle
+                      cx={point.x}
+                      cy={point.y}
+                      r={isActive ? 8 : 5}
+                      fill={isActive ? step.color : "#0A0F15"}
+                      stroke={step.color}
+                      strokeWidth="2"
+                    />
+                    {isActive && (
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r="19"
+                        fill="none"
+                        stroke={step.color}
+                        strokeOpacity="0.2"
+                        strokeWidth="2"
+                      />
+                    )}
+                    <text
+                      x={point.x}
+                      y="124"
+                      textAnchor="middle"
+                      fill={isActive ? step.color : "rgba(255,255,255,0.48)"}
+                      fontSize="11"
+                      fontFamily="Space Grotesk, sans-serif"
+                      fontWeight="700"
+                      letterSpacing="1"
+                    >
+                      {step.days}D
+                    </text>
+                  </g>
+                );
+              })}
+              <g transform={`translate(${activePoint.x}, ${activePoint.y})`}>
+                <line
+                  x1="0"
+                  x2="0"
+                  y1="-28"
+                  y2="-10"
+                  stroke={activeStep.color}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <path d="M -6 -30 L 0 -40 L 6 -30 Z" fill={activeStep.color} />
+              </g>
+            </svg>
+
+            {STEPS.map((step, index) => {
+              const point = points[index];
+
+              return (
+                <button
+                  key={step.label}
+                  type="button"
+                  onClick={() => onSelect(index)}
+                  aria-label={`Select ${step.label}`}
+                  aria-current={activeIndex === index ? "step" : undefined}
+                  className="absolute h-16 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rev-green/60"
+                  style={{
+                    left: `${(point.x / 680) * 100}%`,
+                    top: `${(point.y / 128) * 100}%`,
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          <div className="relative mt-1 h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-[#FF4D4D] via-[#FFB347] to-[#00FFAA] transition-[width] duration-700 ease-out"
+              style={{ width: isReady ? progressWidth : "0%" }}
+            />
+          </div>
+          <div className="relative mt-3 flex justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-white/28">
+            <span>Current</span>
+            <span>Industry</span>
+            <span>Target</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col justify-between gap-4 rounded-[22px] border border-white/[0.065] bg-white/[0.025] p-4">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+            <button
+              type="button"
+              onClick={onPrev}
+              disabled={!canGoPrev}
+              aria-label="Previous benchmark"
+              className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] text-white/64 transition hover:border-rev-green/35 hover:bg-rev-green/[0.07] hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={onNext}
+              disabled={!canGoNext}
+              aria-label="Next benchmark"
+              className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] text-white/64 transition hover:border-rev-green/35 hover:bg-rev-green/[0.07] hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="rounded-2xl border border-rev-green/14 bg-rev-green/[0.055] px-4 py-3 text-[10px] font-semibold uppercase leading-relaxed tracking-[0.2em] text-rev-green/78">
+            Drag, scroll, or swipe the cards.
+          </div>
+        </div>
       </div>
     </div>
   );
