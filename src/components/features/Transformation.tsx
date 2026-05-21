@@ -658,6 +658,31 @@ function ControlDeck({
                 );
               })}
 
+              {/* Center Text Readout */}
+              <text
+                x="50"
+                y="70"
+                textAnchor="middle"
+                fill="#FFFFFF"
+                fontSize="12"
+                fontFamily="Space Grotesk, sans-serif"
+                fontWeight="800"
+              >
+                {activePct}%
+              </text>
+              <text
+                x="50"
+                y="78"
+                textAnchor="middle"
+                fill="rgba(255, 255, 255, 0.35)"
+                fontSize="5.5"
+                fontFamily="Space Grotesk, sans-serif"
+                fontWeight="700"
+                letterSpacing="0.1em"
+              >
+                VELOCITY
+              </text>
+
               {/* Rotating Needle (pointing along positive x-axis and rotated dynamically) */}
               <g 
                 style={{

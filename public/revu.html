@@ -2358,6 +2358,10 @@ footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1p
               <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(483.75 50 50)" style="transition: stroke 0.5s ease;" />
               <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(495 50 50)" style="transition: stroke 0.5s ease;" />
 
+              <!-- Center Text Readout -->
+              <text id="deck-gauge-percent" x="50" y="70" text-anchor="middle" fill="#FFFFFF" font-size="12" font-family="'Space Grotesk', sans-serif" font-weight="800">60%</text>
+              <text x="50" y="78" text-anchor="middle" fill="rgba(255, 255, 255, 0.35)" font-size="5.5" font-family="'Space Grotesk', sans-serif" font-weight="700" letter-spacing="0.1em">VELOCITY</text>
+
               <!-- Rotating Needle -->
               <g id="deck-gauge-needle" style="transform: rotate(297deg); transform-origin: 50px 50px; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);">
                 <polygon points="47,50 50,48.5 78,50 50,51.5" fill="#FFB347" style="filter: drop-shadow(0 0 3px rgba(255,179,71,0.6)); transition: fill 0.5s ease;" />
