@@ -257,20 +257,43 @@ export default function Transformation() {
       id="numbers"
       ref={sectionRef}
       data-section="transformation"
-      className="relative scroll-mt-28 py-28 md:py-36"
+      className="relative isolate scroll-mt-24 overflow-hidden pb-20 pt-12 md:pb-28 md:pt-14"
     >
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(10,12,16,0) 0%, rgba(0,240,176,0.035) 28%, rgba(10,12,16,0.04) 62%, rgba(10,12,16,0) 100%)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-20 -z-10 h-px bg-gradient-to-r from-transparent via-rev-green/35 to-transparent"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.055]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.65) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.65) 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+          maskImage: "linear-gradient(180deg, transparent, black 20%, black 78%, transparent)",
+        }}
+        aria-hidden
+      />
+
       <div className="container">
-        <div className="mb-10 flex flex-col gap-5 reveal lg:flex-row lg:items-end lg:justify-between">
+        <div className="reveal grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(420px,500px)] lg:items-start">
           <div className="max-w-3xl">
-            <div className="mb-5 text-[11px] uppercase tracking-[0.32em] text-white/40">
+            <div className="mb-4 text-[11px] uppercase tracking-[0.32em] text-white/40">
               04 - The transformation
             </div>
             <h2 className="font-display text-balance text-4xl font-semibold leading-[1.05] tracking-tighter md:text-6xl">
               From <span className="text-gradient">stuck</span> to{" "}
               <span className="text-gradient-green">scaling.</span>
             </h2>
-            <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-white/60">
-              Realistic passenger-car benchmarks for independent dealers.
+            <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-white/58">
+              A cleaner path from idle inventory to faster retail turns, using realistic
+              passenger-car benchmarks for independent dealers.
             </p>
           </div>
 
@@ -284,7 +307,7 @@ export default function Transformation() {
 
         <div
           ref={trackRef}
-          className="scrollbar-none flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-4 active:cursor-grabbing"
+          className="scrollbar-none mt-6 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-3 active:cursor-grabbing md:mt-7"
           style={{ touchAction: "pan-y", scrollPaddingInline: "1px" }}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
@@ -302,13 +325,26 @@ export default function Transformation() {
                 key={step.label}
                 data-step-card
                 aria-current={isActive ? "step" : undefined}
-                className={`flex min-h-[390px] flex-[0_0_86vw] snap-center flex-col justify-between rounded-3xl border p-7 transition-[background,border-color,box-shadow,opacity,transform] duration-500 md:flex-[0_0_calc((100%-1.25rem)/2)] lg:flex-[0_0_calc((100%-2.5rem)/3)] ${
+                className={`relative flex min-h-[320px] flex-[0_0_86vw] snap-center flex-col justify-between overflow-hidden rounded-[1.35rem] border p-7 transition-[background,border-color,box-shadow,opacity,transform] duration-500 md:min-h-[340px] md:flex-[0_0_calc((100%-1.25rem)/2)] lg:flex-[0_0_calc((100%-2.5rem)/3)] ${
                   isActive
-                    ? "border-rev-green/35 bg-white/[0.04] opacity-100 shadow-[0_0_0_1px_rgba(0,240,176,0.08),0_28px_90px_rgba(0,0,0,0.24)]"
-                    : "border-white/[0.07] bg-white/[0.018] opacity-70"
+                    ? "border-rev-green/35 bg-white/[0.045] opacity-100 shadow-[0_0_0_1px_rgba(0,240,176,0.08),0_28px_90px_rgba(0,0,0,0.24)]"
+                    : "border-white/[0.075] bg-white/[0.018] opacity-72"
                 }`}
               >
-                <div>
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-80"
+                  style={{
+                    background:
+                      step.tone === "green"
+                        ? "linear-gradient(145deg, rgba(0,240,176,0.13), transparent 38%), linear-gradient(180deg, rgba(255,255,255,0.045), transparent)"
+                        : step.tone === "amber"
+                        ? "linear-gradient(145deg, rgba(255,204,102,0.10), transparent 38%), linear-gradient(180deg, rgba(255,255,255,0.035), transparent)"
+                        : "linear-gradient(180deg, rgba(255,255,255,0.04), transparent)",
+                  }}
+                  aria-hidden
+                />
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent" />
+                <div className="relative">
                   <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/40">
                     Step 0{index + 1}
                   </div>
@@ -317,9 +353,9 @@ export default function Transformation() {
                   </h3>
                 </div>
 
-                <div>
+                <div className="relative">
                   <div
-                    className={`font-display text-[5.25rem] font-semibold leading-none tracking-tightest md:text-[5.75rem] ${
+                    className={`font-display text-[4.25rem] font-semibold leading-none tracking-tightest md:text-[4.9rem] ${
                       step.tone === "green"
                         ? "text-rev-green"
                         : step.tone === "amber"
@@ -334,7 +370,7 @@ export default function Transformation() {
                   </p>
                 </div>
 
-                <div className="flex items-end justify-between gap-6">
+                <div className="relative flex items-end justify-between gap-6">
                   <div>
                     <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/40">
                       Avg margin / car
@@ -356,7 +392,7 @@ export default function Transformation() {
           })}
         </div>
 
-        <div className="mt-7 grid gap-5 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+        <div className="mt-6 grid gap-5 lg:grid-cols-[auto_1fr_auto] lg:items-center">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -398,7 +434,7 @@ export default function Transformation() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-5 rounded-3xl border border-white/[0.07] bg-white/[0.018] p-6 md:grid-cols-3 md:p-8 reveal">
+        <div className="reveal mt-8 grid gap-5 rounded-[1.35rem] border border-white/[0.075] bg-[linear-gradient(135deg,rgba(255,255,255,0.045),rgba(255,255,255,0.012))] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] md:grid-cols-3 md:p-8">
           <DynamicMetric label="Current step" value={activeStep.label} />
           <DynamicMetric label="Days to sell" value={`${Math.round(animatedDays)} days`} accent />
           <DynamicMetric label="Avg margin / car" value={formatCurrency(animatedMargin)} accent />
@@ -434,31 +470,31 @@ function Gauge({
     .join(" ");
 
   return (
-    <div className="relative w-full max-w-lg overflow-hidden rounded-[1.35rem] border border-white/[0.08] bg-[#0d1117] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.32)]">
+    <div className="relative w-full max-w-lg overflow-hidden rounded-[1.35rem] border border-rev-green/18 bg-[#0d1117] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.34),0_0_60px_rgba(0,240,176,0.06)]">
       <div className="pointer-events-none absolute inset-0 opacity-80">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_12%,rgba(0,240,176,0.16),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.07),rgba(255,255,255,0.015)_42%,rgba(0,0,0,0.16))]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rev-green/60 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.075),rgba(255,255,255,0.016)_38%,rgba(0,240,176,0.075)),linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,0.18))]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rev-green/70 to-transparent" />
       </div>
 
       <div className="relative">
-        <div className="flex items-start justify-between gap-5">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <div className="text-[10.5px] uppercase tracking-[0.32em] text-white/38">Velocity model</div>
-            <div className="mt-2 font-display text-2xl font-semibold leading-tight text-white">
+            <div className="mt-1.5 font-display text-[1.35rem] font-semibold leading-tight text-white">
               {step.label}
             </div>
-            <div className="mt-1 text-[13px] text-white/48">Passenger-car benchmark path</div>
+            <div className="mt-1 text-[12.5px] text-white/48">Passenger-car benchmark path</div>
           </div>
 
-          <div className="min-w-[108px] rounded-2xl border border-rev-green/20 bg-rev-green/[0.08] px-4 py-3 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-            <div className="font-display text-4xl font-semibold leading-none tabular-nums text-rev-green">
+          <div className="min-w-[100px] rounded-2xl border border-rev-green/24 bg-rev-green/[0.085] px-4 py-2.5 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_32px_rgba(0,240,176,0.08)]">
+            <div className="font-display text-[2.15rem] font-semibold leading-none tabular-nums text-rev-green">
               {step.days}d
             </div>
             <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-rev-green/70">to sell</div>
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-2">
+        <div className="mt-4 grid grid-cols-3 gap-2">
           <GaugeMetric
             label="Days saved"
             value={daysSaved === 0 ? "Baseline" : `${daysSaved}d`}
@@ -473,7 +509,7 @@ function Gauge({
           />
         </div>
 
-        <div className="relative mt-6 h-[170px] overflow-hidden rounded-2xl border border-white/[0.055] bg-black/15 px-2 py-2">
+        <div className="relative mt-4 hidden h-[92px] overflow-hidden rounded-2xl border border-white/[0.06] bg-black/18 px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] sm:block">
           <svg viewBox="0 0 428 148" className="h-full w-full" aria-hidden>
             <defs>
               <linearGradient id="velocityPath" x1="36" y1="116" x2="392" y2="34" gradientUnits="userSpaceOnUse">
@@ -586,9 +622,9 @@ function Gauge({
 
 function GaugeMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-black/15 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-      <div className="text-[9.5px] uppercase tracking-[0.18em] text-white/32">{label}</div>
-      <div className="mt-1 font-display text-[15px] font-semibold leading-tight tabular-nums text-white/88">{value}</div>
+    <div className="rounded-2xl border border-white/[0.06] bg-black/18 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <div className="text-[9px] uppercase tracking-[0.16em] text-white/32">{label}</div>
+      <div className="mt-1 font-display text-[14px] font-semibold leading-tight tabular-nums text-white/88">{value}</div>
     </div>
   );
 }
@@ -603,11 +639,11 @@ function DynamicMetric({
   accent?: boolean;
 }) {
   return (
-    <div>
+    <div className="rounded-2xl border border-white/[0.045] bg-black/10 px-5 py-4">
       <div className={`text-[10.5px] uppercase tracking-[0.28em] ${accent ? "text-rev-green" : "text-white/40"}`}>
         {label}
       </div>
-      <div className={`mt-3 font-display text-4xl font-semibold tabular-nums ${accent ? "text-rev-green" : "text-white"}`}>
+      <div className={`mt-3 font-display text-3xl font-semibold tabular-nums md:text-4xl ${accent ? "text-rev-green" : "text-white"}`}>
         {value}
       </div>
     </div>
