@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { CSSProperties, MouseEvent, TouchEvent } from "react";
+import { CalendarDays, ChevronLeft, ChevronRight, GaugeCircle, TrendingUp } from "lucide-react";
 
 const STEPS = [
   {
@@ -7,7 +8,8 @@ const STEPS = [
     days: 64,
     margin: 1750,
     context: "Industry-typical idle time. Cash trapped in steel.",
-    tone: "white",
+    tone: "red",
+    color: "#FF4D4D",
   },
   {
     label: "Industry Average",
@@ -15,6 +17,7 @@ const STEPS = [
     margin: 2100,
     context: "What competitors achieve with basic sourcing.",
     tone: "amber",
+    color: "#FFB347",
   },
   {
     label: "Revu Target",
@@ -22,16 +25,39 @@ const STEPS = [
     margin: 2400,
     context: "Achievable in 3 months with Revu's AI-driven system.",
     tone: "green",
+    color: "#00FFAA",
+  },
+] as const;
+
+const IMPACT = [
+  {
+    label: "Days saved",
+    value: "16",
+    detail: "days saved",
+    Icon: CalendarDays,
+  },
+  {
+    label: "Turnover",
+    value: "25%",
+    detail: "faster turnover",
+    Icon: GaugeCircle,
+  },
+  {
+    label: "Margin lift",
+    value: "+$650",
+    detail: "margin per car",
+    Icon: TrendingUp,
   },
 ] as const;
 
 const INITIAL_STEP = 1;
+const MAX_DAYS = 90;
 
 function formatCurrency(value: number) {
   return `$${Math.round(value).toLocaleString()}`;
 }
 
-function useAnimatedNumber(value: number, duration = 520) {
+function useAnimatedNumber(value: number, duration = 560) {
   const [display, setDisplay] = useState(value);
   const previousValueRef = useRef(value);
   const rafRef = useRef<number | null>(null);
@@ -47,6 +73,7 @@ function useAnimatedNumber(value: number, duration = 520) {
       const progress = Math.min(1, (now - start) / duration);
       const eased = 1 - Math.pow(1 - progress, 3);
       setDisplay(from + (to - from) * eased);
+
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(tick);
       } else {
@@ -76,8 +103,8 @@ export default function Transformation() {
   });
 
   const [activeIndex, setActiveIndex] = useState(INITIAL_STEP);
+  const [sectionSeen, setSectionSeen] = useState(false);
   const activeStep = STEPS[activeIndex];
-  const gaugeProgress = activeIndex / (STEPS.length - 1);
   const animatedDays = useAnimatedNumber(activeStep.days);
   const animatedMargin = useAnimatedNumber(activeStep.margin);
 
@@ -101,6 +128,7 @@ export default function Transformation() {
       cards.forEach((card, index) => {
         const cardCenter = card.offsetLeft + card.offsetWidth / 2;
         const distance = Math.abs(cardCenter - center);
+
         if (distance < nearestDistance) {
           nearestDistance = distance;
           nearestIndex = index;
@@ -120,6 +148,7 @@ export default function Transformation() {
 
       const rawOffset = card.offsetLeft + card.offsetWidth / 2 - track.clientWidth / 2;
       const maxOffset = Math.max(0, track.scrollWidth - track.clientWidth);
+
       return Math.min(maxOffset, Math.max(0, rawOffset));
     },
     [clampIndex, getCards]
@@ -165,11 +194,15 @@ export default function Transformation() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting || hasInitializedRef.current) return;
+        if (!entry.isIntersecting) return;
+
+        setSectionSeen(true);
+        if (hasInitializedRef.current) return;
+
         hasInitializedRef.current = true;
         requestAnimationFrame(() => scrollToStep(INITIAL_STEP, "smooth"));
       },
-      { threshold: 0.28 }
+      { threshold: 0.26 }
     );
 
     track.addEventListener("scroll", syncFromScroll, { passive: true });
@@ -220,30 +253,30 @@ export default function Transformation() {
     }
   };
 
-  const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseDown = (event: MouseEvent<HTMLDivElement>) => {
     beginDrag(event.clientX);
   };
 
-  const onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseMove = (event: MouseEvent<HTMLDivElement>) => {
     if (!dragRef.current.active) return;
     event.preventDefault();
     moveDrag(event.clientX);
   };
 
-  const onMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseUp = (event: MouseEvent<HTMLDivElement>) => {
     finishDrag(event.clientX);
   };
 
-  const onTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+  const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
     beginDrag(event.touches[0].clientX);
   };
 
-  const onTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+  const onTouchMove = (event: TouchEvent<HTMLDivElement>) => {
     if (!dragRef.current.active) return;
     moveDrag(event.touches[0].clientX);
   };
 
-  const onTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+  const onTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     const touch = event.changedTouches[0];
     if (!touch) return;
     finishDrag(touch.clientX);
@@ -257,57 +290,45 @@ export default function Transformation() {
       id="numbers"
       ref={sectionRef}
       data-section="transformation"
-      className="relative isolate scroll-mt-24 overflow-hidden pb-20 pt-12 md:pb-28 md:pt-14"
+      className="relative isolate scroll-mt-24 overflow-hidden bg-[#0A0C10] pb-20 pt-16 md:pb-28 md:pt-24"
     >
       <div
-        className="pointer-events-none absolute inset-0 -z-10"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.045]"
         style={{
-          background:
-            "linear-gradient(180deg, rgba(10,12,16,0) 0%, rgba(0,240,176,0.035) 28%, rgba(10,12,16,0.04) 62%, rgba(10,12,16,0) 100%)",
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)",
+          backgroundSize: "76px 76px",
+          maskImage: "linear-gradient(180deg, transparent, black 15%, black 82%, transparent)",
         }}
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 top-20 -z-10 h-px bg-gradient-to-r from-transparent via-rev-green/35 to-transparent"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.055]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.65) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.65) 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-          maskImage: "linear-gradient(180deg, transparent, black 20%, black 78%, transparent)",
-        }}
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[520px] w-[min(920px,100vw)] -translate-x-1/2 rounded-full bg-rev-green/[0.055] blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-rev-green/55 to-transparent"
         aria-hidden
       />
 
       <div className="container">
-        <div className="reveal grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(420px,500px)] lg:items-start">
-          <div className="max-w-3xl">
-            <div className="mb-4 text-[11px] uppercase tracking-[0.32em] text-white/40">
-              04 - The transformation
-            </div>
-            <h2 className="font-display text-balance text-4xl font-semibold leading-[1.05] tracking-tighter md:text-6xl">
-              From <span className="text-gradient">stuck</span> to{" "}
-              <span className="text-gradient-green">scaling.</span>
-            </h2>
-            <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-white/58">
-              A cleaner path from idle inventory to faster retail turns, using realistic
-              passenger-car benchmarks for independent dealers.
-            </p>
+        <div className="reveal mx-auto max-w-4xl text-center">
+          <div className="mb-4 text-[11px] uppercase tracking-[0.32em] text-white/42">
+            04 - The transformation
           </div>
-
-          <Gauge
-            activeIndex={activeIndex}
-            progress={gaugeProgress}
-            step={activeStep}
-            onSelect={(index) => scrollToStep(index)}
-          />
+          <h2 className="font-display text-balance text-4xl font-semibold leading-[1.04] tracking-tightest md:text-6xl">
+            From <span className="text-white/58">stuck</span> to{" "}
+            <span className="text-[#00FFAA]">scaling.</span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-[16px] leading-relaxed text-white/58">
+            A cleaner path from idle inventory to faster retail turns, built around realistic
+            passenger-car benchmarks for independent dealers.
+          </p>
         </div>
 
         <div
           ref={trackRef}
-          className="scrollbar-none mt-6 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-3 active:cursor-grabbing md:mt-7"
+          className="scrollbar-none mt-12 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-4 active:cursor-grabbing md:gap-7 lg:gap-8 lg:pb-0"
           style={{ touchAction: "pan-y", scrollPaddingInline: "1px" }}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
@@ -321,85 +342,26 @@ export default function Transformation() {
           {STEPS.map((step, index) => {
             const isActive = activeIndex === index;
             return (
-              <article
+              <StepCard
                 key={step.label}
-                data-step-card
-                aria-current={isActive ? "step" : undefined}
-                className={`relative flex min-h-[320px] flex-[0_0_86vw] snap-center flex-col justify-between overflow-hidden rounded-[1.35rem] border p-7 transition-[background,border-color,box-shadow,opacity,transform] duration-500 md:min-h-[340px] md:flex-[0_0_calc((100%-1.25rem)/2)] lg:flex-[0_0_calc((100%-2.5rem)/3)] ${
-                  isActive
-                    ? "border-rev-green/35 bg-white/[0.045] opacity-100 shadow-[0_0_0_1px_rgba(0,240,176,0.08),0_28px_90px_rgba(0,0,0,0.24)]"
-                    : "border-white/[0.075] bg-white/[0.018] opacity-72"
-                }`}
-              >
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-80"
-                  style={{
-                    background:
-                      step.tone === "green"
-                        ? "linear-gradient(145deg, rgba(0,240,176,0.13), transparent 38%), linear-gradient(180deg, rgba(255,255,255,0.045), transparent)"
-                        : step.tone === "amber"
-                        ? "linear-gradient(145deg, rgba(255,204,102,0.10), transparent 38%), linear-gradient(180deg, rgba(255,255,255,0.035), transparent)"
-                        : "linear-gradient(180deg, rgba(255,255,255,0.04), transparent)",
-                  }}
-                  aria-hidden
-                />
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent" />
-                <div className="relative">
-                  <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/40">
-                    Step 0{index + 1}
-                  </div>
-                  <h3 className="mt-4 font-display text-2xl font-semibold leading-tight text-white/90">
-                    {step.label}
-                  </h3>
-                </div>
-
-                <div className="relative">
-                  <div
-                    className={`font-display text-[4.25rem] font-semibold leading-none tracking-tightest md:text-[4.9rem] ${
-                      step.tone === "green"
-                        ? "text-rev-green"
-                        : step.tone === "amber"
-                        ? "text-rev-amber"
-                        : "text-white"
-                    }`}
-                  >
-                    {step.days}d
-                  </div>
-                  <p className="mt-5 min-h-12 text-[14px] leading-relaxed text-white/58">
-                    {step.context}
-                  </p>
-                </div>
-
-                <div className="relative flex items-end justify-between gap-6">
-                  <div>
-                    <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/40">
-                      Avg margin / car
-                    </div>
-                    <div
-                      className={`mt-2 font-display text-3xl font-semibold tabular-nums ${
-                        step.tone === "green" ? "text-rev-green" : "text-rev-amber"
-                      }`}
-                    >
-                      {formatCurrency(step.margin)}
-                    </div>
-                  </div>
-                  <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/40">
-                    {index + 1} / {STEPS.length}
-                  </div>
-                </div>
-              </article>
+                step={step}
+                index={index}
+                isActive={isActive}
+                days={isActive ? Math.round(animatedDays) : step.days}
+                margin={isActive ? Math.round(animatedMargin) : step.margin}
+              />
             );
           })}
         </div>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+        <div className="mt-5 grid gap-5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => scrollToStep(activeIndex - 1)}
               disabled={!canGoPrev}
               aria-label="Previous benchmark"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/60 transition hover:bg-white/[0.05] disabled:pointer-events-none disabled:opacity-30"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.025] text-white/62 transition hover:border-rev-green/35 hover:bg-rev-green/[0.06] hover:text-white disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -408,243 +370,229 @@ export default function Transformation() {
               onClick={() => scrollToStep(activeIndex + 1)}
               disabled={!canGoNext}
               aria-label="Next benchmark"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/60 transition hover:bg-white/[0.05] disabled:pointer-events-none disabled:opacity-30"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.025] text-white/62 transition hover:border-rev-green/35 hover:bg-rev-green/[0.06] hover:text-white disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="flex items-center gap-2 lg:justify-center" aria-label="Benchmark steps">
-            {STEPS.map((step, index) => (
-              <button
-                key={step.label}
-                type="button"
-                onClick={() => scrollToStep(index)}
-                aria-label={`Go to ${step.label}`}
-                aria-current={activeIndex === index ? "step" : undefined}
-                className={`h-1 rounded-full transition-all ${
-                  activeIndex === index ? "w-14 bg-rev-green" : "w-7 bg-white/15 hover:bg-white/30"
-                }`}
-              />
-            ))}
-          </div>
+          <Timeline
+            activeIndex={activeIndex}
+            activeDays={activeStep.days}
+            isReady={sectionSeen}
+            onSelect={(index) => scrollToStep(index)}
+          />
 
-          <div className="text-[11px] uppercase tracking-[0.28em] text-white/40">
-            Drag / scroll / swipe -&gt; Watch the needle move with you.
+          <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/38 lg:text-right">
+            Drag / scroll / swipe - watch the needle move with you.
           </div>
         </div>
 
-        <div className="reveal mt-8 grid gap-5 rounded-[1.35rem] border border-white/[0.075] bg-[linear-gradient(135deg,rgba(255,255,255,0.045),rgba(255,255,255,0.012))] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] md:grid-cols-3 md:p-8">
-          <DynamicMetric label="Current step" value={activeStep.label} />
-          <DynamicMetric label="Days to sell" value={`${Math.round(animatedDays)} days`} accent />
-          <DynamicMetric label="Avg margin / car" value={formatCurrency(animatedMargin)} accent />
+        <div className="reveal mt-9 grid gap-4 md:grid-cols-3">
+          {IMPACT.map((item) => (
+            <ImpactPanel key={item.label} {...item} />
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function Gauge({
-  activeIndex,
-  progress,
+function StepCard({
   step,
+  index,
+  isActive,
+  days,
+  margin,
+}: {
+  step: (typeof STEPS)[number];
+  index: number;
+  isActive: boolean;
+  days: number;
+  margin: number;
+}) {
+  const style = {
+    "--step-color": step.color,
+    "--step-shadow": `${step.color}24`,
+  } as CSSProperties;
+
+  return (
+    <article
+      data-step-card
+      aria-current={isActive ? "step" : undefined}
+      style={style}
+      className={`group relative flex min-h-[370px] flex-[0_0_86vw] snap-center flex-col overflow-hidden rounded-[28px] border p-8 transition-[background,border-color,box-shadow,opacity,transform] duration-500 will-change-transform hover:scale-[1.02] hover:border-[color:var(--step-color)] hover:shadow-[0_26px_90px_var(--step-shadow)] md:min-h-[390px] md:flex-[0_0_46vw] md:px-8 md:py-9 lg:min-h-[430px] lg:flex-[0_0_calc((100%-4rem)/3)] lg:px-10 lg:py-10 ${
+        isActive
+          ? "border-[color:var(--step-color)] bg-[rgba(20,22,27,0.62)] opacity-100 shadow-[0_28px_100px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.08)]"
+          : "border-white/[0.08] bg-[rgba(20,22,27,0.48)] opacity-78 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]"
+      }`}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-80 backdrop-blur-[8px]"
+        style={{
+          background:
+            "linear-gradient(145deg, color-mix(in srgb, var(--step-color) 16%, transparent), transparent 42%), linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012))",
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/26 to-transparent"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-16 -top-20 h-52 w-52 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-60"
+        style={{ background: "var(--step-color)" }}
+        aria-hidden
+      />
+
+      <div className="relative flex h-full flex-col">
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-white/42">
+            Step 0{index + 1}
+          </span>
+          <span className="h-2 w-2 rounded-full bg-[color:var(--step-color)] shadow-[0_0_18px_var(--step-color)]" />
+        </div>
+
+        <div className="mt-8">
+          <h3 className="text-[0.9rem] font-semibold uppercase tracking-[0.14em] text-white/56">
+            {step.label}
+          </h3>
+          <div
+            className="mt-5 font-display text-[4.15rem] font-semibold leading-none tracking-tightest tabular-nums md:text-[4.75rem]"
+            style={{ color: "var(--step-color)" }}
+          >
+            {days}d
+          </div>
+          <p className="mt-6 max-w-[14rem] text-[0.85rem] leading-relaxed text-white/58 md:max-w-[15rem]">
+            {step.context}
+          </p>
+        </div>
+
+        <div className="mt-auto pt-10">
+          <div className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-white/36">
+            Avg margin / car
+          </div>
+          <div
+            className="mt-3 font-display text-[1.55rem] font-semibold leading-none tabular-nums"
+            style={{ color: "var(--step-color)" }}
+          >
+            {formatCurrency(margin)}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function Timeline({
+  activeIndex,
+  activeDays,
+  isReady,
   onSelect,
 }: {
   activeIndex: number;
-  progress: number;
-  step: (typeof STEPS)[number];
+  activeDays: number;
+  isReady: boolean;
   onSelect: (index: number) => void;
 }) {
-  const daysSaved = STEPS[0].days - step.days;
-  const marginLift = step.margin - STEPS[0].margin;
-  const fasterPct = Math.round((daysSaved / STEPS[0].days) * 100);
-  const points = [
-    { x: 36, y: 116 },
-    { x: 214, y: 76 },
-    { x: 392, y: 34 },
-  ];
-  const activePoint = points[activeIndex] ?? points[0];
-  const activePath = points
-    .slice(0, activeIndex + 1)
-    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
-    .join(" ");
+  const activePosition = (activeDays / MAX_DAYS) * 100;
 
   return (
-    <div className="relative w-full max-w-lg overflow-hidden rounded-[1.35rem] border border-rev-green/18 bg-[#0d1117] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.34),0_0_60px_rgba(0,240,176,0.06)]">
-      <div className="pointer-events-none absolute inset-0 opacity-80">
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.075),rgba(255,255,255,0.016)_38%,rgba(0,240,176,0.075)),linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,0.18))]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rev-green/70 to-transparent" />
+    <div className="rounded-[22px] border border-white/[0.075] bg-[rgba(20,22,27,0.46)] px-5 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-[8px]">
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/36">
+            Timeline ruler
+          </div>
+          <div className="mt-1 font-display text-lg font-semibold text-white/86">
+            0 to 90 days to sell
+          </div>
+        </div>
+        <div className="rounded-full border border-rev-green/20 bg-rev-green/[0.08] px-3 py-1.5 font-display text-sm font-semibold tabular-nums text-rev-green">
+          {activeDays}d active
+        </div>
       </div>
 
-      <div className="relative">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="text-[10.5px] uppercase tracking-[0.32em] text-white/38">Velocity model</div>
-            <div className="mt-1.5 font-display text-[1.35rem] font-semibold leading-tight text-white">
-              {step.label}
-            </div>
-            <div className="mt-1 text-[12.5px] text-white/48">Passenger-car benchmark path</div>
-          </div>
+      <div className="relative h-16 px-2">
+        <div className="absolute left-2 right-2 top-7 h-px bg-white/12" />
+        <div
+          className="absolute left-2 top-7 h-px bg-gradient-to-r from-rev-green via-[#FFB347] to-[#FF4D4D] transition-[width] duration-700 ease-out"
+          style={{ width: isReady ? `calc(${activePosition}% - 0.5rem)` : "0%" }}
+        />
 
-          <div className="min-w-[100px] rounded-2xl border border-rev-green/24 bg-rev-green/[0.085] px-4 py-2.5 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_32px_rgba(0,240,176,0.08)]">
-            <div className="font-display text-[2.15rem] font-semibold leading-none tabular-nums text-rev-green">
-              {step.days}d
-            </div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-rev-green/70">to sell</div>
-          </div>
-        </div>
+        {STEPS.map((step, index) => {
+          const position = (step.days / MAX_DAYS) * 100;
+          const isActive = activeIndex === index;
 
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          <GaugeMetric
-            label="Days saved"
-            value={daysSaved === 0 ? "Baseline" : `${daysSaved}d`}
-          />
-          <GaugeMetric
-            label="Margin lift"
-            value={marginLift === 0 ? "Baseline" : `+${formatCurrency(marginLift)}`}
-          />
-          <GaugeMetric
-            label="Turnover"
-            value={fasterPct === 0 ? "Baseline" : `${fasterPct}% faster`}
-          />
-        </div>
-
-        <div className="relative mt-4 hidden h-[92px] overflow-hidden rounded-2xl border border-white/[0.06] bg-black/18 px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] sm:block">
-          <svg viewBox="0 0 428 148" className="h-full w-full" aria-hidden>
-            <defs>
-              <linearGradient id="velocityPath" x1="36" y1="116" x2="392" y2="34" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stopColor="rgba(255,204,102,0.46)" />
-                <stop offset="1" stopColor="#00F0B0" />
-              </linearGradient>
-              <filter id="velocityGlow" x="-20%" y="-80%" width="140%" height="260%">
-                <feGaussianBlur stdDeviation="5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-            <path
-              d="M 36 116 C 106 116 144 82 214 76 C 286 70 318 40 392 34"
-              fill="none"
-              stroke="rgba(255,255,255,0.12)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeDasharray="5 8"
-            />
-            <path
-              d={activePath || "M 36 116"}
-              fill="none"
-              stroke="url(#velocityPath)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              filter="url(#velocityGlow)"
-            />
-            {points.map((point, index) => {
-              const isActive = activeIndex === index;
-              return (
-                <g key={STEPS[index].label}>
-                  <line
-                    x1={point.x}
-                    x2={point.x}
-                    y1={point.y + 14}
-                    y2="132"
-                    stroke="rgba(255,255,255,0.08)"
-                    strokeWidth="1"
-                  />
-                  <circle
-                    cx={point.x}
-                    cy={point.y}
-                    r={isActive ? 8 : 5}
-                    fill={isActive ? "#00F0B0" : "#0d1117"}
-                    stroke={isActive ? "#00F0B0" : "rgba(255,255,255,0.28)"}
-                    strokeWidth="2"
-                  />
-                  {isActive && (
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r="18"
-                      fill="none"
-                      stroke="rgba(0,240,176,0.2)"
-                      strokeWidth="2"
-                    />
-                  )}
-                  <text
-                    x={point.x}
-                    y="142"
-                    textAnchor="middle"
-                    fill={isActive ? "#00F0B0" : "rgba(255,255,255,0.42)"}
-                    fontSize="10"
-                    fontFamily="Inter, sans-serif"
-                    fontWeight="700"
-                    letterSpacing="1"
-                  >
-                    {STEPS[index].days}D
-                  </text>
-                </g>
-              );
-            })}
-            <g transform={`translate(${activePoint.x}, ${activePoint.y})`}>
-              <line
-                x1="0"
-                y1="-22"
-                x2="0"
-                y2="-7"
-                stroke="#00F0B0"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <path d="M -5 -24 L 0 -33 L 5 -24 Z" fill="#00F0B0" />
-            </g>
-          </svg>
-
-          {points.map((point, index) => (
+          return (
             <button
-              key={STEPS[index].label}
+              key={step.label}
               type="button"
               onClick={() => onSelect(index)}
-              aria-label={`Select ${STEPS[index].label}`}
-              aria-current={activeIndex === index ? "step" : undefined}
-              className="absolute h-14 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rev-green/60"
-              style={{
-                left: `${(point.x / 428) * 100}%`,
-                top: `${(point.y / 148) * 100}%`,
-              }}
-            />
-          ))}
+              aria-label={`Select ${step.label}`}
+              aria-current={isActive ? "step" : undefined}
+              className="absolute top-7 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rev-green/60"
+              style={{ left: `${position}%`, color: step.color }}
+            >
+              <span
+                className={`h-3 w-3 rounded-full border transition ${
+                  isActive ? "scale-125 bg-current shadow-[0_0_24px_currentColor]" : "bg-[#0A0C10]"
+                }`}
+              />
+              <span className="mt-3 whitespace-nowrap font-display text-[11px] font-semibold uppercase tracking-[0.14em] text-white/48">
+                {step.days}d
+              </span>
+            </button>
+          );
+        })}
+
+        <div
+          className="absolute top-7 h-10 w-px -translate-y-1/2 bg-rev-green transition-[left] duration-500 ease-out"
+          style={{ left: `${activePosition}%` }}
+          aria-hidden
+        >
+          <span className="absolute -top-2 left-1/2 h-0 w-0 -translate-x-1/2 border-x-[5px] border-b-[8px] border-x-transparent border-b-rev-green" />
         </div>
+      </div>
+
+      <div className="flex justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-white/30">
+        <span>0</span>
+        <span>90 days</span>
       </div>
     </div>
   );
 }
 
-function GaugeMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/[0.06] bg-black/18 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-      <div className="text-[9px] uppercase tracking-[0.16em] text-white/32">{label}</div>
-      <div className="mt-1 font-display text-[14px] font-semibold leading-tight tabular-nums text-white/88">{value}</div>
-    </div>
-  );
-}
-
-function DynamicMetric({
+function ImpactPanel({
   label,
   value,
-  accent,
+  detail,
+  Icon,
 }: {
   label: string;
   value: string;
-  accent?: boolean;
+  detail: string;
+  Icon: typeof CalendarDays;
 }) {
   return (
-    <div className="rounded-2xl border border-white/[0.045] bg-black/10 px-5 py-4">
-      <div className={`text-[10.5px] uppercase tracking-[0.28em] ${accent ? "text-rev-green" : "text-white/40"}`}>
-        {label}
-      </div>
-      <div className={`mt-3 font-display text-3xl font-semibold tabular-nums md:text-4xl ${accent ? "text-rev-green" : "text-white"}`}>
-        {value}
+    <div className="group relative overflow-hidden rounded-[22px] border border-white/[0.075] bg-[rgba(20,22,27,0.54)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] backdrop-blur-[8px] transition hover:border-rev-green/35 hover:bg-rev-green/[0.045]">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rev-green/45 to-transparent opacity-0 transition group-hover:opacity-100"
+        aria-hidden
+      />
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/38">
+            {label}
+          </div>
+          <div className="mt-3 font-display text-3xl font-semibold leading-none tabular-nums text-white md:text-4xl">
+            {value}
+          </div>
+          <div className="mt-2 text-[0.86rem] text-white/54">{detail}</div>
+        </div>
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-rev-green/18 bg-rev-green/[0.08] text-rev-green">
+          <Icon className="h-5 w-5" strokeWidth={1.8} />
+        </span>
       </div>
     </div>
   );
