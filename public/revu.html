@@ -3426,6 +3426,9 @@ function updateDeck(idx, animate = true) {
   }
 }
 
+let isProgrammaticScroll = false;
+let programmaticScrollTimeout = null;
+
 function scrollToStep(idx, behavior='smooth') {
   const cards = $$('[data-step]', stepsTrack);
   if (!cards[idx]) return;
@@ -3434,6 +3437,15 @@ function scrollToStep(idx, behavior='smooth') {
   const card = cards[idx];
   const trackW = stepsTrack.clientWidth;
   const offset = card.offsetLeft + card.offsetWidth/2 - trackW/2;
+
+  if (behavior === 'smooth') {
+    isProgrammaticScroll = true;
+    if (programmaticScrollTimeout) clearTimeout(programmaticScrollTimeout);
+    programmaticScrollTimeout = setTimeout(() => {
+      isProgrammaticScroll = false;
+    }, 600);
+  }
+
   stepsTrack.scrollTo({ left: Math.max(0, offset), behavior });
 }
 
@@ -3456,6 +3468,7 @@ deckNext.addEventListener('click', () => scrollToStep(Math.min(2, activeStep+1))
 // Sync from native scroll / drag
 let scrollRaf2 = null;
 stepsTrack.addEventListener('scroll', () => {
+  if (isProgrammaticScroll) return;
   if (scrollRaf2) cancelAnimationFrame(scrollRaf2);
   scrollRaf2 = requestAnimationFrame(() => {
     const cards = $$('[data-step]', stepsTrack);
@@ -3471,7 +3484,21 @@ stepsTrack.addEventListener('scroll', () => {
 
 // Drag to scroll
 let drag = { active:false, x:0, sl:0 };
-stepsTrack.addEventListener('mousedown', e => { drag={active:true,x:e.clientX,sl:stepsTrack.scrollLeft}; });
+stepsTrack.addEventListener('mousedown', e => {
+  if (programmaticScrollTimeout) {
+    clearTimeout(programmaticScrollTimeout);
+    programmaticScrollTimeout = null;
+  }
+  isProgrammaticScroll = false;
+  drag={active:true,x:e.clientX,sl:stepsTrack.scrollLeft};
+});
+stepsTrack.addEventListener('touchstart', () => {
+  if (programmaticScrollTimeout) {
+    clearTimeout(programmaticScrollTimeout);
+    programmaticScrollTimeout = null;
+  }
+  isProgrammaticScroll = false;
+}, { passive: true });
 window.addEventListener('mousemove', e => {
   if (!drag.active) return;
   e.preventDefault();

@@ -94,6 +94,8 @@ export default function Transformation() {
   const activeIndexRef = useRef(INITIAL_STEP);
   const rafRef = useRef<number | null>(null);
   const hasInitializedRef = useRef(false);
+  const isProgrammaticScrollRef = useRef(false);
+  const programmaticScrollTimeoutRef = useRef<any>(null);
   const dragRef = useRef({
     active: false,
     startX: 0,
@@ -168,6 +170,17 @@ export default function Transformation() {
 
       const next = clampIndex(index);
       commitStep(next);
+
+      if (behavior === "smooth") {
+        isProgrammaticScrollRef.current = true;
+        if (programmaticScrollTimeoutRef.current) {
+          clearTimeout(programmaticScrollTimeoutRef.current);
+        }
+        programmaticScrollTimeoutRef.current = window.setTimeout(() => {
+          isProgrammaticScrollRef.current = false;
+        }, 600);
+      }
+
       track.scrollTo({ left: getStepOffset(track, next), behavior });
     },
     [clampIndex, commitStep, getStepOffset]
@@ -179,6 +192,7 @@ export default function Transformation() {
     if (!track || !section) return;
 
     const syncFromScroll = () => {
+      if (isProgrammaticScrollRef.current) return;
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
         commitStep(getNearestStep(track));
@@ -213,12 +227,21 @@ export default function Transformation() {
       window.removeEventListener("resize", recenter);
       observer.disconnect();
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      if (programmaticScrollTimeoutRef.current) {
+        clearTimeout(programmaticScrollTimeoutRef.current);
+      }
     };
   }, [commitStep, getNearestStep, getStepOffset, scrollToStep]);
 
   const beginDrag = (clientX: number) => {
     const track = trackRef.current;
     if (!track) return;
+
+    if (programmaticScrollTimeoutRef.current) {
+      clearTimeout(programmaticScrollTimeoutRef.current);
+      programmaticScrollTimeoutRef.current = null;
+    }
+    isProgrammaticScrollRef.current = false;
 
     dragRef.current = {
       active: true,
