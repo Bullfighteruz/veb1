@@ -44,6 +44,8 @@ const config: Config = {
         rev: {
           green: "#00F0B0",
           amber: "#FFCC66",
+          red: "#FF4D4D",
+          gold: "#FFD966",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -101,6 +103,10 @@ const config: Config = {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        "marquee-reverse": {
+          "0%": { transform: "translateX(-50%)" },
+          "100%": { transform: "translateX(0)" },
+        },
         "spin-slow": {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
@@ -113,15 +119,45 @@ const config: Config = {
           "0%, 100%": { transform: "translate(0px, 0px)" },
           "50%": { transform: "translate(-30px, 40px)" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-12px)" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.92)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "slide-right": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "count-up": {
+          "0%": { transform: "translateY(100%)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "fade-in": "fade-in 0.6s ease-out forwards",
         "pulse-soft": "pulse-soft 3s ease-in-out infinite",
         marquee: "marquee 40s linear infinite",
+        "marquee-reverse": "marquee-reverse 48s linear infinite",
         "spin-slow": "spin-slow 24s linear infinite",
         "drift-1": "drift-1 18s ease-in-out infinite",
         "drift-2": "drift-2 22s ease-in-out infinite",
+        float: "float 6s ease-in-out infinite",
+        "float-slow": "float 9s ease-in-out infinite",
+        "scale-in": "scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "slide-right": "slide-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+      },
+      backdropBlur: {
+        xs: "4px",
+      },
+      boxShadow: {
+        "glow-green": "0 0 0 1px rgba(0,240,176,0.18), 0 10px 40px -10px rgba(0,240,176,0.45)",
+        "glow-green-lg": "0 0 0 1px rgba(0,240,176,0.25), 0 0 40px rgba(0,240,176,0.18), 0 20px 60px -10px rgba(0,240,176,0.55)",
+        "card-dark": "0 28px 80px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.055)",
+        "card-hover": "0 40px 120px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)",
       },
     },
   },

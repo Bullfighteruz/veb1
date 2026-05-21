@@ -1,0 +1,3842 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0A0C10" />
+<title>Revu — Revving up your revenue</title>
+<meta name="description" content="$0 fixed fees. Pay only a percentage of net profit after the car is sold. If a car sits over 60 days, Revu charges $0. Built for independent used-car dealers." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   REVU — DESIGN SYSTEM
+   Dark theme: #0A0C10  Green: #00FFAA  Amber: #FFB347  Red: #FF4D4D  Gold: #FFD966
+   Data canonical: 64d → 55d → 42d  |  $1,750 → $2,100 → $2,400  |  22d saved  34% faster  +$650 margin
+═══════════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #0A0C10;
+  --ink-2: #12161F;
+  --ink-3: #1A1F2B;
+  --ink-4: #242A38;
+  --green: #00FFAA;
+  --green-dim: rgba(0,255,170,0.12);
+  --green-glow: rgba(0,255,170,0.35);
+  --amber: #FFB347;
+  --amber-dim: rgba(255,179,71,0.12);
+  --red: #FF4D4D;
+  --red-dim: rgba(255,77,77,0.12);
+  --gold: #FFD966;
+  --gold-dim: rgba(255,217,102,0.12);
+  --white: #FFFFFF;
+  --muted: rgba(255,255,255,0.55);
+  --subtle: rgba(255,255,255,0.08);
+  --line: rgba(255,255,255,0.06);
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --radius-card: 24px;
+  --radius-pill: 999px;
+  --ease-spring: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--white);
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+::selection { background: var(--green); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────────────── */
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+.font-display { font-family: var(--font-display); }
+.tabular { font-variant-numeric: tabular-nums; }
+
+.glass {
+  background: rgba(255,255,255,0.025);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--line);
+}
+.glass-strong {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.09);
+}
+
+.glow-green {
+  box-shadow: 0 0 0 1px rgba(0,255,170,0.2), 0 0 24px rgba(0,255,170,0.18), 0 12px 48px -8px rgba(0,255,170,0.5);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  will-change: opacity, transform;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 80ms; }
+.reveal-delay-2 { transition-delay: 160ms; }
+.reveal-delay-3 { transition-delay: 240ms; }
+.reveal-delay-4 { transition-delay: 320ms; }
+.reveal-delay-5 { transition-delay: 400ms; }
+
+/* Hairlines */
+.hairline-green {
+  position: absolute;
+  inset-x: 0; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,255,170,0.5), transparent);
+  pointer-events: none;
+}
+.hairline-white {
+  position: absolute;
+  inset-x: 0; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  pointer-events: none;
+}
+
+/* ── Scroll progress bar ───────────────────────────────────────────────────── */
+#scroll-progress {
+  position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
+  background: linear-gradient(90deg, var(--green), var(--amber));
+  width: 0%; transition: width 0.1s linear;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════════ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  transition: all 0.5s var(--ease-out);
+  padding: 1.5rem 0;
+}
+#nav.scrolled {
+  padding: 0.5rem 1.25rem;
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.5s var(--ease-out);
+}
+#nav.scrolled .nav-inner {
+  max-width: 1060px; margin: 0 auto;
+  background: rgba(10,12,16,0.82);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  padding: 0.625rem 1.25rem;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 0.5rem;
+  text-decoration: none; color: inherit;
+}
+.nav-logo svg { flex-shrink: 0; }
+.nav-logo-text {
+  font-family: var(--font-display);
+  font-size: 1.0625rem; font-weight: 600;
+  letter-spacing: -0.04em;
+}
+nav.nav-links {
+  display: flex; align-items: center; gap: 1.75rem;
+  font-size: 0.8125rem; letter-spacing: 0.06em; color: var(--muted);
+}
+@media (max-width: 767px) { nav.nav-links { display: none; } }
+nav.nav-links a { text-decoration: none; color: inherit; transition: color 0.2s; }
+nav.nav-links a:hover { color: var(--white); }
+.nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+.btn-cart {
+  position: relative; display: inline-flex; align-items: center; gap: 0.5rem;
+  height: 2.25rem; padding: 0 0.875rem;
+  border-radius: 999px; border: 1px solid var(--line);
+  background: rgba(255,255,255,0.03);
+  font-size: 0.78125rem; color: rgba(255,255,255,0.8);
+  cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.btn-cart:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.15); }
+.cart-dot {
+  position: absolute; right: -3px; top: -3px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); display: none;
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+.cart-dot.active { display: block; }
+@keyframes pulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+.btn-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+  height: 2.25rem; padding: 0 1.125rem; border-radius: 999px;
+  background: var(--green); color: var(--ink);
+  font-size: 0.78125rem; font-weight: 600;
+  border: none; cursor: pointer; text-decoration: none;
+  transition: filter 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.btn-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
+@media (max-width: 479px) { .btn-cta { display: none; } }
+
+/* ══════════════════════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════════════════════ */
+#hero {
+  min-height: 100svh;
+  display: flex; align-items: center;
+  padding-top: 7rem; padding-bottom: 4rem;
+  position: relative; overflow: hidden;
+  background: radial-gradient(1200px 600px at 50% -5%, rgba(0,255,170,0.07), transparent 60%),
+              linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+}
+.hero-bg {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+}
+.hero-blob-1 {
+  position: absolute; left: -6rem; top: 25%;
+  width: 18rem; height: 18rem; border-radius: 50%;
+  background: rgba(0,255,170,0.05); filter: blur(60px);
+  animation: drift1 18s ease-in-out infinite;
+}
+.hero-blob-2 {
+  position: absolute; right: -5rem; top: 30%;
+  width: 24rem; height: 24rem; border-radius: 50%;
+  background: rgba(255,179,71,0.04); filter: blur(60px);
+  animation: drift2 22s ease-in-out infinite;
+}
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+}
+@keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-30px)} }
+@keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,40px)} }
+
+.hero-inner {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr;
+  gap: 3rem; align-items: center;
+}
+@media (min-width: 1024px) {
+  .hero-inner { grid-template-columns: 7fr 5fr; gap: 4rem; }
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  border-radius: 999px; border: 1px solid var(--line);
+  background: rgba(255,255,255,0.025);
+  padding: 0.375rem 0.875rem;
+  font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.65); margin-bottom: 2rem;
+}
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.hero-headline {
+  font-family: var(--font-display);
+  font-weight: 700; line-height: 1.04;
+  letter-spacing: -0.04em;
+  font-size: clamp(2.25rem, 5.5vw, 4.75rem);
+  position: relative;
+  min-height: clamp(9rem, 20vw, 13rem);
+}
+.hero-headline-text {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #fff 0%, rgba(255,255,255,0.72) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  will-change: opacity, transform;
+}
+.hero-headline-text.green-grad {
+  background: linear-gradient(135deg, #fff 0%, var(--green) 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+.hero-headline-text.hidden-above { opacity: 0; transform: translateY(-110%); }
+.hero-headline-text.hidden-below { opacity: 0; transform: translateY(110%); }
+.hero-headline-text.active { opacity: 1; transform: translateY(0); }
+
+.hero-sub {
+  margin-top: 1.5rem;
+  font-size: 1.0625rem; line-height: 1.65; color: rgba(255,255,255,0.6);
+  max-width: 34rem;
+}
+.hero-sub strong { color: var(--white); font-weight: 500; }
+
+.hero-actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
+  margin-top: 2.5rem;
+}
+.btn-hero-primary {
+  position: relative; display: inline-flex; align-items: center; gap: 0.5rem;
+  height: 3rem; padding: 0 1.75rem; border-radius: 999px;
+  background: var(--green); color: var(--ink);
+  font-weight: 700; font-size: 0.875rem; border: none; cursor: pointer;
+  text-decoration: none; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,255,170,0.25), 0 0 28px rgba(0,255,170,0.2), 0 14px 48px -8px rgba(0,255,170,0.55);
+  transition: filter 0.25s, transform 0.2s;
+}
+.btn-hero-primary::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0); transition: background 0.3s;
+}
+.btn-hero-primary:hover { filter: brightness(1.08); transform: translateY(-2px); }
+.btn-hero-primary:hover::after { background: rgba(255,255,255,0.12); }
+.btn-hero-secondary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  height: 3rem; padding: 0 1.5rem; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.02);
+  font-size: 0.875rem; color: rgba(255,255,255,0.82); cursor: pointer;
+  text-decoration: none; transition: background 0.2s, border-color 0.2s;
+}
+.btn-hero-secondary:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.22); }
+
+.hero-trust {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem; margin-top: 3.5rem; max-width: 26rem;
+}
+.trust-stat { }
+.trust-number {
+  font-family: var(--font-display);
+  font-size: 1.875rem; font-weight: 700; line-height: 1;
+  letter-spacing: -0.03em;
+}
+.trust-label {
+  margin-top: 0.25rem; font-size: 0.6875rem;
+  text-transform: uppercase; letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.4);
+}
+
+/* Speedometer */
+.hero-speedo { position: relative; }
+.hero-speedo-wrap {
+  position: relative; max-width: 26rem; margin: 0 auto;
+}
+.speedo-card {
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  padding: 1.25rem;
+  box-shadow: 0 28px 80px rgba(0,0,0,0.28);
+}
+.speedo-inner {
+  background: rgba(0,0,0,0.18); border-radius: 18px;
+  padding: 1rem; position: relative; overflow: hidden;
+}
+#speedometer-canvas { display: block; width: 100%; height: auto; max-width: 240px; margin: 0 auto; }
+.speedo-meta {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 0.625rem; margin-top: 1.25rem;
+}
+.speedo-meta-item {
+  border-radius: 16px; border: 1px solid var(--line);
+  background: rgba(255,255,255,0.02);
+  padding: 0.625rem; text-align: center;
+  transition: background 0.2s;
+}
+.speedo-meta-item:hover { background: rgba(255,255,255,0.05); }
+.speedo-meta-label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); margin-top: 0.25rem; }
+.speedo-meta-value { font-family: var(--font-display); font-size: 1rem; font-weight: 600; }
+
+/* Scroll cue */
+.scroll-cue {
+  position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.35); transition: opacity 0.5s;
+}
+.scroll-cue-line {
+  width: 1px; height: 2.5rem;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.35), transparent);
+}
+.scroll-cue.hidden { opacity: 0; pointer-events: none; }
+
+/* ══════════════════════════════════════════════════════════════════
+   PROBLEM SECTION
+══════════════════════════════════════════════════════════════════ */
+#problem {
+  padding: 7rem 0;
+  background: linear-gradient(180deg, var(--ink-2) 0%, var(--ink) 100%);
+  position: relative; overflow: hidden;
+}
+#problem::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,170,0.35), transparent); }
+
+.problem-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 3rem; align-items: center;
+}
+@media (min-width: 1024px) { .problem-grid { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; } }
+
+.section-eyebrow {
+  font-size: 0.6875rem; text-transform: uppercase;
+  letter-spacing: 0.32em; color: rgba(255,255,255,0.4);
+  margin-bottom: 1.25rem;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 700; line-height: 1.08;
+  letter-spacing: -0.04em;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  text-wrap: balance;
+}
+.section-title .accent-green {
+  background: linear-gradient(90deg, var(--green), #7FFFD4);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.section-title .accent-warm {
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.section-body {
+  margin-top: 1rem; font-size: 1rem; line-height: 1.65; color: rgba(255,255,255,0.62);
+  max-width: 36rem;
+}
+.section-body strong { color: var(--white); font-weight: 500; }
+
+/* Bar chart */
+.bar-chart-card {
+  border-radius: var(--radius-card); border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(16,18,24,0.9); padding: 1.75rem;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 28px 72px rgba(0,0,0,0.3);
+}
+.bar-chart-title {
+  font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.26em;
+  color: rgba(255,255,255,0.38); margin-bottom: 1.5rem;
+}
+.bar-chart { display: flex; flex-direction: column; gap: 1.25rem; }
+.bar-row { }
+.bar-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+.bar-label { font-size: 0.8125rem; color: rgba(255,255,255,0.7); }
+.bar-value { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; letter-spacing: -0.03em; }
+.bar-track { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1.2s var(--ease-out); }
+.bar-sub { margin-top: 0.375rem; font-size: 0.75rem; color: rgba(255,255,255,0.38); }
+
+/* Pain points */
+.pain-points { margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.875rem; }
+.pain-item { display: flex; align-items: flex-start; gap: 0.75rem; }
+.pain-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 0.45rem; }
+.pain-text { font-size: 0.8125rem; line-height: 1.55; color: rgba(255,255,255,0.58); }
+.pain-text strong { font-weight: 600; }
+
+/* Stat grid */
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+}
+.stat-card {
+  border-radius: 18px; border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(16,18,24,0.85); padding: 1.375rem;
+  transition: transform 0.3s var(--ease-spring), border-color 0.3s;
+  position: relative; overflow: hidden;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.stat-card:hover { transform: translateY(-3px) scale(1.012); }
+.stat-card-glow {
+  position: absolute; right: -2rem; top: -2rem;
+  width: 5rem; height: 5rem; border-radius: 50%;
+  opacity: 0; transition: opacity 0.4s;
+}
+.stat-card:hover .stat-card-glow { opacity: 0.35; }
+.stat-number {
+  font-family: var(--font-display); font-size: 2.5rem; font-weight: 700;
+  line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+.stat-desc { margin-top: 0.5rem; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.5); }
+.stat-sub { margin-top: 0.375rem; font-size: 0.75rem; color: rgba(255,255,255,0.35); }
+
+/* ══════════════════════════════════════════════════════════════════
+   ENGINE NETWORK (Solution)
+══════════════════════════════════════════════════════════════════ */
+#engine {
+  padding: 7rem 0; position: relative; overflow: hidden;
+}
+#engine::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+
+.engine-header { text-align: center; max-width: 42rem; margin: 0 auto 4rem; }
+
+.network-container { position: relative; max-width: 600px; margin: 0 auto; }
+.network-aspect { position: relative; width: 100%; padding-bottom: 100%; }
+.network-inner { position: absolute; inset: 0; }
+
+/* Decorative rings */
+.ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.04);
+  pointer-events: none;
+}
+.ring-1 { margin: 8%; }
+.ring-2 { margin: 17%; }
+.ring-glow { margin: 28%; background: rgba(0,255,170,0.035); filter: blur(24px); border: none; }
+
+.network-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Center core */
+.network-core {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 7rem; height: 7rem; border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.09);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; z-index: 5;
+}
+.core-label {
+  font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.3em;
+  color: rgba(255,255,255,0.42); margin-bottom: 0.125rem;
+}
+.core-name { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+.core-pulse {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: rgba(0,255,170,0.08); filter: blur(16px);
+  animation: corePulse 3s ease-in-out infinite;
+}
+@keyframes corePulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+/* Department nodes */
+.dep-node {
+  position: absolute; transform: translate(-50%, -50%);
+  z-index: 10; cursor: pointer;
+}
+.dep-icon-wrap {
+  width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--ink-2); transition: all 0.3s var(--ease-out);
+  position: relative;
+}
+.dep-node:hover .dep-icon-wrap,
+.dep-node.active .dep-icon-wrap {
+  border-color: rgba(0,255,170,0.6);
+  background: rgba(0,255,170,0.06);
+  box-shadow: 0 0 0 6px rgba(0,255,170,0.08), 0 0 20px rgba(0,255,170,0.15);
+}
+.dep-icon {
+  width: 1.25rem; height: 1.25rem; stroke: rgba(255,255,255,0.75);
+  fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.3s;
+}
+.dep-node:hover .dep-icon,
+.dep-node.active .dep-icon { stroke: var(--green); }
+.dep-name {
+  position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  white-space: nowrap; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.5); transition: color 0.3s;
+}
+.dep-node:hover .dep-name,
+.dep-node.active .dep-name { color: var(--green); }
+
+/* Detail panel */
+.detail-panel {
+  margin-top: 2.5rem; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(16,18,24,0.9);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 1.5rem; min-height: 120px;
+  transition: border-color 0.3s;
+}
+.detail-panel.has-active { border-color: rgba(0,255,170,0.18); }
+.detail-inner {
+  display: flex; flex-direction: column; gap: 1rem;
+  align-items: flex-start;
+}
+@media (min-width: 640px) {
+  .detail-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+.detail-meta { flex: 1; }
+.detail-short { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.28em; color: var(--green); margin-bottom: 0.375rem; }
+.detail-name { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; }
+.detail-desc { margin-top: 0.375rem; font-size: 0.875rem; color: rgba(255,255,255,0.6); max-width: 28rem; }
+.detail-price-wrap { flex-shrink: 0; text-align: right; }
+.detail-price { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--amber); }
+.detail-unit { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.38); margin-top: 0.125rem; }
+.detail-empty { text-align: center; color: rgba(255,255,255,0.35); font-size: 0.875rem; padding: 1rem; }
+
+/* ══════════════════════════════════════════════════════════════════
+   PAY PLAN
+══════════════════════════════════════════════════════════════════ */
+#plan {
+  padding: 7rem 0; position: relative;
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+}
+#plan::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+
+.plan-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 3rem; align-items: start;
+}
+@media (min-width: 1024px) { .plan-grid { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+
+.plan-table-wrap {
+  border-radius: var(--radius-card); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(16,18,24,0.9);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.plan-table-head {
+  display: grid; grid-template-columns: 1fr auto;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 1rem 1.5rem;
+  font-size: 0.6875rem; text-transform: uppercase;
+  letter-spacing: 0.28em; color: rgba(255,255,255,0.35);
+}
+.plan-row {
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: center; padding: 0; position: relative;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+.plan-row:hover { background: rgba(255,255,255,0.02); }
+.plan-row-accent {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 0 2px 2px 0;
+}
+.plan-row-left { padding: 1.25rem 1.5rem 1.25rem 1.75rem; }
+.plan-row-title { display: flex; align-items: center; gap: 0.625rem; }
+.plan-row-range { font-size: 0.9375rem; color: rgba(255,255,255,0.85); }
+.plan-badge {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  border-radius: 999px; padding: 0.125rem 0.625rem;
+  font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.plan-row-desc { margin-top: 0.25rem; font-size: 0.75rem; color: rgba(255,255,255,0.38); }
+.plan-row-right {
+  padding: 1.25rem 1.5rem;
+  font-family: var(--font-display); font-size: 1.75rem; font-weight: 700;
+  letter-spacing: -0.03em; text-align: right;
+}
+
+/* Calculation example */
+.calc-card {
+  border-radius: var(--radius-card); border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(16,18,24,0.85); padding: 1.75rem;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.calc-title { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.26em; color: rgba(255,255,255,0.35); margin-bottom: 0.25rem; }
+.calc-sub { font-size: 0.8125rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; }
+.calc-line { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.875rem; }
+.calc-line:last-of-type { border-bottom: none; }
+.calc-line-label { color: rgba(255,255,255,0.55); }
+.calc-line-value { font-family: var(--font-display); font-weight: 500; color: rgba(255,255,255,0.85); }
+.calc-net { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; margin: 0.75rem 0; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+.calc-net-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.55); }
+.calc-net-value { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+.calc-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem; }
+.calc-split-item { border-radius: 14px; padding: 0.875rem; text-align: center; }
+.calc-split-label { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.14em; }
+.calc-split-value { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-top: 0.25rem; }
+
+.plan-note {
+  margin-top: 1.5rem; padding: 1rem 1.25rem;
+  border-radius: 14px; border: 1px solid rgba(0,255,170,0.15);
+  background: rgba(0,255,170,0.05);
+  font-size: 0.8125rem; line-height: 1.55; color: rgba(0,255,170,0.85);
+}
+.plan-note strong { color: var(--green); }
+
+/* ══════════════════════════════════════════════════════════════════
+   TRANSFORMATION / CASH VELOCITY
+══════════════════════════════════════════════════════════════════ */
+#numbers {
+  padding: 7rem 0; position: relative; overflow: hidden;
+  background: var(--ink);
+}
+#numbers::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,170,0.45), transparent); }
+
+.transform-header { text-align: center; max-width: 48rem; margin: 0 auto 4rem; }
+.transform-header .section-body { margin: 0.875rem auto 0; }
+
+/* Horizontal card track */
+.steps-track-outer { position: relative; }
+.steps-track {
+  display: flex; gap: 1.25rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; -ms-overflow-style: none;
+  padding-bottom: 0.5rem; cursor: grab;
+}
+.steps-track:active { cursor: grabbing; }
+.steps-track::-webkit-scrollbar { display: none; }
+
+.step-card {
+  flex: 0 0 78vw; scroll-snap-align: center;
+  border-radius: var(--radius-card); border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(20,22,27,0.72);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  padding: 2rem 2rem 1.75rem;
+  transition: border-color 0.4s, box-shadow 0.4s, opacity 0.4s, transform 0.4s;
+  will-change: transform; position: relative; overflow: hidden;
+  min-height: 400px; display: flex; flex-direction: column;
+}
+@media (min-width: 768px) { .step-card { flex: 0 0 44vw; } }
+@media (min-width: 1024px) { .step-card { flex: 0 0 calc((100% - 2.5rem) / 3); } }
+
+.step-card.active {
+  border-color: var(--step-color, #fff);
+  box-shadow: 0 28px 100px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.step-card:not(.active) { opacity: 0.65; }
+.step-card:hover { transform: scale(1.015); }
+
+.step-glow {
+  position: absolute; right: -4rem; top: -5rem;
+  width: 13rem; height: 13rem; border-radius: 50%;
+  filter: blur(40px); opacity: 0; transition: opacity 0.5s;
+}
+.step-card.active .step-glow,
+.step-card:hover .step-glow { opacity: 0.45; }
+.step-card-hairline {
+  position: absolute; inset-x: 2rem; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+}
+
+.step-number {
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.24em; color: rgba(255,255,255,0.38);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.step-indicator { width: 8px; height: 8px; border-radius: 50%; }
+
+.step-label { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(255,255,255,0.55); margin-top: 2rem; }
+.step-days {
+  font-family: var(--font-display); font-size: 5rem; font-weight: 800;
+  line-height: 1; letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.875rem;
+}
+.step-telemetry-list { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.375rem; font-family: monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; }
+.step-telemetry-item { display: flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.35); transition: color 0.5s; }
+.step-card.active .step-telemetry-item { color: var(--step-color); }
+.step-telemetry-bullet { display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: background-color 0.5s; }
+.step-card.active .step-telemetry-bullet { background-color: var(--step-color); }
+
+.step-margin-wrap { margin-top: auto; padding-top: 2rem; }
+.step-margin-label { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.24em; color: rgba(255,255,255,0.35); }
+.step-margin-value {
+  font-family: var(--font-display); font-size: 1.625rem; font-weight: 700;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+  margin-top: 0.625rem;
+}
+
+/* Control deck */
+.control-deck {
+  margin-top: 1.75rem; border-radius: 28px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(135deg, rgba(20,22,27,0.8), rgba(8,11,16,0.65));
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  padding: 1rem;
+  box-shadow: 0 28px 100px rgba(0,0,0,0.3);
+}
+.control-deck-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 0.875rem;
+}
+@media (min-width: 1024px) {
+  .control-deck-grid { grid-template-columns: minmax(200px, 0.7fr) minmax(0, 1.7fr) auto; align-items: stretch; }
+}
+.deck-panel {
+  border-radius: 20px; border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.025); padding: 1.25rem; position: relative; overflow: hidden;
+}
+.deck-eyebrow { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.28em; color: rgba(255,255,255,0.35); }
+.deck-bench-name { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; margin-top: 0.625rem; }
+.deck-bench-sub { font-size: 0.8125rem; color: rgba(255,255,255,0.45); margin-top: 0.25rem; }
+.deck-bench-days { margin-top: 1.25rem; display: flex; align-items: flex-end; gap: 0.625rem; }
+.deck-days-num { font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.deck-days-unit { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.35); margin-bottom: 0.375rem; }
+
+/* Timeline SVG chart */
+.deck-chart-panel {
+  border-radius: 20px; border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(10,15,21,0.7); padding: 1.25rem 1.25rem 1rem;
+  position: relative; overflow: hidden;
+}
+.deck-chart-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.875rem; }
+.deck-chart-eyebrow { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.28em; color: rgba(255,255,255,0.32); }
+.deck-chart-pill {
+  border-radius: 999px; border: 1px solid rgba(0,255,170,0.2);
+  background: rgba(0,255,170,0.08);
+  padding: 0.25rem 0.75rem; font-family: var(--font-display);
+  font-size: 0.875rem; font-weight: 700; color: var(--green);
+  font-variant-numeric: tabular-nums;
+}
+.deck-chart-svg-wrap { position: relative; height: 140px; }
+.deck-chart-svg { width: 100%; height: 100%; display: block; }
+.deck-progress-bar { margin-top: 0.75rem; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.deck-progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--red), var(--amber), var(--green)); transition: width 0.7s var(--ease-out); width: 0; }
+.deck-labels { display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.28); }
+
+/* Nav arrows */
+.deck-nav { display: flex; flex-direction: column; justify-content: space-between; gap: 0.75rem; }
+.deck-nav-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+@media (min-width: 1024px) { .deck-nav-buttons { grid-template-columns: 1fr; } }
+.deck-btn {
+  width: 3rem; height: 3rem; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.6);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.deck-btn:hover:not(:disabled) { background: rgba(0,255,170,0.07); border-color: rgba(0,255,170,0.35); color: var(--white); }
+.deck-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.deck-hint {
+  border-radius: 14px; border: 1px solid rgba(0,255,170,0.12);
+  background: rgba(0,255,170,0.05);
+  padding: 0.875rem; font-size: 0.625rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.18em; color: rgba(0,255,170,0.75);
+  line-height: 1.5;
+}
+
+/* Impact panels */
+.impact-grid { display: grid; grid-template-columns: 1fr; gap: 0.875rem; margin-top: 2rem; }
+@media (min-width: 640px) { .impact-grid { grid-template-columns: repeat(3, 1fr); } }
+.impact-card {
+  border-radius: 20px !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  background: rgba(255,255,255,0.015) !important;
+  padding: 1.5rem !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.025) !important;
+  transition: all 0.5s ease !important;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.impact-card:hover {
+  border-color: rgba(0, 240, 176, 0.25) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 240, 176, 0.06), 0 12px 30px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+.impact-card-hairline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(to right, transparent, #00F0B0, transparent);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  z-index: 2;
+}
+.impact-card:hover .impact-card-hairline {
+  opacity: 0.8;
+}
+.impact-radial-glow {
+  position: absolute;
+  inset: -1px;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(130px circle at 50% 10%, rgba(0, 240, 176, 0.06), transparent 70%);
+}
+.impact-card:hover .impact-radial-glow {
+  opacity: 1;
+}
+.impact-card:hover .impact-value {
+  text-shadow: 0 0 20px rgba(0, 240, 176, 0.25) !important;
+}
+.impact-card:hover .impact-micro-graphic {
+  opacity: 0.75 !important;
+}
+.impact-card:hover .clock-svg {
+  transform: rotate(-90deg);
+}
+.impact-card:hover .chevrons-svg {
+  transform: translateX(2px);
+}
+.impact-card:hover .profit-path-glow {
+  opacity: 0.2 !important;
+}
+.impact-icon-wrap {
+  width: 2.75rem; height: 2.75rem; border-radius: 14px;
+  border: 1px solid rgba(0,255,170,0.18); background: rgba(0,255,170,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green); margin-bottom: 1rem; flex-shrink: 0;
+}
+.impact-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.875rem; }
+.impact-eyebrow { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.28em; color: rgba(255,255,255,0.38); }
+.impact-value { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--white); margin-top: 0.625rem; }
+.impact-detail { font-size: 0.875rem; color: rgba(255,255,255,0.52); margin-top: 0.375rem; }
+
+/* ══════════════════════════════════════════════════════════════════
+   AI MARQUEE
+══════════════════════════════════════════════════════════════════ */
+#ai {
+  padding: 7rem 0; overflow: hidden; position: relative;
+  background: linear-gradient(180deg, var(--ink-2) 0%, var(--ink) 100%);
+}
+#ai::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+
+.ai-header { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3rem; }
+@media (min-width: 768px) { .ai-header { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
+.ai-header-right { font-size: 0.875rem; color: rgba(255,255,255,0.5); max-width: 22rem; flex-shrink: 0; }
+
+.marquee-outer {
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+.marquee-row { overflow: hidden; margin-bottom: 0.875rem; }
+.marquee-track {
+  display: flex; gap: 0.875rem;
+  width: max-content;
+  animation: marquee1 40s linear infinite;
+}
+.marquee-track.reverse { animation: marquee2 50s linear infinite; }
+.marquee-outer:hover .marquee-track { animation-play-state: paused; }
+
+@keyframes marquee1 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+@keyframes marquee2 { 0%{transform:translateX(-50%)} 100%{transform:translateX(0)} }
+
+.ai-chip {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  border-radius: 999px; border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.025); padding: 0.75rem 1.375rem;
+  cursor: pointer; white-space: nowrap;
+  transition: border-color 0.25s, background 0.25s;
+}
+.ai-chip:hover, .ai-chip.active {
+  border-color: rgba(0,255,170,0.3); background: rgba(0,255,170,0.06);
+}
+.ai-chip-icon-wrap {
+  width: 2rem; height: 2rem; border-radius: 50%;
+  background: rgba(0,255,170,0.1);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ai-chip-icon { width: 1rem; height: 1rem; color: var(--green); }
+.ai-chip-label { font-family: var(--font-display); font-size: 0.9375rem; font-weight: 500; letter-spacing: -0.01em; color: rgba(255,255,255,0.88); }
+
+.ai-hint-bar {
+  margin-top: 2rem;
+}
+.ai-hint-pill {
+  display: block; margin: 0 auto;
+  max-width: 36rem; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.025);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  padding: 0.875rem 1.5rem;
+  text-align: center; font-size: 0.875rem; line-height: 1.5;
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   OPTIONAL SERVICES
+══════════════════════════════════════════════════════════════════ */
+#services {
+  padding: 7rem 0; position: relative;
+}
+#services::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,170,0.3), transparent); }
+
+.services-header {
+  display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 3rem;
+}
+@media (min-width: 768px) { .services-header { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
+
+.services-rail-btns { display: flex; gap: 0.5rem; }
+.rail-btn {
+  width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.02); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.7);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.rail-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); color: var(--white); }
+.rail-btn svg { width: 1rem; height: 1rem; }
+
+.services-rail {
+  display: flex; gap: 1.25rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; -ms-overflow-style: none;
+  padding: 0.5rem 1.5rem 1.5rem;
+  margin: 0 -1.5rem;
+}
+.services-rail::-webkit-scrollbar { display: none; }
+
+.service-card {
+  flex: 0 0 82vw; scroll-snap-align: center;
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(16,18,24,0.9);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  padding: 1.75rem; min-height: 320px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s var(--ease-spring);
+}
+@media (min-width: 640px) { .service-card { flex: 0 0 320px; } }
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.service-card.in-cart { border-color: rgba(0,255,170,0.25); box-shadow: 0 0 0 1px rgba(0,255,170,0.12), 0 20px 60px rgba(0,0,0,0.25); }
+.service-card-glow {
+  position: absolute; right: -3rem; top: -3rem;
+  width: 10rem; height: 10rem; border-radius: 50%;
+  filter: blur(48px); opacity: 0.55;
+  transition: opacity 0.4s, transform 0.4s;
+  pointer-events: none;
+}
+.service-card:hover .service-card-glow { opacity: 0.85; transform: scale(1.15); }
+.service-num { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.28em; color: rgba(255,255,255,0.35); }
+.service-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-top: 0.875rem; line-height: 1.2; }
+.service-blurb { margin-top: 0.75rem; font-size: 0.875rem; line-height: 1.55; color: rgba(255,255,255,0.58); }
+.service-detail { margin-top: 0.375rem; font-size: 0.75rem; color: rgba(255,255,255,0.36); }
+.service-bottom { display: flex; align-items: flex-end; justify-content: space-between; }
+.service-price { font-family: var(--font-display); font-size: 1.875rem; font-weight: 700; letter-spacing: -0.03em; }
+.service-unit { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.38); margin-top: 0.25rem; }
+.in-cart-badge {
+  position: absolute; top: 1rem; right: 1rem;
+  display: flex; align-items: center; gap: 0.375rem;
+  border-radius: 999px; padding: 0.25rem 0.75rem;
+  background: rgba(0,255,170,0.12); border: 1px solid rgba(0,255,170,0.25);
+  font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--green); opacity: 0; transition: opacity 0.3s;
+}
+.service-card.in-cart .in-cart-badge { opacity: 1; }
+
+/* Add to cart button */
+.btn-add {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  border-radius: 999px; padding: 0.625rem 1.125rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.03); cursor: pointer;
+  font-size: 0.8125rem; font-weight: 600; color: rgba(255,255,255,0.8);
+  transition: all 0.25s; white-space: nowrap;
+}
+.btn-add:hover { background: var(--green); border-color: var(--green); color: var(--ink); }
+.btn-add.added { background: rgba(0,255,170,0.12); border-color: rgba(0,255,170,0.3); color: var(--green); }
+
+/* ══════════════════════════════════════════════════════════════════
+   CART DRAWER
+══════════════════════════════════════════════════════════════════ */
+.cart-overlay {
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 160;
+  width: 100%; max-width: 28rem;
+  background: var(--ink-2); border-left: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column;
+  transform: translateX(100%); transition: transform 0.5s var(--ease-out);
+}
+.cart-drawer.open { transform: translateX(0); }
+
+.cart-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.375rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.cart-title { display: flex; align-items: center; gap: 0.625rem; font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+.cart-close {
+  width: 2.25rem; height: 2.25rem; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.7); transition: background 0.2s;
+}
+.cart-close:hover { background: rgba(255,255,255,0.08); }
+.cart-close svg { width: 1rem; height: 1rem; }
+
+.cart-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.cart-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 2rem; }
+.cart-empty-text { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: rgba(255,255,255,0.65); }
+.cart-empty-sub { margin-top: 0.75rem; font-size: 0.875rem; color: rgba(255,255,255,0.4); max-width: 18rem; line-height: 1.55; }
+
+.cart-items { display: flex; flex-direction: column; gap: 0.875rem; }
+.cart-item {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02); padding: 1rem;
+}
+.cart-item-name { font-family: var(--font-display); font-size: 0.9375rem; font-weight: 700; }
+.cart-item-meta { margin-top: 0.25rem; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.38); }
+.cart-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+.cart-item-total { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--green); }
+.qty-ctrl { display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
+.qty-btn { width: 1.75rem; height: 1.75rem; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.65); transition: color 0.2s; border: none; background: none; }
+.qty-btn:hover { color: var(--white); }
+.qty-btn svg { width: 0.75rem; height: 0.75rem; }
+.qty-val { min-width: 1.5rem; text-align: center; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+
+.cart-footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 1.25rem 1.5rem; }
+.cart-subtotal { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.cart-subtotal-label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.28em; color: rgba(255,255,255,0.38); }
+.cart-subtotal-value { font-family: var(--font-display); font-size: 1.875rem; font-weight: 800; letter-spacing: -0.03em; }
+.cart-actions { display: flex; gap: 0.75rem; }
+.btn-cart-clear {
+  flex: 1; height: 2.75rem; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02);
+  font-size: 0.8125rem; color: rgba(255,255,255,0.65); cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-cart-clear:hover { background: rgba(255,255,255,0.06); }
+.btn-cart-go {
+  flex: 2; height: 2.75rem; border-radius: 999px;
+  background: var(--green); color: var(--ink);
+  font-size: 0.8125rem; font-weight: 700; cursor: pointer; border: none;
+  text-decoration: none; display: flex; align-items: center; justify-content: center;
+  transition: filter 0.2s;
+}
+.btn-cart-go:hover { filter: brightness(1.1); }
+
+/* ══════════════════════════════════════════════════════════════════
+   PILOT FORM
+══════════════════════════════════════════════════════════════════ */
+#pilot {
+  padding: 7rem 0; position: relative;
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+}
+#pilot::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,170,0.45), transparent); }
+.pilot-bg {
+  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  width: 700px; height: 400px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,255,170,0.05), transparent 70%);
+  pointer-events: none; filter: blur(1px);
+}
+.pilot-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+@media (min-width: 1024px) { .pilot-grid { grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; } }
+
+.pilot-bullets { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.875rem; }
+.pilot-bullet { display: flex; align-items: flex-start; gap: 0.875rem; font-size: 0.9375rem; color: rgba(255,255,255,0.7); }
+.bullet-icon {
+  width: 1.25rem; height: 1.25rem; border-radius: 50%;
+  background: rgba(0,255,170,0.12); border: 1px solid rgba(0,255,170,0.25);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.1rem;
+}
+.bullet-icon svg { width: 0.625rem; height: 0.625rem; color: var(--green); }
+
+.form-card {
+  border-radius: var(--radius-card); border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  padding: 2rem 2rem 2.5rem; position: relative; overflow: hidden;
+  box-shadow: 0 28px 80px rgba(0,0,0,0.3);
+}
+.form-card::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,170,0.5), transparent); }
+
+.form-grid { display: flex; flex-direction: column; gap: 1.25rem; }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 479px) { .form-row-2 { grid-template-columns: 1fr; } }
+
+.form-field { }
+.form-label {
+  display: block; margin-bottom: 0.5rem;
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.28em; color: rgba(255,255,255,0.4);
+}
+.form-label .req { color: var(--green); }
+.form-input {
+  display: block; width: 100%; height: 3rem;
+  padding: 0 1rem; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.025);
+  font-family: var(--font-body); font-size: 0.9375rem; color: var(--white);
+  outline: none; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.form-input::placeholder { color: rgba(255,255,255,0.25); }
+.form-input:focus { border-color: rgba(0,255,170,0.45); background: rgba(255,255,255,0.04); box-shadow: 0 0 0 3px rgba(0,255,170,0.1); }
+.form-input.error { border-color: rgba(255,77,77,0.5); }
+.form-input.error:focus { box-shadow: 0 0 0 3px rgba(255,77,77,0.12); }
+.form-error { display: flex; align-items: center; gap: 0.375rem; margin-top: 0.375rem; font-size: 0.75rem; color: var(--red); }
+.form-error svg { width: 0.75rem; height: 0.75rem; flex-shrink: 0; }
+.form-hint { margin-top: 0.375rem; font-size: 0.6875rem; color: rgba(255,255,255,0.3); }
+
+.form-cart-summary {
+  border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02); padding: 1rem;
+}
+.form-cart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.4); }
+.form-cart-clear { background: none; border: none; cursor: pointer; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.35); transition: color 0.2s; }
+.form-cart-clear:hover { color: var(--white); }
+.form-cart-items { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-cart-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: rgba(255,255,255,0.72); }
+.form-cart-item-price { font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.52); }
+.form-cart-total { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.18em; }
+.form-cart-total-label { color: rgba(255,255,255,0.38); }
+.form-cart-total-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--green); }
+
+.btn-submit {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  width: 100%; height: 3rem; border-radius: 999px;
+  background: var(--green); color: var(--ink);
+  font-weight: 700; font-size: 0.875rem; border: none; cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,255,170,0.25), 0 0 28px rgba(0,255,170,0.18), 0 14px 48px -8px rgba(0,255,170,0.52);
+  transition: filter 0.2s, transform 0.2s;
+}
+.btn-submit:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-submit .spinner {
+  width: 1rem; height: 1rem; border-radius: 50%;
+  border: 2px solid rgba(10,12,16,0.3); border-top-color: var(--ink);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.form-micro { margin-top: 0.75rem; text-align: center; font-size: 0.6875rem; color: rgba(255,255,255,0.3); }
+
+/* Success state */
+.form-success { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2.5rem 0; }
+.success-icon {
+  width: 4rem; height: 4rem; border-radius: 50%;
+  background: rgba(0,255,170,0.12); border: 1px solid rgba(0,255,170,0.25);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+  box-shadow: 0 0 32px rgba(0,255,170,0.18);
+}
+.success-icon svg { width: 2rem; height: 2rem; color: var(--green); }
+.success-title { font-family: var(--font-display); font-size: 1.875rem; font-weight: 800; letter-spacing: -0.03em; }
+.success-body { margin-top: 0.75rem; font-size: 0.9375rem; color: rgba(255,255,255,0.6); max-width: 22rem; line-height: 1.55; }
+.btn-reset { margin-top: 2rem; background: none; border: none; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.38); transition: color 0.2s; }
+.btn-reset:hover { color: var(--white); }
+
+/* ══════════════════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════════════════ */
+footer {
+  padding: 5rem 0 3rem; position: relative;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+footer::before { content: ''; position: absolute; inset-x: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,170,0.3), transparent); }
+
+.footer-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media (min-width: 768px) { .footer-grid { grid-template-columns: 1.5fr 1fr 1fr; gap: 4rem; } }
+
+.footer-brand { }
+.footer-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: inherit; }
+.footer-logo-text { font-family: var(--font-display); font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.04em; }
+.footer-tagline { margin-top: 0.75rem; font-size: 0.8125rem; line-height: 1.55; color: rgba(255,255,255,0.4); max-width: 18rem; }
+
+.footer-col-label { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.28em; color: rgba(255,255,255,0.3); margin-bottom: 1rem; }
+.footer-links { display: flex; flex-direction: column; gap: 0.625rem; }
+.footer-link { font-size: 0.875rem; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.2s; }
+.footer-link:hover { color: var(--green); }
+
+.footer-bottom {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex; flex-direction: column; gap: 1rem;
+  align-items: flex-start;
+}
+@media (min-width: 640px) { .footer-bottom { flex-direction: row; align-items: center; justify-content: space-between; } }
+.footer-copy { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.25); }
+.footer-legal { display: flex; gap: 1.25rem; }
+.footer-legal a { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.25); text-decoration: none; transition: color 0.2s; }
+.footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+/* ══════════════════════════════════════════════════════════════════
+   CURSOR FOLLOWER (desktop only)
+══════════════════════════════════════════════════════════════════ */
+#cursor {
+  position: fixed; width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid rgba(0,255,170,0.5); pointer-events: none;
+  z-index: 9999; transform: translate(-50%, -50%);
+  transition: transform 0.15s, width 0.25s, height 0.25s, border-color 0.25s, background 0.25s;
+  will-change: left, top;
+}
+#cursor.hovered { width: 40px; height: 40px; background: rgba(0,255,170,0.08); border-color: var(--green); }
+@media (max-width: 1023px) { #cursor { display: none; } }
+
+/* ─── TRANSFORMATION REDESIGN CUSTOM STYLES ─── */
+.num-bg-grid-1 {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(to right, rgba(255,255,255,0.012) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, #000 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, #000 70%, transparent 100%);
+  pointer-events: none; z-index: 1;
+}
+.num-bg-grid-2 {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(to right, rgba(255,255,255,0.005) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255,255,255,0.005) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, #000 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, #000 60%, transparent 100%);
+  pointer-events: none; z-index: 1;
+}
+.num-orb-1 {
+  position: absolute; left: -10rem; top: 3rem; width: 550px; height: 550px; border-radius: 50%;
+  background: rgba(255, 77, 77, 0.012); filter: blur(145px); pointer-events: none; z-index: 1;
+  animation: drift1 18s ease-in-out infinite;
+}
+.num-orb-2 {
+  position: absolute; right: -10rem; bottom: 3rem; width: 550px; height: 550px; border-radius: 50%;
+  background: rgba(0, 240, 176, 0.012); filter: blur(145px); pointer-events: none; z-index: 1;
+  animation: drift2 22s ease-in-out infinite;
+}
+.num-orb-active {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 450px; height: 450px; border-radius: 50%; filter: blur(130px); pointer-events: none; z-index: 1;
+  background: radial-gradient(circle, color-mix(in srgb, var(--amber) 15%, transparent), transparent 70%);
+  transition: background 1s ease-in-out;
+}
+.num-noise {
+  position: absolute; inset: 0; opacity: 0.012; pointer-events: none; z-index: 1; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.step-card {
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: rgba(16, 18, 23, 0.42) !important;
+  opacity: 0.78 !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+  transition: all 0.5s ease !important;
+}
+.step-card.active {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(16, 18, 23, 0.72) !important;
+  opacity: 1 !important;
+  box-shadow: 0 30px 90px -10px rgba(var(--step-shadow-rgb), 0.125), 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+.step-card:hover {
+  transform: scale(1.02) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 25px 70px -12px rgba(var(--step-shadow-rgb), 0.082), 0 15px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+.step-card[data-step="0"] { --step-shadow-rgb: 255, 77, 77; }
+.step-card[data-step="1"] { --step-shadow-rgb: 255, 179, 71; }
+.step-card[data-step="2"] { --step-shadow-rgb: 0, 240, 176; }
+
+.step-spotlight {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  transition: opacity 0.5s; z-index: 2;
+}
+.step-card:hover .step-spotlight {
+  opacity: 1;
+}
+.step-card::after {
+  content: ''; position: absolute; inset: 0; opacity: 0.02; pointer-events: none;
+  background-image: radial-gradient(circle, var(--step-color) 1px, transparent 1px);
+  background-size: 16px 16px; transition: opacity 0.5s; z-index: 1;
+}
+.step-card:hover::after {
+  opacity: 0.05;
+}
+.step-card-backdrop {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.8; z-index: 1;
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--step-color) 12%, transparent), transparent 45%), linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.005));
+}
+.step-card-hairline {
+  position: absolute; inset-x: 0; top: 0; height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--step-color), transparent) !important;
+  opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 3;
+}
+.step-card.active .step-card-hairline {
+  opacity: 0.8;
+  animation: pulse-hairline 2s ease-in-out infinite;
+}
+.step-card:hover .step-card-hairline {
+  opacity: 0.8;
+}
+.step-card-inner {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+.step-card-body {
+  margin-top: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.step-days-metric {
+  margin-top: 1rem;
+  display: flex;
+  align-items: baseline;
+  user-select: none;
+  z-index: 3;
+}
+.step-days-num {
+  font-family: var(--font-display);
+  font-size: 4.5rem !important;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+.step-days-unit {
+  font-family: var(--font-display);
+  font-size: 3.25rem !important;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin-left: 0.125rem;
+  color: var(--step-color);
+  transition: text-shadow 0.5s;
+}
+.step-card.active .step-days-unit,
+.step-card:hover .step-days-unit {
+  text-shadow: 0 0 25px rgba(var(--step-shadow-rgb), 0.25);
+}
+.step-context {
+  margin-top: 1.25rem;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+  position: relative;
+  z-index: 3;
+}
+.step-coord {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  font-family: monospace;
+  font-size: 6.5px;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.15);
+}
+.step-telemetry-row {
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.5s ease;
+}
+.step-card.active .step-telemetry-row {
+  color: var(--step-color);
+}
+.step-telemetry-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.step-telemetry-bullet {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background-color 0.5s ease;
+}
+.step-card.active .step-telemetry-bullet {
+  background-color: var(--step-color);
+}
+.step-telemetry-bar-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+.step-telemetry-bar-segments {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.step-telemetry-seg {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+.step-telemetry-seg.filled {
+  background: rgba(255, 255, 255, 0.4);
+}
+.step-card.active .step-telemetry-seg.filled {
+  background: var(--step-color);
+  box-shadow: 0 0 6px var(--step-color);
+}
+.step-telemetry-pct {
+  font-size: 8px;
+  font-family: monospace;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+.step-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 1rem;
+  width: 100%; z-index: 3;
+}
+.step-sys-tag {
+  font-family: monospace; font-size: 9px; letter-spacing: 0.15em; color: rgba(255,255,255,0.4);
+}
+.step-status {
+  display: flex; align-items: center; gap: 6px;
+}
+.step-status-text {
+  font-family: monospace; font-size: 7.5px; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); text-transform: uppercase;
+}
+.step-status-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.1);
+  transition: all 0.5s;
+}
+.step-card.active .step-status-dot {
+  background: var(--step-color); box-shadow: 0 0 10px var(--step-color);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+.step-coord {
+  position: absolute; right: 8px; top: 8px; font-family: monospace; font-size: 6.5px; color: rgba(255,255,255,0.15);
+}
+.step-margin-wrap {
+  margin-top: auto; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.03) !important;
+  width: 100%; z-index: 3;
+}
+.step-margin-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.step-margin-label {
+  font-size: 9px !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.35);
+}
+.step-ctrl-tag {
+  font-family: monospace; font-size: 8px; color: rgba(255,255,255,0.2);
+}
+.step-margin-row {
+  display: flex; align-items: baseline; gap: 8px; margin-top: 8px;
+}
+.step-margin-value {
+  font-family: var(--font-display); font-size: 1.85rem !important; font-weight: 800; line-height: 1; margin-top: 0 !important;
+}
+.step-margin-lift-tag {
+  font-size: 10px; font-weight: 700; color: #00F0B0; letter-spacing: 0.05em;
+}
+
+/* Control deck panel styles */
+.deck-panel {
+  border-radius: 22px !important; border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(16,18,23,0.5) !important; padding: 1.5rem !important; position: relative; overflow: hidden;
+}
+.l-bracket {
+  position: absolute; width: 14px; height: 14px; transition: border-color 0.5s;
+}
+.l-bracket.top-left { top: 0; left: 0; border-left: 2px solid var(--active-color); border-top: 2px solid var(--active-color); }
+.l-bracket.top-right { top: 0; right: 0; border-right: 2px solid var(--active-color); border-top: 2px solid var(--active-color); }
+.l-bracket.bottom-left { bottom: 0; left: 0; border-left: 2px solid var(--active-color); border-bottom: 2px solid var(--active-color); }
+.l-bracket.bottom-right { bottom: 0; right: 0; border-right: 2px solid var(--active-color); border-bottom: 2px solid var(--active-color); }
+
+.deck-telemetry-hdr {
+  font-family: monospace; font-size: 9px; letter-spacing: 0.15em; color: rgba(255,255,255,0.35);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.deck-status-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--active-color);
+  box-shadow: 0 0 8px var(--active-color); animation: pulse-dot 2s infinite;
+}
+.deck-bench-name {
+  font-size: 1.5rem !important; font-weight: 800 !important; text-transform: uppercase; margin-top: 1rem !important;
+}
+.deck-bench-sub {
+  font-family: monospace; font-size: 11px !important; color: rgba(255,255,255,0.4) !important; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.deck-bench-days {
+  margin-top: 1.5rem !important;
+}
+.deck-days-num {
+  font-size: 3rem !important; font-weight: 800; text-shadow: 0 0 20px rgba(var(--active-rgb), 0.2); transition: color 0.5s, text-shadow 0.5s;
+}
+.deck-days-unit {
+  font-size: 9px !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.35); margin-bottom: 0.375rem;
+}
+.deck-chart-panel {
+  border-radius: 22px !important; border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(10,15,21,0.8) !important; padding: 1.5rem 1.5rem 1.25rem !important;
+  position: relative; overflow: hidden;
+}
+.deck-chart-grid-overlay {
+  position: absolute; inset: 0; opacity: 0.06; pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 24px 24px; z-index: 1;
+}
+.deck-chart-head {
+  position: relative; z-index: 2;
+}
+.deck-chart-eyebrow-row {
+  display: flex; align-items: center; gap: 6px;
+}
+.deck-sys-badge {
+  font-family: monospace; font-size: 7px; padding: 1.5px 6px; border-radius: 4px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.4);
+}
+.deck-chart-desc {
+  font-size: 12px !important; color: rgba(255,255,255,0.5) !important; margin-top: 4px;
+}
+.deck-chart-pill {
+  transition: all 0.5s;
+}
+.deck-chart-svg-wrap {
+  position: relative; height: 128px !important; margin-top: 1rem; z-index: 2;
+}
+.svg-node {
+  cursor: pointer;
+}
+.node-ring {
+  transition: r 0.5s, stroke 0.5s, opacity 0.5s;
+}
+.node-core {
+  transition: r 0.5s, fill 0.5s;
+}
+.node-laser {
+  transition: stroke 0.5s, stroke-width 0.5s, opacity 0.5s;
+}
+.node-hud-box {
+  transition: opacity 0.5s;
+}
+.node-hud-box rect {
+  transition: stroke 0.5s;
+}
+.node-hud-box text {
+  transition: fill 0.5s;
+}
+.node-tick-text {
+  transition: fill 0.5s;
+}
+.radar-pulse-1 {
+  animation: radar-pulse 2.4s infinite;
+}
+.radar-pulse-2 {
+  animation: radar-pulse 2.4s infinite;
+  animation-delay: 1.2s;
+}
+@keyframes radar-pulse {
+  0% { r: 5px; opacity: 0.85; }
+  100% { r: 20px; opacity: 0; }
+}
+.animate-spin-slow {
+  animation: rotate-slow 18s linear infinite;
+}
+.animate-rotate-slow {
+  animation: rotate-slow 18s linear infinite;
+}
+@keyframes rotate-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes rotate-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+.animate-rotate-reverse {
+  animation: rotate-reverse 15s linear infinite;
+}
+@keyframes pulse-hairline {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.95; }
+}
+.animate-pulse-hairline {
+  animation: pulse-hairline 2s ease-in-out infinite;
+}
+.deck-nav-btn-circle {
+  position: relative;
+  display: inline-flex;
+  height: 3rem;
+  width: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  background: rgba(255,255,255,0.02) !important;
+  color: rgba(255,255,255,0.5) !important;
+  transition: border-color 0.3s, background 0.3s, color 0.3s, transform 0.3s !important;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.deck-nav-btn-circle:hover:not(:disabled) {
+  transform: scale(1.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+}
+.deck-nav-btn-circle:active:not(:disabled) {
+  transform: scale(0.95) !important;
+}
+.deck-nav-btn-circle:disabled {
+  opacity: 0.2 !important;
+  cursor: not-allowed !important;
+}
+.impact-compass {
+  opacity: 0.04 !important;
+  transition: opacity 0.5s;
+}
+.impact-card:hover .impact-compass {
+  opacity: 0.12 !important;
+}
+.step-card.active .step-card-hairline {
+  opacity: 0.8 !important;
+  animation: pulse-hairline 2s ease-in-out infinite !important;
+}
+.step-card {
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SCROLL PROGRESS ════════════════════════════════════════════════════ -->
+<div id="scroll-progress" role="progressbar" aria-label="Page scroll progress"></div>
+
+<!-- ═══ CURSOR ════════════════════════════════════════════════════════════ -->
+<div id="cursor" aria-hidden="true"></div>
+
+<!-- ═══ NAVIGATION ════════════════════════════════════════════════════════ -->
+<header id="nav" role="banner">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" aria-label="Revu home">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="12" stroke="#00FFAA" stroke-width="1.5"/>
+          <path d="M14 14 L21 8.5" stroke="#00FFAA" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="2" fill="#00FFAA"/>
+        </svg>
+        <span class="nav-logo-text">Revu</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#problem">Numbers</a>
+        <a href="#engine">Engine</a>
+        <a href="#plan">Pay plan</a>
+        <a href="#numbers">Velocity</a>
+        <a href="#services">Services</a>
+        <a href="#pilot">Pilot</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn-cart" id="cart-btn" aria-label="Open cart (0 items)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span id="cart-count">0</span>
+          <div class="cart-dot" id="cart-dot" aria-hidden="true"></div>
+        </button>
+        <a href="#pilot" class="btn-cta">Start pilot</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══════════════════════════════════════════════════════════════ -->
+<section id="hero" aria-labelledby="hero-heading">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-blob-1"></div>
+    <div class="hero-blob-2"></div>
+    <div class="hero-grid"></div>
+  </div>
+
+  <div class="container">
+    <div class="hero-inner">
+      <!-- Left: copy -->
+      <div>
+        <div class="hero-badge reveal" aria-label="Performance pricing, built for independents">
+          <span class="badge-dot"></span>
+          Performance pricing · Built for independents
+        </div>
+
+        <h1 id="hero-heading" class="hero-headline reveal reveal-delay-1">
+          <span class="hero-headline-text active" id="hl-0">Revving up your revenue.</span>
+          <span class="hero-headline-text hidden-below green-grad" id="hl-1">Turning inventory into cash — faster.</span>
+          <span class="hero-headline-text hidden-below" id="hl-2">No fixed fees until the car is sold.</span>
+          <span class="hero-headline-text hidden-below green-grad" id="hl-3">If it sits over 60 days, you pay nothing.</span>
+          <span class="hero-headline-text hidden-below" id="hl-4">Join the pilot program today.</span>
+        </h1>
+
+        <p class="hero-sub reveal reveal-delay-2">
+          <strong>$0 fixed fees.</strong> Pay only a percentage of net profit after the car is sold.
+          If a car sits over 60 days, Revu charges you <strong>$0</strong>.
+        </p>
+
+        <div class="hero-actions reveal reveal-delay-3">
+          <a href="#pilot" class="btn-hero-primary" id="hero-cta">
+            Claim 4-week pilot at 10%
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="#engine" class="btn-hero-secondary">
+            See the engine
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <!-- Trust stats — consistent: 42d target, $0 fixed, +$650 margin -->
+        <div class="hero-trust reveal reveal-delay-4">
+          <div class="trust-stat">
+            <div class="trust-number tabular" style="color:#fff">42d</div>
+            <div class="trust-label">Revu target</div>
+          </div>
+          <div class="trust-stat">
+            <div class="trust-number tabular" style="color:var(--green)">$0</div>
+            <div class="trust-label">Fixed fees</div>
+          </div>
+          <div class="trust-stat">
+            <div class="trust-number tabular" style="color:var(--amber)">+$650</div>
+            <div class="trust-label">Margin lift</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Speedometer -->
+      <div class="hero-speedo reveal reveal-delay-2">
+        <div class="hero-speedo-wrap">
+          <div class="speedo-card">
+            <div class="speedo-inner">
+              <canvas id="speedometer-canvas" width="240" height="240" aria-label="Speedometer showing current readiness to scale"></canvas>
+              <div id="speedo-label" style="text-align:center;margin-top:1rem;">
+                <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;letter-spacing:-0.03em;" id="speedo-pct">30%</div>
+                <div style="font-size:0.8125rem;color:rgba(255,255,255,0.6);margin-top:0.25rem;line-height:1.4;" id="speedo-text">Starting boost — discover how Revu works</div>
+              </div>
+            </div>
+            <div class="speedo-meta">
+              <div class="speedo-meta-item">
+                <div class="speedo-meta-value">Live</div>
+                <div class="speedo-meta-label">Market</div>
+              </div>
+              <div class="speedo-meta-item" style="border-color:rgba(0,255,170,0.2);background:rgba(0,255,170,0.05)">
+                <div class="speedo-meta-value" style="color:var(--green)">AI</div>
+                <div class="speedo-meta-label">Pricing</div>
+              </div>
+              <div class="speedo-meta-item">
+                <div class="speedo-meta-value">Pay</div>
+                <div class="speedo-meta-label">After sale</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
+    Scroll
+    <div class="scroll-cue-line"></div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEM ════════════════════════════════════════════════════════════ -->
+<section id="problem" aria-labelledby="problem-heading">
+  <div class="container">
+    <div class="problem-grid">
+      <!-- Left: copy -->
+      <div>
+        <div class="section-eyebrow reveal">01 — The problem</div>
+        <h2 id="problem-heading" class="section-title reveal reveal-delay-1">
+          Cash velocity,<br><span class="accent-green">visualized.</span>
+        </h2>
+        <p class="section-body reveal reveal-delay-2">
+          The average independent dealer turns inventory in <strong>64 days</strong>.
+          Industry average is <strong>55 days</strong>. Revu brings you to <strong>42 days</strong> —
+          unlocking <strong>$15,000+ in additional monthly profit</strong>.
+        </p>
+
+        <!-- Pain points -->
+        <div class="pain-points reveal reveal-delay-3">
+          <div class="pain-item">
+            <div class="pain-dot" style="background:var(--red)"></div>
+            <p class="pain-text"><strong style="color:var(--red)">64 days</strong> of idle time costs ~$3,100/month in floor-plan interest alone</p>
+          </div>
+          <div class="pain-item">
+            <div class="pain-dot" style="background:var(--amber)"></div>
+            <p class="pain-text"><strong style="color:var(--amber)">15%</strong> of your inventory loses money after 60 days — Revu's $0 guarantee protects you</p>
+          </div>
+          <div class="pain-item">
+            <div class="pain-dot" style="background:var(--green)"></div>
+            <p class="pain-text"><strong style="color:var(--green)">$650</strong> additional margin per car at Revu's 42-day target vs. your current 64-day cycle</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: bar chart + stats -->
+      <div>
+        <!-- Bar chart -->
+        <div class="bar-chart-card reveal reveal-delay-1">
+          <div class="bar-chart-title">Days to sell — industry benchmark</div>
+          <div class="bar-chart">
+            <!-- Current: 64d -->
+            <div class="bar-row">
+              <div class="bar-meta">
+                <span class="bar-label">Your current</span>
+                <span class="bar-value tabular" style="color:var(--red)" id="bar-val-1">0</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" id="bar-1" style="background:var(--red);width:0%" data-target="71.1"></div>
+              </div>
+              <div class="bar-sub">64 days — cash trapped in steel</div>
+            </div>
+            <!-- Industry: 55d -->
+            <div class="bar-row">
+              <div class="bar-meta">
+                <span class="bar-label">Industry average</span>
+                <span class="bar-value tabular" id="bar-val-2" style="color:rgba(255,255,255,0.6)">0</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" id="bar-2" style="background:rgba(255,255,255,0.42);width:0%" data-target="61.1"></div>
+              </div>
+              <div class="bar-sub">55 days — what most competitors achieve</div>
+            </div>
+            <!-- Revu: 42d -->
+            <div class="bar-row">
+              <div class="bar-meta">
+                <span class="bar-label">Revu target</span>
+                <span class="bar-value tabular" style="color:var(--green)" id="bar-val-3">0</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" id="bar-3" style="background:var(--green);width:0%" data-target="46.7"></div>
+              </div>
+              <div class="bar-sub">42 days — achievable in 3 months with Revu</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stat grid: consistent numbers -->
+        <div class="stat-grid" style="margin-top:1rem">
+          <div class="stat-card reveal reveal-delay-2">
+            <div class="stat-card-glow" style="background:var(--green);filter:blur(32px)"></div>
+            <div class="stat-number tabular" style="color:var(--green)" id="cnt-1">0</div>
+            <div class="stat-desc">Days saved per car</div>
+            <div class="stat-sub">vs. your current 64d</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-3">
+            <div class="stat-card-glow" style="background:var(--amber);filter:blur(32px)"></div>
+            <div class="stat-number tabular" style="color:var(--amber)" id="cnt-2">0%</div>
+            <div class="stat-desc">Faster turnover</div>
+            <div class="stat-sub">from 64 to 42 days</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-4">
+            <div class="stat-card-glow" style="background:var(--green);filter:blur(32px)"></div>
+            <div class="stat-number tabular" style="color:var(--green)" id="cnt-3">0</div>
+            <div class="stat-desc">Extra cars / month</div>
+            <div class="stat-sub">on same lot size</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-5">
+            <div class="stat-card-glow" style="background:var(--gold);filter:blur(32px)"></div>
+            <div class="stat-number tabular" style="color:var(--gold);font-size:1.75rem" id="cnt-4">$0</div>
+            <div class="stat-desc">Monthly profit lift</div>
+            <div class="stat-sub">at $2,400 avg margin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ENGINE NETWORK ══════════════════════════════════════════════════════ -->
+<section id="engine" aria-labelledby="engine-heading">
+  <div class="container">
+    <div class="engine-header reveal">
+      <div class="section-eyebrow">02 — The engine</div>
+      <h2 id="engine-heading" class="section-title">
+        Five departments.<br><span class="accent-green">One nervous system.</span>
+      </h2>
+      <p class="section-body" style="margin:0.875rem auto 0;text-align:center">
+        Hover or tap any department node to see what it does — and what it costs.
+      </p>
+    </div>
+
+    <div class="network-container reveal reveal-delay-1">
+      <div class="network-aspect">
+        <div class="network-inner">
+          <!-- Rings -->
+          <div class="ring ring-1" aria-hidden="true"></div>
+          <div class="ring ring-2" aria-hidden="true"></div>
+          <div class="ring ring-glow" aria-hidden="true"></div>
+
+          <!-- SVG lines -->
+          <svg class="network-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" id="network-svg">
+            <!-- Lines drawn by JS -->
+          </svg>
+
+          <!-- Center core -->
+          <div class="network-core">
+            <div class="core-pulse" aria-hidden="true"></div>
+            <div class="core-label">Core</div>
+            <div class="core-name">Revu</div>
+          </div>
+
+          <!-- Dept nodes — positions: dispatch top, parts right, marketing bottom-right, buying bottom-left, inventory left -->
+          <button class="dep-node" style="left:50%;top:10%" data-id="dispatch" aria-label="Dispatch — Logistics" aria-pressed="false">
+            <div class="dep-icon-wrap">
+              <svg class="dep-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <span class="dep-name">Dispatch</span>
+          </button>
+
+          <button class="dep-node" style="left:84%;top:38%" data-id="parts" aria-label="Parts — Sourcing" aria-pressed="false">
+            <div class="dep-icon-wrap">
+              <svg class="dep-icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <span class="dep-name">Parts</span>
+          </button>
+
+          <button class="dep-node" style="left:75%;top:82%" data-id="marketing" aria-label="Marketing + SEO — Demand" aria-pressed="false">
+            <div class="dep-icon-wrap">
+              <svg class="dep-icon" viewBox="0 0 24 24"><path d="M11 5h2"/><path d="M19 5v3a7 7 0 0 1-7 7H5"/><path d="m3 21 5-5"/><path d="M5 16h4v4"/></svg>
+            </div>
+            <span class="dep-name">Marketing</span>
+          </button>
+
+          <button class="dep-node" style="left:25%;top:82%" data-id="buying" aria-label="Buying — Acquisition" aria-pressed="false">
+            <div class="dep-icon-wrap">
+              <svg class="dep-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <span class="dep-name">Buying</span>
+          </button>
+
+          <button class="dep-node" style="left:16%;top:38%" data-id="inventory" aria-label="Inventory Management — Ops" aria-pressed="false">
+            <div class="dep-icon-wrap">
+              <svg class="dep-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <span class="dep-name">Inventory Management</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail panel -->
+    <div class="detail-panel reveal reveal-delay-2" id="detail-panel">
+      <p class="detail-empty">Hover any department node to inspect — click to lock it, then add it to your pilot.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAY PLAN ════════════════════════════════════════════════════════════ -->
+<section id="plan" aria-labelledby="plan-heading">
+  <div class="container">
+    <div style="text-align:center;max-width:40rem;margin:0 auto 4rem">
+      <div class="section-eyebrow reveal">03 — The pay plan</div>
+      <h2 id="plan-heading" class="section-title reveal reveal-delay-1">
+        Skin in the game.<br><span class="accent-warm">Priced by performance.</span>
+      </h2>
+      <p class="section-body reveal reveal-delay-2" style="margin:0.875rem auto 0;text-align:center">
+        Revu earns only when you earn. The faster the car moves, the higher our share — but you always keep the majority.
+      </p>
+    </div>
+
+    <div class="plan-grid">
+      <!-- Commission table -->
+      <div class="reveal reveal-delay-1">
+        <div class="plan-table-wrap">
+          <div class="plan-table-head">
+            <span>Days to sell</span>
+            <span>Revu's share of net profit</span>
+          </div>
+
+          <!-- Row 1: 30% -->
+          <div class="plan-row">
+            <div class="plan-row-accent" style="background:var(--green)"></div>
+            <div class="plan-row-left">
+              <div class="plan-row-title">
+                <span class="plan-row-range">1 – 10 days</span>
+                <span class="plan-badge" style="background:rgba(0,255,170,0.1);border:1px solid rgba(0,255,170,0.25);color:var(--green)">Best rate</span>
+              </div>
+              <div class="plan-row-desc">Sell fast — both sides win big.</div>
+            </div>
+            <div class="plan-row-right" style="color:var(--green)">30%</div>
+          </div>
+
+          <!-- Row 2: 20% -->
+          <div class="plan-row">
+            <div class="plan-row-accent" style="background:var(--gold)"></div>
+            <div class="plan-row-left">
+              <div class="plan-row-title"><span class="plan-row-range">11 – 30 days</span></div>
+              <div class="plan-row-desc">Healthy volume, strong margins.</div>
+            </div>
+            <div class="plan-row-right" style="color:var(--gold)">20%</div>
+          </div>
+
+          <!-- Row 3: 15% -->
+          <div class="plan-row">
+            <div class="plan-row-accent" style="background:var(--amber)"></div>
+            <div class="plan-row-left">
+              <div class="plan-row-title"><span class="plan-row-range">31 – 60 days</span></div>
+              <div class="plan-row-desc">Aging inventory, slimmer take.</div>
+            </div>
+            <div class="plan-row-right" style="color:var(--amber)">15%</div>
+          </div>
+
+          <!-- Row 4: $0 -->
+          <div class="plan-row" style="background:rgba(255,77,77,0.03)">
+            <div class="plan-row-accent" style="background:var(--red)"></div>
+            <div class="plan-row-left">
+              <div class="plan-row-title">
+                <span class="plan-row-range">60+ days</span>
+                <span class="plan-badge" style="background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.25);color:var(--red)">Zero risk</span>
+              </div>
+              <div class="plan-row-desc">Sits too long → you owe nothing.</div>
+            </div>
+            <div class="plan-row-right" style="color:var(--red)">$0</div>
+          </div>
+        </div>
+
+        <div class="plan-note" style="margin-top:1.25rem">
+          <strong>Net profit =</strong> Sale price − Buy price − Recon − Shipping − Fees.
+          Full transparency — calculated per car, every time.
+        </div>
+      </div>
+
+      <!-- Calculation card -->
+      <div class="reveal reveal-delay-2">
+        <div class="calc-card">
+          <div class="calc-title">Example calculation</div>
+          <div class="calc-sub">Car sold in 8 days → 30% commission tier</div>
+
+          <div class="calc-line"><span class="calc-line-label">Sale price</span><span class="calc-line-value">$18,500</span></div>
+          <div class="calc-line"><span class="calc-line-label">Buy price</span><span class="calc-line-value" style="color:rgba(255,255,255,0.5)">− $14,200</span></div>
+          <div class="calc-line"><span class="calc-line-label">Reconditioning</span><span class="calc-line-value" style="color:rgba(255,255,255,0.5)">− $850</span></div>
+          <div class="calc-line"><span class="calc-line-label">Shipping</span><span class="calc-line-value" style="color:rgba(255,255,255,0.5)">− $180</span></div>
+          <div class="calc-line"><span class="calc-line-label">Fees</span><span class="calc-line-value" style="color:rgba(255,255,255,0.5)">− $320</span></div>
+
+          <div class="calc-net">
+            <span class="calc-net-label">Net profit</span>
+            <span class="calc-net-value">$2,950</span>
+          </div>
+
+          <div class="calc-split">
+            <div class="calc-split-item" style="background:rgba(0,255,170,0.07);border:1px solid rgba(0,255,170,0.18)">
+              <div class="calc-split-label" style="color:rgba(0,255,170,0.65)">Revu (30%)</div>
+              <div class="calc-split-value" style="color:var(--green)">$885</div>
+            </div>
+            <div class="calc-split-item" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1)">
+              <div class="calc-split-label" style="color:rgba(255,255,255,0.5)">You keep (70%)</div>
+              <div class="calc-split-value">$2,065</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="plan-note" style="margin-top:1rem">
+          Pilot program: <strong>flat 10% commission</strong> for the first 4 weeks — regardless of how fast the car sells.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRANSFORMATION ══════════════════════════════════════════════════════ -->
+<section id="numbers" aria-labelledby="transform-heading">
+  <div class="num-bg-grid-1"></div>
+  <div class="num-bg-grid-2"></div>
+  <div class="num-orb-1"></div>
+  <div class="num-orb-2"></div>
+  <div class="num-orb-active" id="num-orb-active" style="background: radial-gradient(circle, var(--amber)15, transparent 70%)"></div>
+  <div class="num-noise"></div>
+
+  <div class="container">
+    <div class="transform-header reveal">
+      <div class="section-eyebrow">04 — The transformation</div>
+      <h2 id="transform-heading" class="section-title">
+        From <span style="color:rgba(255,255,255,0.45)">stuck</span> to
+        <span class="accent-green">scaling.</span>
+      </h2>
+      <p class="section-body">
+        A cleaner path from idle inventory to faster retail turns — built around realistic
+        passenger-car benchmarks for independent dealers. Drag or swipe to compare.
+      </p>
+    </div>
+
+    <!-- Step cards -->
+    <div class="steps-track-outer">
+      <div class="steps-track reveal reveal-delay-1" id="steps-track">
+        <!-- Step 01: Current 64d -->
+        <article class="step-card" data-step="0" style="--step-color:var(--red); --step-shadow-rgb:255, 77, 77;">
+          <div class="step-spotlight"></div>
+          <div class="step-card-backdrop"></div>
+          <div class="step-card-hairline"></div>
+          
+          <div class="step-card-inner">
+            <div class="step-card-header">
+              <span class="step-sys-tag">Step 01</span>
+              <div class="step-status">
+                <span class="step-status-dot"></span>
+              </div>
+            </div>
+
+            <div class="step-card-body">
+              <div>
+                <h3 class="step-label">Your Current</h3>
+                
+                <div class="step-days-metric">
+                  <span class="step-days-num" id="days-0">64</span><span class="step-days-unit">d</span>
+                </div>
+
+                <p class="step-context">Typical idle times trap substantial cash flow in depreciating metal assets on the lot.</p>
+              </div>
+
+              <div class="step-margin-wrap" style="border-top: 1px solid rgba(255,255,255,0.03); padding-top: 1.25rem;">
+                <div class="step-margin-header">
+                  <div class="step-margin-label">Avg margin / car</div>
+                </div>
+                <div class="step-margin-row">
+                  <div class="step-margin-value tabular" style="color:var(--red)" id="margin-0">$1,750</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Step 02: Industry Average 55d -->
+        <article class="step-card active" data-step="1" style="--step-color:var(--amber); --step-shadow-rgb:255, 179, 71;">
+          <div class="step-spotlight"></div>
+          <div class="step-card-backdrop"></div>
+          <div class="step-card-hairline"></div>
+          
+          <div class="step-card-inner">
+            <div class="step-card-header">
+              <span class="step-sys-tag">Step 02</span>
+              <div class="step-status">
+                <span class="step-status-dot"></span>
+              </div>
+            </div>
+
+            <div class="step-card-body">
+              <div>
+                <h3 class="step-label">Industry Average</h3>
+                
+                <div class="step-days-metric">
+                  <span class="step-days-num" id="days-1">55</span><span class="step-days-unit">d</span>
+                </div>
+
+                <p class="step-context">The benchmark most independent dealers reach using standard local sourcing channels.</p>
+              </div>
+
+              <div class="step-margin-wrap" style="border-top: 1px solid rgba(255,255,255,0.03); padding-top: 1.25rem;">
+                <div class="step-margin-header">
+                  <div class="step-margin-label">Avg margin / car</div>
+                  <span class="step-margin-lift-tag" style="color:#00F0B0; font-weight:bold; letter-spacing:normal;">↑ +$350</span>
+                </div>
+                <div class="step-margin-row">
+                  <div class="step-margin-value tabular" style="color:var(--amber)" id="margin-1">$2,100</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Step 03: Revu Target 42d -->
+        <article class="step-card" data-step="2" style="--step-color:var(--green); --step-shadow-rgb:0, 240, 176;">
+          <div class="step-spotlight"></div>
+          <div class="step-card-backdrop"></div>
+          <div class="step-card-hairline"></div>
+          
+          <div class="step-card-inner">
+            <div class="step-card-header">
+              <span class="step-sys-tag">Step 03</span>
+              <div class="step-status">
+                <span class="step-status-dot"></span>
+              </div>
+            </div>
+
+            <div class="step-card-body">
+              <div>
+                <h3 class="step-label">Revu Target</h3>
+                
+                <div class="step-days-metric">
+                  <span class="step-days-num" id="days-2">42</span><span class="step-days-unit">d</span>
+                </div>
+
+                <p class="step-context">Accelerated retail velocity achieved by matching pre-sold buyers with optimal vehicle supply.</p>
+              </div>
+
+              <div class="step-margin-wrap" style="border-top: 1px solid rgba(255,255,255,0.03); padding-top: 1.25rem;">
+                <div class="step-margin-header">
+                  <div class="step-margin-label">Avg margin / car</div>
+                  <span class="step-margin-lift-tag" style="color:#00F0B0; font-weight:bold; letter-spacing:normal;">↑ +$650</span>
+                </div>
+                <div class="step-margin-row">
+                  <div class="step-margin-value tabular" style="color:var(--green)" id="margin-2">$2,400</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Control deck -->
+    <div class="control-deck reveal reveal-delay-2" id="control-deck">
+      <div class="control-deck-grid">
+        <!-- Left: active benchmark -->
+        <div class="deck-panel" style="--active-color: var(--amber); --active-rgb: 255, 179, 71; display: flex; flex-direction: column; align-items: center; min-height: 220px;">
+          <!-- L-brackets -->
+          <span class="l-bracket top-left"></span>
+          <span class="l-bracket top-right"></span>
+          <span class="l-bracket bottom-left"></span>
+          <span class="l-bracket bottom-right"></span>
+
+          <div class="deck-telemetry-hdr" style="width: 100%;">
+            <span>// TELEMETRY.EFFICIENCY</span>
+            <span class="deck-status-dot"></span>
+          </div>
+
+          <div style="position: relative; flex: 1; display: flex; align-items: center; justify-content: center; height: 7rem; width: 7rem;">
+            <svg viewBox="0 0 100 100" style="height: 100%; width: 100%;">
+              <!-- Background swept track -->
+              <path
+                d="M 23.13 76.87 A 38 38 0 1 1 76.87 76.87"
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.04)"
+                stroke-width="5"
+                stroke-linecap="round"
+              />
+              
+              <!-- Active swept progress track -->
+              <path
+                id="deck-gauge-circle"
+                d="M 23.13 76.87 A 38 38 0 1 1 76.87 76.87"
+                fill="none"
+                stroke="#FFB347"
+                stroke-width="5"
+                stroke-linecap="round"
+                stroke-dasharray="179.07"
+                stroke-dashoffset="71.628"
+                style="transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease; filter: drop-shadow(0 0 6px rgba(255,179,71,0.31));"
+              />
+
+              <!-- Concentric tick lines around the circle (25 ticks, indices 0-24) -->
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(225 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(236.25 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(247.5 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(258.75 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(270 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(281.25 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(292.5 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(303.75 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(315 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(326.25 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(337.5 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(348.75 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(360 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(371.25 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(382.5 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(393.75 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(405 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(416.25 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(427.5 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(438.75 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(450 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(461.25 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(472.5 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="14" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" transform="rotate(483.75 50 50)" style="transition: stroke 0.5s ease;" />
+              <line class="gauge-tick" x1="50" y1="11" x2="50" y2="16" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" transform="rotate(495 50 50)" style="transition: stroke 0.5s ease;" />
+
+              <!-- Rotating Needle -->
+              <g id="deck-gauge-needle" transform="rotate(297 50 50)" style="transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);">
+                <polygon points="47,50 50,48.5 78,50 50,51.5" fill="#FFB347" style="filter: drop-shadow(0 0 3px rgba(255,179,71,0.6)); transition: fill 0.5s ease;" />
+              </g>
+
+              <!-- Center Pin -->
+              <circle id="deck-gauge-pin" cx="50" cy="50" r="5" fill="#101217" stroke="#FFB347" stroke-width="1.5" style="transition: stroke 0.5s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+              <circle cx="50" cy="50" r="1.8" fill="#FFFFFF" />
+            </svg>
+            <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(28px);">
+              <span id="deck-gauge-percent" style="font-family: var(--font-display); font-size: 1rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums;">60%</span>
+              <span style="font-family: monospace; font-size: 6.5px; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-top: 2px;">SPEED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: velocity chart -->
+        <div class="deck-chart-panel" style="--active-color: var(--amber); --active-rgb: 255, 179, 71;">
+          <!-- L-brackets -->
+          <span class="l-bracket top-left"></span>
+          <span class="l-bracket top-right"></span>
+          <span class="l-bracket bottom-left"></span>
+          <span class="l-bracket bottom-right"></span>
+
+          <div class="deck-chart-grid-overlay"></div>
+
+          <div class="deck-chart-head" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div class="deck-chart-eyebrow-row">
+                <span class="deck-chart-eyebrow" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.35);">// VELOCITY CORRIDOR GRAPH</span>
+                <span class="deck-sys-badge">SYS_V2.0</span>
+              </div>
+              <div class="deck-chart-desc">64 days to 42 days, without benchmark confusion</div>
+            </div>
+            <div class="deck-chart-pill" id="deck-pill" style="border: 1px solid rgba(255, 179, 71, 0.3); background-color: rgba(255, 179, 71, 0.08); box-shadow: 0 0 10px rgba(255, 179, 71, 0.05); color: var(--amber); font-family: monospace; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 4px 12px; text-transform: uppercase;">55d active</div>
+          </div>
+          
+          <div class="deck-chart-svg-wrap">
+            <svg class="deck-chart-svg" id="deck-svg" viewBox="0 0 680 128" aria-hidden="true" style="overflow: visible;">
+              <defs>
+                <linearGradient id="vel-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#FF4D4D"/>
+                  <stop offset="50%" stop-color="#FFB347"/>
+                  <stop offset="100%" stop-color="#00F0B0"/>
+                </linearGradient>
+                <linearGradient id="area-glow-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop id="area-glow-start" offset="0%" stop-color="#FFB347" stop-opacity="0.12" />
+                  <stop id="area-glow-end" offset="100%" stop-color="#FFB347" stop-opacity="0.0" />
+                </linearGradient>
+                <filter id="glow-f" x="-20%" y="-90%" width="140%" height="280%">
+                  <feGaussianBlur stdDeviation="3.5" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <!-- Technical horizontal coordinate lines -->
+              <line x1="30" x2="650" y1="40" y2="40" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
+              <line x1="30" x2="650" y1="68" y2="68" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
+              <line x1="30" x2="650" y1="96" y2="96" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8" />
+
+              <!-- Area glow under the curve -->
+              <path d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40 L 622 114 L 58 114 Z" fill="url(#area-glow-grad)" style="transition: all 0.7s;" />
+
+              <!-- Main Dotted Guide Line -->
+              <path d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="5 7" stroke-linecap="round"/>
+
+              <!-- Underlaying static corridor path with gradient -->
+              <path d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40" fill="none" stroke="url(#vel-grad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.08;"/>
+
+              <!-- Segment 1 comet trail -->
+              <g id="comet-seg-1" style="display: none;">
+                <!-- Trail 2 -->
+                <circle r="3.5" fill="#FF4D4D" opacity="0.25" filter="url(#glow-f)">
+                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="0s" />
+                </circle>
+                <!-- Trail 1 -->
+                <circle r="2.5" fill="#FFB347" opacity="0.6" filter="url(#glow-f)">
+                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.06s" />
+                </circle>
+                <!-- White-hot head -->
+                <circle r="1.5" fill="#FFFFFF" opacity="0.95">
+                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.12s" />
+                </circle>
+              </g>
+
+              <!-- Segment 2 comet trail -->
+              <g id="comet-seg-2" style="display: none;">
+                <!-- Trail 2 -->
+                <circle r="3.5" fill="#FFB347" opacity="0.25" filter="url(#glow-f)">
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="0s" />
+                </circle>
+                <!-- Trail 1 -->
+                <circle r="2.5" fill="#00F0B0" opacity="0.6" filter="url(#glow-f)">
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.05s" />
+                </circle>
+                <!-- White-hot head -->
+                <circle r="1.5" fill="#FFFFFF" opacity="0.95">
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.10s" />
+                </circle>
+              </g>
+
+              <!-- Step Nodes and Guides -->
+              
+              <!-- Node 0: Current -->
+              <g id="deck-point-0" class="svg-node" onclick="scrollToStep(0)">
+                <line x1="58" x2="58" y1="96" y2="114" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="2 2" class="node-laser" style="opacity: 0.25;"/>
+                <circle cx="58" cy="96" r="5" fill="none" stroke="#FF4D4D" stroke-width="1.5" class="radar-pulse-1" style="display:none;">
+                  <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="58" cy="96" r="5" fill="none" stroke="#FF4D4D" stroke-width="1.2" class="radar-pulse-2" style="display:none;">
+                  <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                  <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                </circle>
+                <circle cx="58" cy="96" r="7" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring"/>
+                <circle cx="58" cy="96" r="3" fill="#0A0F15" class="node-core"/>
+                <text x="58" y="124" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">64D</text>
+              </g>
+
+              <!-- Node 1: Industry Average -->
+              <g id="deck-point-1" class="svg-node" onclick="scrollToStep(1)">
+                <line x1="340" x2="340" y1="68" y2="114" stroke="#FFB347" stroke-width="1.5" stroke-dasharray="3 1" class="node-laser" style="opacity: 0.8;"/>
+                <circle cx="340" cy="68" r="5" fill="none" stroke="#FFB347" stroke-width="1.5" class="radar-pulse-1">
+                  <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="340" cy="68" r="5" fill="none" stroke="#FFB347" stroke-width="1.2" class="radar-pulse-2">
+                  <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                  <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                </circle>
+                <circle cx="340" cy="68" r="11" fill="none" stroke="#FFB347" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring">
+                  <animateTransform attributeName="transform" type="rotate" from="0 340 68" to="360 340 68" dur="18s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="340" cy="68" r="4.5" fill="#FFFFFF" stroke="#FFB347" stroke-width="2.5" style="filter: drop-shadow(0 0 3px #FFB347);" class="node-core"/>
+                <text x="340" y="124" text-anchor="middle" fill="#FFB347" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">55D</text>
+              </g>
+
+              <!-- Node 2: Revu Target -->
+              <g id="deck-point-2" class="svg-node" onclick="scrollToStep(2)">
+                <line x1="622" x2="622" y1="40" y2="114" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="2 2" class="node-laser" style="opacity: 0.25;"/>
+                <circle cx="622" cy="40" r="5" fill="none" stroke="#00F0B0" stroke-width="1.5" class="radar-pulse-1" style="display:none;">
+                  <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="622" cy="40" r="5" fill="none" stroke="#00F0B0" stroke-width="1.2" class="radar-pulse-2" style="display:none;">
+                  <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                  <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                </circle>
+                <circle cx="622" cy="40" r="7" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-dasharray="3 3" stroke-width="1.2" class="node-ring"/>
+                <circle cx="622" cy="40" r="3" fill="#0A0F15" class="node-core"/>
+                <text x="622" y="124" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="9" font-family="Space Grotesk, sans-serif" font-weight="800" class="node-tick-text">42D</text>
+              </g>
+
+              <!-- Tactical Radar Target Lock Over active node -->
+              <g id="deck-target-lock" transform="translate(340, 68)" class="pointer-events-none" style="transition: transform 0.5s;">
+                <circle cx="0" cy="0" r="16" fill="none" stroke="#FFB347" stroke-width="0.8" stroke-dasharray="4 8">
+                  <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="24s" repeatCount="indefinite" />
+                </circle>
+                <line x1="-19" y1="0" x2="-13" y2="0" stroke="#FFB347" stroke-width="1" />
+                <line x1="13" y1="0" x2="19" y2="0" stroke="#FFB347" stroke-width="1" />
+                <line x1="0" y1="-19" x2="0" y2="-13" stroke="#FFB347" stroke-width="1" />
+                <line x1="0" y1="13" x2="0" y2="19" stroke="#FFB347" stroke-width="1" />
+              </g>
+
+            </svg>
+          </div>
+          <div class="deck-progress-bar"><div class="deck-progress-fill" id="deck-progress" style="width: 50%;"></div></div>
+          <div class="deck-labels"><span>[YOU // START]</span><span>[INDUSTRY // WALK]</span><span>[REVU // OPTIMAL]</span></div>
+        </div>
+
+        <!-- Right: nav buttons -->
+        <div class="deck-nav" style="display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; border-radius: 22px; border: 1px solid rgba(255,255,255,0.06); background: rgba(16,18,23,0.5); padding: 1rem; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: relative; overflow: hidden; --active-color: var(--amber); --active-rgb: 255, 179, 71;">
+          <!-- L-brackets -->
+          <span class="l-bracket top-left"></span>
+          <span class="l-bracket top-right"></span>
+          <span class="l-bracket bottom-left"></span>
+          <span class="l-bracket bottom-right"></span>
+
+          <div class="deck-nav-buttons" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+            <!-- Prev Button -->
+            <button
+              type="button"
+              id="deck-prev"
+              disabled
+              aria-label="Previous benchmark"
+              class="deck-nav-btn-circle"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition: transform 0.3s; z-index: 2;"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            
+            <!-- Next Button -->
+            <button
+              type="button"
+              id="deck-next"
+              aria-label="Next benchmark"
+              class="deck-nav-btn-circle"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition: transform 0.3s; z-index: 2;"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+          
+          <div style="border-radius: 1rem; border: 1px solid rgba(0, 240, 176, 0.15); background: rgba(0, 240, 176, 0.04); padding: 0.75rem 1rem; font-size: 9px; font-family: monospace; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(0, 240, 176, 0.8); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <span style="height: 6px; width: 6px; border-radius: 50%; background: #00F0B0; animation: pulse-dot 2s infinite;" class="radar-status-dot"></span>
+            <span>SWIPE CARDS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact panels — consistent data: 22d, 34%, +$650 -->
+    <div class="impact-grid reveal reveal-delay-3">
+      
+      <!-- Panel 1: Days saved -->
+      <div class="impact-card">
+        <div class="impact-card-hairline" aria-hidden="true"></div>
+        <div class="impact-radial-glow" aria-hidden="true"></div>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%;">
+          <div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div class="impact-value tabular" id="imp-1">0</div>
+              <div class="impact-micro-graphic">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="clock-svg">
+                  <circle cx="12" cy="12" r="9" stroke="#00F0B0" stroke-width="1.5" stroke-dasharray="3 3" style="opacity: 0.4;" />
+                  <circle cx="12" cy="12" r="9" stroke="#00F0B0" stroke-width="1.8" stroke-dasharray="18 40" stroke-linecap="round" />
+                  <path d="M 12 12 L 12 7" stroke="#00F0B0" stroke-width="1.8" stroke-linecap="round" />
+                  <path d="M 12 12 L 15.5 12" stroke="#00F0B0" stroke-width="1.5" stroke-linecap="round" style="opacity: 0.75;" />
+                </svg>
+              </div>
+            </div>
+            <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.35); margin-top: 0.75rem;">
+              // DAYS SAVED
+            </div>
+          </div>
+          <div style="margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.02); font-size: 10.5px; color: rgba(255,255,255,0.45); line-height: 1.5;">
+            days saved per car on average lot time
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Turnover -->
+      <div class="impact-card">
+        <div class="impact-card-hairline" aria-hidden="true"></div>
+        <div class="impact-radial-glow" aria-hidden="true"></div>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%;">
+          <div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div class="impact-value tabular" id="imp-2">0%</div>
+              <div class="impact-micro-graphic">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="chevrons-svg">
+                  <path d="M 8 6 L 14 12 L 8 18" stroke="#00F0B0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M 14 6 L 20 12 L 14 18" stroke="#00F0B0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;" />
+                </svg>
+              </div>
+            </div>
+            <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.35); margin-top: 0.75rem;">
+              // TURNOVER
+            </div>
+          </div>
+          <div style="margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.02); font-size: 10.5px; color: rgba(255,255,255,0.45); line-height: 1.5;">
+            faster inventory turnover
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3: Margin lift -->
+      <div class="impact-card">
+        <div class="impact-card-hairline" aria-hidden="true"></div>
+        <div class="impact-radial-glow" aria-hidden="true"></div>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%;">
+          <div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div class="impact-value tabular" id="imp-3">$0</div>
+              <div class="impact-micro-graphic">
+                <svg width="30" height="18" viewBox="0 0 32 20" fill="none">
+                  <path d="M 4 16 L 10 10 L 16 13 L 26 4" stroke="#00F0B0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M 20 4 H 26 V 10" stroke="#00F0B0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  <path class="profit-path-glow" d="M 4 16 L 10 10 L 16 13 L 26 4" stroke="#00F0B0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0; transition: opacity 0.5s; filter: blur(2.5px);" />
+                </svg>
+              </div>
+            </div>
+            <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.35); margin-top: 0.75rem;">
+              // MARGIN LIFT
+            </div>
+          </div>
+          <div style="margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.02); font-size: 10.5px; color: rgba(255,255,255,0.45); line-height: 1.5;">
+            extra margin per car
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AI MARQUEE ══════════════════════════════════════════════════════════ -->
+<section id="ai" aria-labelledby="ai-heading">
+  <div class="container">
+    <div class="ai-header reveal">
+      <div>
+        <div class="section-eyebrow">05 — The intelligence</div>
+        <h2 id="ai-heading" class="section-title" style="max-width:28rem">
+          AI works in the background.
+          <span class="accent-green">You see results.</span>
+        </h2>
+      </div>
+      <p class="ai-header-right">Hover or tap any capability to see what it does under the hood.</p>
+    </div>
+  </div>
+
+  <div class="marquee-outer reveal reveal-delay-1">
+    <div class="marquee-row">
+      <div class="marquee-track" id="marquee-row-1">
+        <!-- Chips built by JS -->
+      </div>
+    </div>
+    <div class="marquee-row">
+      <div class="marquee-track reverse" id="marquee-row-2"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="ai-hint-bar reveal reveal-delay-2">
+      <div class="ai-hint-pill" id="ai-hint">Eight AI engines running on every car you list.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES ════════════════════════════════════════════════════════════ -->
+<section id="services" aria-labelledby="services-heading">
+  <div class="container">
+    <div class="services-header reveal">
+      <div>
+        <div class="section-eyebrow">06 — Optional services</div>
+        <h2 id="services-heading" class="section-title">Add only what moves the needle.</h2>
+        <p class="section-body" style="margin-top:0.875rem">Mix‑and‑match your pilot loadout. Most services bill per car or post-sale — no monthly minimums.</p>
+      </div>
+      <div class="services-rail-btns">
+        <button class="rail-btn" id="rail-prev" aria-label="Previous service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button class="rail-btn" id="rail-next" aria-label="Next service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="services-rail reveal reveal-delay-1" id="services-rail">
+    <!-- Cards built by JS -->
+  </div>
+</section>
+
+<!-- ═══ CART DRAWER ════════════════════════════════════════════════════════ -->
+<div class="cart-overlay" id="cart-overlay" role="presentation"></div>
+<aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Pilot loadout cart" aria-modal="true">
+  <div class="cart-header">
+    <div class="cart-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Pilot loadout
+    </div>
+    <button class="cart-close" id="cart-close" aria-label="Close cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+  <div class="cart-body" id="cart-body">
+    <div class="cart-empty">
+      <div class="cart-empty-text">Empty.</div>
+      <p class="cart-empty-sub">Add services from the engine or services rail to assemble your pilot.</p>
+    </div>
+  </div>
+  <footer class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-subtotal">
+      <div class="cart-subtotal-label">Subtotal</div>
+      <div class="cart-subtotal-value" id="cart-total">$0</div>
+    </div>
+    <div class="cart-actions">
+      <button class="btn-cart-clear" id="cart-clear-btn">Clear cart</button>
+      <a href="#pilot" class="btn-cart-go" id="cart-go">Proceed to pilot →</a>
+    </div>
+  </footer>
+</aside>
+
+<!-- ═══ PILOT FORM ══════════════════════════════════════════════════════════ -->
+<section id="pilot" aria-labelledby="pilot-heading">
+  <div class="pilot-bg" aria-hidden="true"></div>
+  <div class="container">
+    <div class="pilot-grid">
+      <!-- Left: pitch -->
+      <div class="reveal">
+        <div class="section-eyebrow">07 — Start your pilot</div>
+        <h2 id="pilot-heading" class="section-title" style="font-size:clamp(2rem,4.5vw,3.75rem)">
+          Start a 4‑week pilot at
+          <span class="accent-green">10% commission.</span>
+        </h2>
+        <p class="section-body">
+          We onboard your inventory, deploy the five‑department engine, and prove the math in 28 days.
+          If a car sits past 60 days, you pay $0.
+        </p>
+        <div class="pilot-bullets">
+          <div class="pilot-bullet">
+            <div class="bullet-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
+            Zero fixed fees — pay only when a car sells
+          </div>
+          <div class="pilot-bullet">
+            <div class="bullet-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
+            Full 5-department engine from day one
+          </div>
+          <div class="pilot-bullet">
+            <div class="bullet-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
+            Dedicated onboarding specialist assigned to you
+          </div>
+          <div class="pilot-bullet">
+            <div class="bullet-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
+            Cancel any time after the pilot period
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="reveal reveal-delay-2">
+        <div class="form-card">
+          <div id="form-container">
+            <form id="pilot-form" class="form-grid" novalidate>
+              <input type="hidden" name="cart" id="form-cart-hidden" value="[]">
+
+              <div class="form-field">
+                <label class="form-label" for="f-dealer">Dealer name <span class="req">*</span></label>
+                <input class="form-input" type="text" id="f-dealer" name="dealerName" placeholder="Reyes Auto Group" autocomplete="organization" aria-required="true">
+                <div class="form-error" id="err-dealer" role="alert" style="display:none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  At least 2 characters required
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="f-contact">Contact person <span class="req">*</span></label>
+                <input class="form-input" type="text" id="f-contact" name="contactPerson" placeholder="Marcus Reyes" autocomplete="name" aria-required="true">
+                <div class="form-error" id="err-contact" role="alert" style="display:none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  At least 2 characters required
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-field">
+                  <label class="form-label" for="f-email">Email <span class="req">*</span></label>
+                  <input class="form-input" type="email" id="f-email" name="email" placeholder="you@dealership.com" autocomplete="email" aria-required="true">
+                  <div class="form-error" id="err-email" role="alert" style="display:none">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Valid email required
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" for="f-phone">Phone <span class="req">*</span></label>
+                  <input class="form-input" type="tel" id="f-phone" name="phone" placeholder="(555) 123-4567" autocomplete="tel" aria-required="true">
+                  <div class="form-hint">US or international</div>
+                  <div class="form-error" id="err-phone" role="alert" style="display:none">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    At least 7 digits required
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cart summary in form -->
+              <div id="form-cart-box" style="display:none">
+                <div class="form-cart-summary">
+                  <div class="form-cart-head">
+                    <span>Pilot loadout</span>
+                    <button type="button" class="form-cart-clear" id="form-clear-cart">Clear all</button>
+                  </div>
+                  <div class="form-cart-items" id="form-cart-items"></div>
+                  <div class="form-cart-total">
+                    <span class="form-cart-total-label">Est. total</span>
+                    <span class="form-cart-total-value" id="form-cart-total-val">$0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button type="submit" class="btn-submit" id="btn-submit">
+                  Claim 4-week pilot at 10% commission
+                </button>
+                <p class="form-micro">By submitting, you agree to be contacted within 24 hours.</p>
+              </div>
+            </form>
+          </div>
+
+          <div id="form-success" style="display:none">
+            <div class="form-success">
+              <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              </div>
+              <div class="success-title">We'll call within 24h</div>
+              <p class="success-body">A Revu specialist will reach out to schedule your 4‑week pilot onboarding. Check your inbox for a confirmation.</p>
+              <button class="btn-reset" id="btn-reset">Submit another dealer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ══════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo" aria-label="Revu home">
+          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <circle cx="14" cy="14" r="12" stroke="#00FFAA" stroke-width="1.5"/>
+            <path d="M14 14 L21 8.5" stroke="#00FFAA" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="2" fill="#00FFAA"/>
+          </svg>
+          <span class="footer-logo-text">Revu</span>
+        </a>
+        <p class="footer-tagline">Performance-based inventory management for independent auto dealers. Pay only when cars sell.</p>
+      </div>
+
+      <nav aria-label="Footer navigation">
+        <div class="footer-col-label">Navigation</div>
+        <div class="footer-links">
+          <a href="#engine" class="footer-link">Engine</a>
+          <a href="#plan" class="footer-link">Pay plan</a>
+          <a href="#numbers" class="footer-link">Cash velocity</a>
+          <a href="#services" class="footer-link">Services</a>
+          <a href="#pilot" class="footer-link">Pilot</a>
+        </div>
+      </nav>
+
+      <div>
+        <div class="footer-col-label">Contact</div>
+        <div class="footer-links">
+          <a href="mailto:contact@revu.com" class="footer-link">contact@revu.com</a>
+          <a href="tel:+15550000000" class="footer-link">+1 (555) 000‑0000</a>
+          <a href="#" class="footer-link">LinkedIn ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© <span id="footer-year"></span> Revu — All rights reserved</div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+   JAVASCRIPT
+════════════════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+const fmt = n => '$' + Math.round(n).toLocaleString();
+
+// ── Footer year ───────────────────────────────────────────────────────────────
+$('#footer-year').textContent = new Date().getFullYear();
+
+// ── Scroll progress bar ───────────────────────────────────────────────────────
+const progressBar = $('#scroll-progress');
+function updateProgress() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const pct = max > 0 ? (scrollY / max) * 100 : 0;
+  progressBar.style.width = pct + '%';
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+
+// ── Custom cursor ─────────────────────────────────────────────────────────────
+const cursor = $('#cursor');
+let cx = 0, cy = 0, tx = 0, ty = 0;
+document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+(function animCursor() {
+  cx = lerp(cx, tx, 0.14);
+  cy = lerp(cy, ty, 0.14);
+  cursor.style.left = cx + 'px';
+  cursor.style.top = cy + 'px';
+  requestAnimationFrame(animCursor);
+})();
+document.addEventListener('mouseover', e => {
+  if (e.target.matches('a,button,[data-cursor]')) cursor.classList.add('hovered');
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.matches('a,button,[data-cursor]')) cursor.classList.remove('hovered');
+});
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+const nav = $('#nav');
+function updateNav() {
+  if (scrollY > 80) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+// ── Reveal on scroll ──────────────────────────────────────────────────────────
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }});
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revealObs.observe(el));
+
+// ── Count-up helper ───────────────────────────────────────────────────────────
+function countUp(el, target, duration = 1400, suffix = '', prefix = '', isMoney = false) {
+  const start = performance.now();
+  function tick(now) {
+    const p = clamp((now - start) / duration, 0, 1);
+    const val = Math.round(target * easeOutCubic(p));
+    el.textContent = prefix + (isMoney ? val.toLocaleString() : val) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ── Speedometer ───────────────────────────────────────────────────────────────
+const canvas = $('#speedometer-canvas');
+const ctx2d = canvas.getContext('2d');
+const dpr = window.devicePixelRatio || 1;
+const BASE = 240;
+canvas.width = BASE * dpr; canvas.height = BASE * dpr;
+canvas.style.width = BASE + 'px'; canvas.style.height = BASE + 'px';
+ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+let speedTarget = 30, speedCurrent = 30;
+const speedLabels = [
+  'Starting boost — discover how Revu works',
+  'Accelerating — you\'re seeing the engine',
+  'Near full throttle — your profit gains clarity',
+  'Almost there — ready to claim pilot',
+  'Full power! Claim your 4‑week pilot now',
+];
+
+function getSpeedLabel(pct) {
+  if (pct >= 100) return speedLabels[4];
+  if (pct >= 81) return speedLabels[3];
+  if (pct >= 61) return speedLabels[2];
+  if (pct >= 41) return speedLabels[1];
+  return speedLabels[0];
+}
+
+function drawSpeedo(pct) {
+  const size = BASE, cx = size/2, r = 96;
+  const base = (-120 * Math.PI) / 180;
+  const sweep = (240 * Math.PI) / 180;
+  const angle = base + (pct / 100) * sweep;
+  ctx2d.clearRect(0, 0, size, size);
+
+  // Glow
+  const grd = ctx2d.createRadialGradient(cx, cx, r*0.15, cx, cx, r*1.2);
+  grd.addColorStop(0, 'rgba(0,255,170,0.18)');
+  grd.addColorStop(0.65, 'rgba(0,255,170,0.04)');
+  grd.addColorStop(1, 'rgba(0,255,170,0)');
+  ctx2d.fillStyle = grd; ctx2d.beginPath(); ctx2d.arc(cx,cx,r*1.15,0,Math.PI*2); ctx2d.fill();
+
+  // Background disk
+  ctx2d.save();
+  ctx2d.fillStyle = 'rgba(5,8,15,0.55)';
+  ctx2d.strokeStyle = 'rgba(255,255,255,0.06)'; ctx2d.lineWidth = 1;
+  ctx2d.beginPath(); ctx2d.arc(cx,cx,r+10,0,Math.PI*2); ctx2d.fill(); ctx2d.stroke();
+  ctx2d.restore();
+
+  // Track bg
+  ctx2d.save(); ctx2d.lineWidth = 12; ctx2d.lineCap = 'round';
+  ctx2d.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx2d.beginPath(); ctx2d.arc(cx,cx,r,base,base+sweep); ctx2d.stroke(); ctx2d.restore();
+
+  // Active arc
+  const tg = ctx2d.createLinearGradient(0,0,size,size);
+  tg.addColorStop(0,'rgba(0,255,170,0.7)'); tg.addColorStop(0.5,'rgba(0,255,170,0.45)'); tg.addColorStop(1,'rgba(255,255,255,0.9)');
+  ctx2d.save(); ctx2d.strokeStyle = tg; ctx2d.lineWidth = 12; ctx2d.lineCap = 'round';
+  ctx2d.beginPath(); ctx2d.arc(cx,cx,r,base,angle); ctx2d.stroke(); ctx2d.restore();
+
+  // Tick marks
+  for (let i = 0; i <= 20; i++) {
+    const ta = base + (sweep*i)/20;
+    const inner = r - (i%5===0?14:10), outer = r+4;
+    ctx2d.strokeStyle = i%5===0?'rgba(255,255,255,0.85)':'rgba(255,255,255,0.4)';
+    ctx2d.lineWidth = i%5===0?2:1;
+    ctx2d.beginPath();
+    ctx2d.moveTo(cx+Math.cos(ta)*inner, cx+Math.sin(ta)*inner);
+    ctx2d.lineTo(cx+Math.cos(ta)*outer, cx+Math.sin(ta)*outer);
+    ctx2d.stroke();
+  }
+
+  // Needle
+  ctx2d.save(); ctx2d.translate(cx,cx); ctx2d.rotate(angle);
+  ctx2d.strokeStyle = '#00FFAA'; ctx2d.lineWidth = 4; ctx2d.lineCap = 'round';
+  ctx2d.beginPath(); ctx2d.moveTo(-12,0); ctx2d.lineTo(r-18,0); ctx2d.stroke();
+  ctx2d.fillStyle='rgba(0,255,170,0.95)'; ctx2d.beginPath(); ctx2d.arc(r-18,0,7,0,Math.PI*2); ctx2d.fill();
+  ctx2d.restore();
+
+  // Center dot
+  ctx2d.save();
+  ctx2d.fillStyle='rgba(0,255,170,0.95)'; ctx2d.shadowColor='rgba(0,255,170,0.4)'; ctx2d.shadowBlur=18;
+  ctx2d.beginPath(); ctx2d.arc(cx,cx,9,0,Math.PI*2); ctx2d.fill();
+  ctx2d.restore();
+}
+
+const speedoPct = $('#speedo-pct');
+const speedoText = $('#speedo-text');
+let speedRaf = null;
+function animSpeedo() {
+  const delta = speedTarget - speedCurrent;
+  const step = Math.sign(delta) * Math.min(Math.abs(delta), Math.max(0.15, Math.abs(delta)*0.16));
+  speedCurrent = Math.abs(delta) < 0.12 ? speedTarget : speedCurrent + step;
+  const rounded = Math.round(speedCurrent);
+  drawSpeedo(speedCurrent);
+  speedoPct.textContent = rounded + '%';
+  speedoText.textContent = getSpeedLabel(rounded);
+  speedRaf = requestAnimationFrame(animSpeedo);
+}
+drawSpeedo(30);
+speedRaf = requestAnimationFrame(animSpeedo);
+
+// Update speedometer + headline on scroll
+const hl = ['hl-0','hl-1','hl-2','hl-3','hl-4'];
+let hlIdx = 0;
+const scrollCue = $('#scroll-cue');
+window.addEventListener('scroll', () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const prog = max > 0 ? scrollY / max : 0;
+  speedTarget = clamp(30 + prog * 70, 30, 100);
+  const newIdx = Math.min(4, Math.floor(prog * 5));
+  if (newIdx !== hlIdx) {
+    $(`.hero-headline-text:not(.hidden-above):not(.hidden-below)`)?.classList.add(hlIdx > newIdx ? 'hidden-below' : 'hidden-above');
+    const prev = hl[hlIdx];
+    document.getElementById(prev).className = 'hero-headline-text ' + (hlIdx < newIdx ? 'hidden-above' : 'hidden-below') + (hlIdx%2===1?' green-grad':'');
+    hlIdx = newIdx;
+    const el = document.getElementById(hl[hlIdx]);
+    el.className = 'hero-headline-text active' + (hlIdx%2===1?' green-grad':'');
+  }
+  if (prog > 0.02) scrollCue.classList.add('hidden');
+  else scrollCue.classList.remove('hidden');
+}, { passive: true });
+
+// ── Bar chart animation ───────────────────────────────────────────────────────
+const barObsTarget = $('#problem');
+let barsAnimated = false;
+const barObs = new IntersectionObserver(([e]) => {
+  if (!e.isIntersecting || barsAnimated) return;
+  barsAnimated = true;
+
+  // bars: target = % of 90-day max
+  const bars = [
+    { fill: $('#bar-1'), val: $('#bar-val-1'), days: 64, target: 71.1 },
+    { fill: $('#bar-2'), val: $('#bar-val-2'), days: 55, target: 61.1 },
+    { fill: $('#bar-3'), val: $('#bar-val-3'), days: 42, target: 46.7 },
+  ];
+  bars.forEach(b => {
+    setTimeout(() => {
+      b.fill.style.width = b.target + '%';
+      const start = performance.now();
+      (function tick(now) {
+        const p = clamp((now-start)/1200,0,1);
+        b.val.textContent = Math.round(b.days * easeOutCubic(p)) + 'd';
+        if (p<1) requestAnimationFrame(tick);
+      })(performance.now());
+    }, 200);
+  });
+
+  // stat count-ups — consistent with transformation data (22d, 34%, 5–10 range, $15k–$25k range)
+  setTimeout(() => countUp($('#cnt-1'), 22, 1200, 'd'), 400);
+  setTimeout(() => countUp($('#cnt-2'), 34, 1200, '%'), 600);
+  setTimeout(() => {
+    const el = $('#cnt-3'); const start = performance.now();
+    (function tick(now) {
+      const p = clamp((now-start)/1000,0,1); const v = easeOutCubic(p);
+      const v1 = Math.round(5 * v); const v2 = Math.round(10 * v);
+      el.textContent = v1 + '–' + v2;
+      if (p<1) requestAnimationFrame(tick);
+    })(performance.now());
+  }, 800);
+  setTimeout(() => {
+    const el = $('#cnt-4'); const start = performance.now();
+    (function tick(now) {
+      const p = clamp((now-start)/1400,0,1); const v = easeOutCubic(p);
+      const v1 = Math.round(15 * v); const v2 = Math.round(25 * v);
+      el.textContent = '$' + v1 + 'k–$' + v2 + 'k';
+      if (p<1) requestAnimationFrame(tick);
+    })(performance.now());
+  }, 1000);
+
+  barObs.disconnect();
+}, { threshold: 0.3 });
+barObs.observe(barObsTarget);
+
+// ── Engine network ─────────────────────────────────────────────────────────────
+const NODES = {
+  dispatch: { short:'Logistics', name:'Dispatch', desc:'Shipping coordination with routed transport and freight savings up to 30%.', price:'$10/car + 10% of saved costs', unit:'per car', cx:50, cy:10 },
+  parts:    { short:'Sourcing',  name:'Parts',    desc:'AI-powered parts search across 2,400+ suppliers. Average $180 saved per repair.', price:'$20 / car', unit:'per car', cx:84, cy:38 },
+  marketing:{ short:'Demand',   name:'Marketing + SEO', desc:'Dealer website, local SEO, listings across 12 platforms, and ad ops.', price:'$499 / month', unit:'monthly', cx:75, cy:82 },
+  buying:   { short:'Acquisition', name:'Buying', desc:'Auction signals, smart buy price bands, and weekly competitor intelligence.', price:'$35 / report', unit:'per report', cx:25, cy:82 },
+  inventory:{ short:'Ops',      name:'Inventory Management', desc:'Full competitor market scan every 3–5 days. Billed only after car is sold.', price:'$50 / car', unit:'post-sale', cx:16, cy:38 },
+};
+
+const svgEl = $('#network-svg');
+const detailPanel = $('#detail-panel');
+let activeNode = null;
+let lockedNode = null;
+
+// Draw SVG lines
+Object.values(NODES).forEach(n => {
+  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1','50'); line.setAttribute('y1','50');
+  line.setAttribute('x2', n.cx); line.setAttribute('y2', n.cy);
+  line.setAttribute('stroke','rgba(255,255,255,0.1)'); line.setAttribute('stroke-width','0.18');
+  line.style.transition = 'all 0.4s ease';
+  n._line = line;
+  svgEl.appendChild(line);
+});
+
+function showDetail(id) {
+  const n = NODES[id];
+  if (!n) return;
+  detailPanel.classList.add('has-active');
+  const svc = cartServices.find(s => s.id === id);
+  const inCart = cart.some(i => i.id === id);
+  detailPanel.innerHTML = `
+    <div class="detail-inner">
+      <div class="detail-meta">
+        <div class="detail-short">${n.short}</div>
+        <div class="detail-name">${n.name}</div>
+        <div class="detail-desc">${n.desc}</div>
+      </div>
+      <div class="detail-price-wrap">
+        <div class="detail-price">${n.price}</div>
+        <div class="detail-unit">${n.unit}</div>
+        ${svc ? `<button class="btn-add${inCart?' added':''}" onclick="addToCart('${id}')" style="margin-top:0.75rem">${inCart?'✓ In cart':'Add to pilot'}</button>` : ''}
+      </div>
+    </div>`;
+}
+
+function clearDetail() {
+  detailPanel.classList.remove('has-active');
+  detailPanel.innerHTML = '<p class="detail-empty">Hover any department node to inspect — click to lock it, then add it to your pilot.</p>';
+}
+
+$$('.dep-node').forEach(btn => {
+  const id = btn.dataset.id;
+  const n = NODES[id];
+
+  btn.addEventListener('mouseenter', () => {
+    if (!lockedNode) { activeNode = id; showDetail(id); }
+    n._line.setAttribute('stroke','rgba(0,255,170,0.6)'); n._line.setAttribute('stroke-width','0.5');
+  });
+  btn.addEventListener('mouseleave', () => {
+    if (!lockedNode) { activeNode = null; clearDetail(); }
+    if (lockedNode !== id) { n._line.setAttribute('stroke','rgba(255,255,255,0.1)'); n._line.setAttribute('stroke-width','0.18'); }
+  });
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (lockedNode === id) {
+      lockedNode = null; btn.classList.remove('active'); btn.setAttribute('aria-pressed','false');
+      n._line.setAttribute('stroke','rgba(255,255,255,0.1)'); n._line.setAttribute('stroke-width','0.18');
+      clearDetail();
+    } else {
+      if (lockedNode) {
+        const prev = $$('.dep-node.active')[0];
+        if (prev) { prev.classList.remove('active'); prev.setAttribute('aria-pressed','false'); }
+        NODES[lockedNode]._line.setAttribute('stroke','rgba(255,255,255,0.1)'); NODES[lockedNode]._line.setAttribute('stroke-width','0.18');
+      }
+      lockedNode = id; btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+      n._line.setAttribute('stroke','rgba(0,255,170,0.6)'); n._line.setAttribute('stroke-width','0.5');
+      showDetail(id);
+    }
+  });
+});
+
+document.addEventListener('click', e => {
+  if (!$('.dep-node:hover') && !e.target.closest('.dep-node') && !e.target.closest('.detail-panel')) {
+    if (lockedNode) {
+      NODES[lockedNode]._line.setAttribute('stroke','rgba(255,255,255,0.1)'); NODES[lockedNode]._line.setAttribute('stroke-width','0.18');
+      $$('.dep-node.active').forEach(el => { el.classList.remove('active'); el.setAttribute('aria-pressed','false'); });
+      lockedNode = null; clearDetail();
+    }
+  }
+});
+
+// ── Transformation / Step slider ───────────────────────────────────────────────
+const steps = [
+  { label:'Your Current', days:64, margin:1750, color:'#FF4D4D', name:'Current', rgb:'255, 77, 77' },
+  { label:'Industry Average', days:55, margin:2100, color:'#FFB347', name:'Industry', rgb:'255, 179, 71' },
+  { label:'Revu Target', days:42, margin:2400, color:'#00F0B0', name:'Target', rgb:'0, 240, 176' }
+];
+const pathPoints = [
+  { x:58, y:96 }, { x:340, y:68 }, { x:622, y:40 }
+];
+let activeStep = 1;
+let transformSeen = false;
+
+const stepsTrack = $('#steps-track');
+const deckPrev = $('#deck-prev');
+const deckNext = $('#deck-next');
+const deckGaugeCircle = $('#deck-gauge-circle');
+const deckGaugePercent = $('#deck-gauge-percent');
+const deckBenchStatus = $('#deck-bench-status');
+const deckDays = $('#deck-days');
+const deckPill = $('#deck-pill');
+const deckProgress = $('#deck-progress');
+const impEl1 = $('#imp-1');
+const impEl2 = $('#imp-2');
+const impEl3 = $('#imp-3');
+
+function updateDeck(idx, animate = true) {
+  const s = steps[idx];
+  
+  const pct = idx === 0 ? 35 : idx === 1 ? 60 : 100;
+  if (deckGaugePercent) {
+    deckGaugePercent.textContent = pct + '%';
+  }
+  if (deckGaugeCircle) {
+    // Arc length for M 23.13 76.87 A 38 38 0 1 1 76.87 76.87 is 179.07
+    const offset = 179.07 - (179.07 * pct) / 100;
+    deckGaugeCircle.setAttribute('stroke-dasharray', '179.07');
+    deckGaugeCircle.setAttribute('stroke-dashoffset', offset);
+    deckGaugeCircle.setAttribute('stroke', s.color);
+    deckGaugeCircle.style.filter = `drop-shadow(0 0 6px ${s.color}50)`;
+  }
+
+  // Update needle rotation
+  const deckGaugeNeedle = $('#deck-gauge-needle');
+  if (deckGaugeNeedle) {
+    const angle = 135 + (pct / 100) * 270;
+    deckGaugeNeedle.setAttribute('transform', `rotate(${angle} 50 50)`);
+    const polygon = deckGaugeNeedle.querySelector('polygon');
+    if (polygon) {
+      polygon.setAttribute('fill', s.color);
+      polygon.style.filter = `drop-shadow(0 0 3px ${s.color}60)`;
+    }
+  }
+
+  // Update pin stroke
+  const deckGaugePin = $('#deck-gauge-pin');
+  if (deckGaugePin) {
+    deckGaugePin.setAttribute('stroke', s.color);
+  }
+
+  // Update gauge ticks (25 ticks, indices 0-24)
+  $$('.gauge-tick').forEach((tick, i) => {
+    const tickPct = (i / 24) * 100;
+    const isActiveTick = tickPct <= pct;
+    tick.setAttribute('stroke', isActiveTick ? s.color : 'rgba(255, 255, 255, 0.08)');
+  });
+  
+  if (deckDays) deckDays.textContent = s.days;
+  
+  deckPill.textContent = s.days + 'd active';
+  deckPill.style.color = s.color;
+  deckPill.style.borderColor = `${s.color}30`;
+  deckPill.style.backgroundColor = `${s.color}08`;
+  deckPill.style.boxShadow = `0 0 10px ${s.color}05`;
+  
+  deckProgress.style.width = ((idx / 2) * 100) + '%';
+
+  // Update panels dynamic active variables
+  $$('.deck-panel, .deck-chart-panel, .deck-nav').forEach(p => {
+    p.style.setProperty('--active-color', s.color);
+    p.style.setProperty('--active-rgb', s.rgb);
+  });
+
+  // Reposition target lock
+  const pt = pathPoints[idx];
+  const targetLock = $('#deck-target-lock');
+  if (targetLock) {
+    targetLock.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
+    targetLock.querySelectorAll('line').forEach(l => l.setAttribute('stroke', s.color));
+    const circle = targetLock.querySelector('circle');
+    if (circle) circle.setAttribute('stroke', s.color);
+  }
+
+  // Area glow grad update
+  const areaStart = $('#area-glow-start');
+  const areaEnd = $('#area-glow-end');
+  if (areaStart && areaEnd) {
+    areaStart.setAttribute('stop-color', s.color);
+    areaStart.setAttribute('stop-opacity', idx === 0 ? '0.08' : idx === 1 ? '0.12' : '0.20');
+    areaEnd.setAttribute('stop-color', s.color);
+  }
+
+  // Comet trails toggle
+  const comet1 = $('#comet-seg-1');
+  const comet2 = $('#comet-seg-2');
+  if (comet1) comet1.style.display = idx >= 1 ? 'block' : 'none';
+  if (comet2) comet2.style.display = idx >= 2 ? 'block' : 'none';
+
+  // Highlight points
+  pathPoints.forEach((p, i) => {
+    const g = $(`#deck-point-${i}`);
+    if (!g) return;
+
+    // Guide lines
+    const laser = g.querySelector('.node-laser');
+    if (laser) {
+      laser.setAttribute('stroke', i === idx ? steps[i].color : 'rgba(255,255,255,0.06)');
+      laser.setAttribute('stroke-width', i === idx ? '1.5' : '1');
+      laser.setAttribute('stroke-dasharray', i === idx ? '3 1' : '2 2');
+      laser.style.opacity = i === idx ? '0.8' : '0.25';
+    }
+
+    // Concentric pulses
+    const pulse1 = g.querySelector('.radar-pulse-1');
+    const pulse2 = g.querySelector('.radar-pulse-2');
+    if (pulse1) pulse1.style.display = i === idx ? 'block' : 'none';
+    if (pulse2) pulse2.style.display = i === idx ? 'block' : 'none';
+
+    // Outer notch ring
+    const ring = g.querySelector('.node-ring');
+    if (ring) {
+      ring.setAttribute('r', i === idx ? '11' : '7');
+      ring.setAttribute('stroke', i === idx ? steps[i].color : 'rgba(255, 255, 255, 0.12)');
+      ring.style.opacity = i === idx ? '0.95' : '0.4';
+      
+      let anim = ring.querySelector('animateTransform');
+      if (i === idx) {
+        if (!anim) {
+          anim = document.createElementNS('http://www.w3.org/2000/svg', 'animateTransform');
+          anim.setAttribute('attributeName', 'transform');
+          anim.setAttribute('type', 'rotate');
+          anim.setAttribute('from', `0 ${p.x} ${p.y}`);
+          anim.setAttribute('to', `360 ${p.x} ${p.y}`);
+          anim.setAttribute('dur', '18s');
+          anim.setAttribute('repeatCount', 'indefinite');
+          ring.appendChild(anim);
+        }
+      } else {
+        if (anim) anim.remove();
+        ring.removeAttribute('transform');
+      }
+    }
+
+    // Core center
+    const core = g.querySelector('.node-core');
+    if (core) {
+      core.setAttribute('r', i === idx ? '4.5' : '3');
+      core.setAttribute('fill', i === idx ? '#FFFFFF' : '#0A0F15');
+      core.setAttribute('stroke', steps[i].color);
+      core.setAttribute('stroke-width', i === idx ? '2.5' : '1.5');
+      core.style.filter = i === idx ? `drop-shadow(0 0 3px ${steps[i].color})` : 'none';
+    }
+
+    // Bottom tick text
+    const tick = g.querySelector('.node-tick-text');
+    if (tick) {
+      tick.setAttribute('fill', i === idx ? steps[i].color : 'rgba(255,255,255,0.25)');
+    }
+  });
+
+  // Buttons state
+  deckPrev.disabled = idx === 0;
+  deckNext.disabled = idx === 2;
+
+  // Active step cards highlight
+  $$('[data-step]').forEach(c => {
+    const i = +c.dataset.step;
+    c.classList.toggle('active', i === idx);
+  });
+
+  // Active background orb gradient
+  const numOrbActive = $('#num-orb-active');
+  if (numOrbActive) {
+    numOrbActive.style.background = `radial-gradient(circle, ${s.color}15, transparent 70%)`;
+  }
+}
+
+function scrollToStep(idx, behavior='smooth') {
+  const cards = $$('[data-step]', stepsTrack);
+  if (!cards[idx]) return;
+  activeStep = idx;
+  updateDeck(idx);
+  const card = cards[idx];
+  const trackW = stepsTrack.clientWidth;
+  const offset = card.offsetLeft + card.offsetWidth/2 - trackW/2;
+  stepsTrack.scrollTo({ left: Math.max(0, offset), behavior });
+}
+
+// Mouse spotlight tracking on step cards
+$$('.step-card').forEach((card, idx) => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const spotlight = card.querySelector('.step-spotlight');
+    if (spotlight) {
+      spotlight.style.background = `radial-gradient(200px circle at ${x}px ${y}px, ${steps[idx].color}15, transparent 80%)`;
+    }
+  });
+});
+
+deckPrev.addEventListener('click', () => scrollToStep(Math.max(0, activeStep-1)));
+deckNext.addEventListener('click', () => scrollToStep(Math.min(2, activeStep+1)));
+
+// Sync from native scroll / drag
+let scrollRaf2 = null;
+stepsTrack.addEventListener('scroll', () => {
+  if (scrollRaf2) cancelAnimationFrame(scrollRaf2);
+  scrollRaf2 = requestAnimationFrame(() => {
+    const cards = $$('[data-step]', stepsTrack);
+    const center = stepsTrack.scrollLeft + stepsTrack.clientWidth/2;
+    let nearest=0, nearestDist=Infinity;
+    cards.forEach((c,i) => {
+      const dist = Math.abs(c.offsetLeft + c.offsetWidth/2 - center);
+      if (dist<nearestDist) { nearestDist=dist; nearest=i; }
+    });
+    if (nearest !== activeStep) { activeStep=nearest; updateDeck(nearest); }
+  });
+}, { passive:true });
+
+// Drag to scroll
+let drag = { active:false, x:0, sl:0 };
+stepsTrack.addEventListener('mousedown', e => { drag={active:true,x:e.clientX,sl:stepsTrack.scrollLeft}; });
+window.addEventListener('mousemove', e => {
+  if (!drag.active) return;
+  e.preventDefault();
+  stepsTrack.scrollLeft = drag.sl - (e.clientX - drag.x);
+}, { passive:false });
+window.addEventListener('mouseup', e => {
+  if (!drag.active) return;
+  const delta = e.clientX - drag.x;
+  drag.active = false;
+  if (Math.abs(delta)>60) scrollToStep(clamp(activeStep+(delta<0?1:-1),0,2));
+  else scrollToStep(activeStep);
+});
+
+// Intersection observer for transformation section
+const transformObs = new IntersectionObserver(([entry]) => {
+  if (!entry.isIntersecting || transformSeen) return;
+  transformSeen = true;
+  requestAnimationFrame(() => scrollToStep(1, 'auto'));
+  // Impact count-ups — consistent: 22d, 34%, +$650
+  setTimeout(() => countUp(impEl1, 22, 1200, ''), 200);
+  setTimeout(() => {
+    const el=impEl2; const start=performance.now();
+    (function tick(now) {
+      const p=clamp((now-start)/1200,0,1); const v=Math.round(34*easeOutCubic(p));
+      el.textContent=v+'%'; if(p<1) requestAnimationFrame(tick);
+    })(performance.now());
+  }, 400);
+  setTimeout(() => {
+    const el=impEl3; const start=performance.now();
+    (function tick(now) {
+      const p=clamp((now-start)/1200,0,1); const v=Math.round(650*easeOutCubic(p));
+      el.textContent='+$'+v; if(p<1) requestAnimationFrame(tick);
+    })(performance.now());
+  }, 600);
+}, { threshold: 0.25 });
+transformObs.observe($('#numbers'));
+
+// Initialize
+scrollToStep(1, 'auto');
+updateDeck(1, false);
+
+// ── AI Marquee ────────────────────────────────────────────────────────────────
+const AI_ITEMS = [
+  { label:'Predictive Turnaround', hint:'Predicts days-to-sell within ±5 days using VIN-level market data' },
+  { label:'Smart Buy Price',       hint:'Auction-aware buy price bands per VIN — never overpay again' },
+  { label:'Competitor Tracking',   hint:'Live market scans every 3–5 days across your local radius' },
+  { label:'Inventory Scoring',     hint:'Ranks every unit by margin potential and velocity risk (0–100)' },
+  { label:'AI Copywriting',        hint:'SEO-tuned listing copy matched to your lot, region, and buyer' },
+  { label:'Risk Alerts',           hint:'Flags aging units before they cross 60 days — prevent $0 sits' },
+  { label:'Velocity Forecasting',  hint:'30-day sell-through projection updated daily per vehicle' },
+  { label:'Market Positioning',    hint:'Shows exactly where each car sits vs. 200+ competitors in real time' },
+];
+
+const SVG_ICONS = [
+  '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  '<circle cx="11" cy="11" r="8"/><circle cx="11" cy="11" r="3"/><path d="m21 21-4.3-4.3"/>',
+  '<path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/>',
+  '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+];
+
+function makeChip(item, i) {
+  const iconIdx = i % SVG_ICONS.length;
+  const chip = document.createElement('button');
+  chip.className = 'ai-chip';
+  chip.setAttribute('aria-label', `${item.label}: ${item.hint}`);
+  chip.innerHTML = `
+    <span class="ai-chip-icon-wrap">
+      <svg class="ai-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${SVG_ICONS[iconIdx]}</svg>
+    </span>
+    <span class="ai-chip-label">${item.label}</span>`;
+
+  chip.addEventListener('mouseenter', () => showHint(item));
+  chip.addEventListener('mouseleave', clearHint);
+  chip.addEventListener('focus', () => showHint(item));
+  chip.addEventListener('blur', clearHint);
+  chip.addEventListener('click', () => {
+    const same = chip.classList.contains('active');
+    $$('.ai-chip.active').forEach(c => c.classList.remove('active'));
+    if (!same) { chip.classList.add('active'); showHint(item); }
+    else clearHint();
+  });
+  return chip;
+}
+
+const row1El = $('#marquee-row-1');
+const row2El = $('#marquee-row-2');
+const hintEl = $('#ai-hint');
+const baseItems = [...AI_ITEMS, ...AI_ITEMS]; // duplicate for seamless loop
+
+baseItems.forEach((item, i) => row1El.appendChild(makeChip(item, i)));
+const row2Items = [...AI_ITEMS.slice(3), ...AI_ITEMS.slice(0,3), ...AI_ITEMS.slice(3), ...AI_ITEMS.slice(0,3)];
+row2Items.forEach((item, i) => row2El.appendChild(makeChip(item, i)));
+
+let hintDefault = 'Eight AI engines running on every car you list.';
+function showHint(item) {
+  hintEl.style.borderColor = 'rgba(0,255,170,0.35)';
+  hintEl.style.background = 'rgba(0,255,170,0.06)';
+  hintEl.style.color = 'var(--green)';
+  hintEl.textContent = item.hint;
+}
+function clearHint() {
+  if ($('.ai-chip.active')) return;
+  hintEl.style.borderColor = '';
+  hintEl.style.background = '';
+  hintEl.style.color = 'rgba(255,255,255,0.45)';
+  hintEl.textContent = hintDefault;
+}
+hintEl.style.color = 'rgba(255,255,255,0.45)';
+
+// ── Cart ─────────────────────────────────────────────────────────────────────
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('revu_cart') || '[]'); } catch(e) {}
+
+const cartServices = [
+  { id:'dispatch',  name:'Shipping coordination', price:10,  unit:'per car',    qtyLabel:'Cars' },
+  { id:'parts',     name:'Parts searching',        price:20,  unit:'per car',    qtyLabel:'Cars' },
+  { id:'marketing', name:'Website + SEO',          price:499, unit:'per month',  qtyLabel:'Months' },
+  { id:'buying',    name:'Competitor pricing report', price:35, unit:'per report', qtyLabel:'Reports' },
+  { id:'inventory', name:'Inventory Management',   price:50,  unit:'post-sale',  qtyLabel:'Cars' },
+];
+
+function saveCart() { try { localStorage.setItem('revu_cart', JSON.stringify(cart)); } catch(e) {} }
+function totalPrice() { return cart.reduce((s,i) => s+i.price*i.qty, 0); }
+function totalItems() { return cart.reduce((s,i) => s+i.qty, 0); }
+
+function updateCartUI() {
+  const count = totalItems();
+  const total = totalPrice();
+  // Nav badge
+  $('#cart-count').textContent = count;
+  $('#cart-dot').classList.toggle('active', count > 0);
+  $('#cart-btn').setAttribute('aria-label', `Open cart (${count} items)`);
+
+  // Drawer body
+  const body = $('#cart-body');
+  const footer = $('#cart-footer');
+  if (cart.length === 0) {
+    body.innerHTML = `<div class="cart-empty"><div class="cart-empty-text">Empty.</div><p class="cart-empty-sub">Add services from the engine or services rail to assemble your pilot.</p></div>`;
+    footer.style.display = 'none';
+  } else {
+    body.innerHTML = `<ul class="cart-items">${cart.map(item => `
+      <li class="cart-item">
+        <div>
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-meta">$${item.price.toLocaleString()} · ${item.unit}</div>
+        </div>
+        <div class="cart-item-right">
+          <div class="cart-item-total">$${(item.price*item.qty).toLocaleString()}</div>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="setQty('${item.id}',${item.qty-1})" aria-label="Decrease quantity">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="setQty('${item.id}',${item.qty+1})" aria-label="Increase quantity">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+        </div>
+      </li>`).join('')}</ul>`;
+    $('#cart-total').textContent = fmt(total);
+    footer.style.display = '';
+  }
+
+  // Form cart box
+  const formBox = $('#form-cart-box');
+  const formItems = $('#form-cart-items');
+  const formTotal = $('#form-cart-total-val');
+  if (formBox) {
+    if (cart.length > 0) {
+      formBox.style.display = '';
+      formItems.innerHTML = cart.map(i => `<div class="form-cart-item"><span>${i.name} <span style="color:rgba(255,255,255,0.35)">×${i.qty}</span></span><span class="form-cart-item-price">$${(i.price*i.qty).toLocaleString()}</span></div>`).join('');
+      formTotal.textContent = fmt(total);
+    } else {
+      formBox.style.display = 'none';
+    }
+    $('#form-cart-hidden').value = JSON.stringify(cart);
+  }
+
+  // Service card in-cart state
+  $$('.service-card[data-svc-id]').forEach(card => {
+    const inCart = cart.some(i => i.id === card.dataset.svcId);
+    card.classList.toggle('in-cart', inCart);
+    const btn = card.querySelector('.btn-add');
+    if (btn) { btn.textContent = inCart ? '✓ In cart' : 'Add to pilot'; btn.classList.toggle('added', inCart); }
+  });
+
+  // Network detail refresh
+  if (lockedNode || activeNode) showDetail(lockedNode || activeNode);
+}
+
+window.addToCart = function(id) {
+  const svc = cartServices.find(s => s.id === id);
+  if (!svc) return;
+  const existing = cart.find(i => i.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ ...svc, qty: 1 });
+  saveCart(); updateCartUI();
+};
+
+window.setQty = function(id, qty) {
+  if (qty < 1) { cart = cart.filter(i => i.id !== id); }
+  else { const item = cart.find(i => i.id === id); if (item) item.qty = qty; }
+  saveCart(); updateCartUI();
+};
+
+window.clearCart = function() { cart = []; saveCart(); updateCartUI(); };
+
+// Cart drawer open/close
+function openCart() {
+  $('#cart-drawer').classList.add('open');
+  $('#cart-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  $('#cart-close').focus();
+}
+function closeCart() {
+  $('#cart-drawer').classList.remove('open');
+  $('#cart-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+$('#cart-btn').addEventListener('click', openCart);
+$('#cart-close').addEventListener('click', closeCart);
+$('#cart-overlay').addEventListener('click', closeCart);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart(); });
+$('#cart-clear-btn').addEventListener('click', clearCart);
+$('#cart-go').addEventListener('click', closeCart);
+
+// ── Services rail ─────────────────────────────────────────────────────────────
+const SERVICES = [
+  { id:'inventory', name:'Inventory Management', blurb:'Full competitor scan every 3–5 days.', detail:'Billed after sale — zero upfront cost.', price:50, unit:'post-sale', priceLabel:'$50 / car', tone:'green' },
+  { id:'dispatch',  name:'Shipping Coordination', blurb:'Routed transport with freight savings.', detail:'We return 10% of every dollar saved.', price:10, unit:'per car', priceLabel:'$10/car + 10%', tone:'white' },
+  { id:'parts',     name:'Parts Searching', blurb:'AI search across 2,400+ suppliers.', detail:'Average savings: $180 per repair.', price:20, unit:'per car', priceLabel:'$20 / car', tone:'amber' },
+  { id:'marketing', name:'Website + SEO', blurb:'Dealer site, local SEO, listing sync.', detail:'Across 12 platforms, updated daily.', price:499, unit:'per month', priceLabel:'$499 / mo', tone:'white' },
+  { id:'buying',    name:'Competitor Pricing Report', blurb:'Per-market intelligence, weekly.', detail:'Covers 200+ competitors in your radius.', price:35, unit:'per report', priceLabel:'$35 / report', tone:'green' },
+];
+const TONE_GLOW = { green:'rgba(0,255,170,0.18)', amber:'rgba(255,204,102,0.16)', white:'rgba(255,255,255,0.04)' };
+const TONE_COLOR = { green:'var(--green)', amber:'var(--amber)', white:'var(--white)' };
+
+const rail = $('#services-rail');
+SERVICES.forEach((s, i) => {
+  const inCart = cart.some(c => c.id === s.id);
+  const card = document.createElement('article');
+  card.className = 'service-card' + (inCart?' in-cart':'');
+  card.dataset.svcId = s.id;
+  card.innerHTML = `
+    <div class="service-card-glow" style="background:${TONE_GLOW[s.tone]}"></div>
+    <div class="in-cart-badge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+      In cart
+    </div>
+    <div>
+      <div class="service-num">0${i+1}</div>
+      <h3 class="service-name">${s.name}</h3>
+      <p class="service-blurb">${s.blurb}</p>
+      <p class="service-detail">${s.detail}</p>
+    </div>
+    <div class="service-bottom">
+      <div>
+        <div class="service-price" style="color:${TONE_COLOR[s.tone]}">${s.priceLabel}</div>
+        <div class="service-unit">${s.unit}</div>
+      </div>
+      <button class="btn-add${inCart?' added':''}" onclick="addToCart('${s.id}')">${inCart?'✓ In cart':'Add to pilot'}</button>
+    </div>`;
+  rail.appendChild(card);
+});
+
+$('#rail-prev').addEventListener('click', () => { rail.scrollBy({ left: -rail.clientWidth*0.75, behavior:'smooth' }); });
+$('#rail-next').addEventListener('click', () => { rail.scrollBy({ left:  rail.clientWidth*0.75, behavior:'smooth' }); });
+
+$('#form-clear-cart').addEventListener('click', () => { clearCart(); updateCartUI(); });
+
+// Initial cart render
+updateCartUI();
+
+// ── Pilot form ────────────────────────────────────────────────────────────────
+const form = $('#pilot-form');
+const btnSubmit = $('#btn-submit');
+const fields = {
+  dealer:  { el: $('#f-dealer'),  err: $('#err-dealer'),  validate: v => v.trim().length >= 2 },
+  contact: { el: $('#f-contact'), err: $('#err-contact'), validate: v => v.trim().length >= 2 },
+  email:   { el: $('#f-email'),   err: $('#err-email'),   validate: v => /\S+@\S+\.\S+/.test(v) },
+  phone:   { el: $('#f-phone'),   err: $('#err-phone'),   validate: v => v.replace(/\D/g,'').length >= 7 },
+};
+
+Object.values(fields).forEach(f => {
+  f.el.addEventListener('blur', () => {
+    const ok = f.validate(f.el.value);
+    f.el.classList.toggle('error', !ok);
+    f.err.style.display = ok ? 'none' : 'flex';
+  });
+  f.el.addEventListener('input', () => {
+    if (f.el.classList.contains('error')) {
+      const ok = f.validate(f.el.value);
+      f.el.classList.toggle('error', !ok);
+      f.err.style.display = ok ? 'none' : 'flex';
+    }
+  });
+});
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  let allValid = true;
+  Object.values(fields).forEach(f => {
+    const ok = f.validate(f.el.value);
+    f.el.classList.toggle('error', !ok);
+    f.err.style.display = ok ? 'none' : 'flex';
+    if (!ok) allValid = false;
+  });
+  if (!allValid) return;
+
+  btnSubmit.disabled = true;
+  btnSubmit.innerHTML = '<div class="spinner"></div> Submitting…';
+
+  await new Promise(r => setTimeout(r, 900));
+
+  const lead = {
+    dealerName: $('#f-dealer').value,
+    contactPerson: $('#f-contact').value,
+    email: $('#f-email').value,
+    phone: $('#f-phone').value,
+    cart,
+    cartTotal: totalPrice(),
+    createdAt: new Date().toISOString(),
+  };
+
+  // ── BACKEND INTEGRATION POINT ──────────────────────────────────────────
+  // Replace with your real API call, e.g.:
+  //   await fetch('/api/leads', { method:'POST', body:JSON.stringify(lead) })
+  // Or integrate with HubSpot, Salesforce, or any CRM webhook.
+  console.log('[Revu pilot lead]', lead);
+  // ────────────────────────────────────────────────────────────────────────
+
+  try {
+    const prev = JSON.parse(localStorage.getItem('revu_leads') || '[]');
+    prev.push(lead);
+    localStorage.setItem('revu_leads', JSON.stringify(prev));
+  } catch(err) { /* ignore quota */ }
+
+  // Clear cart on success
+  clearCart(); updateCartUI();
+
+  // Show success
+  $('#form-container').style.display = 'none';
+  $('#form-success').style.display = '';
+});
+
+$('#btn-reset').addEventListener('click', () => {
+  $('#form-container').style.display = '';
+  $('#form-success').style.display = 'none';
+  btnSubmit.disabled = false;
+  btnSubmit.textContent = 'Claim 4-week pilot at 10% commission';
+  Object.values(fields).forEach(f => { f.el.value=''; f.el.classList.remove('error'); f.err.style.display='none'; });
+});
+
+// ── Performance: lazy-load images placeholder ─────────────────────────────────
+// No images used in this implementation (SVG + canvas only) — Lighthouse ready.
+
+console.log('[Revu] Page loaded. Cart:', cart, '| Version: 2.0');
+</script>
+</body>
+</html>

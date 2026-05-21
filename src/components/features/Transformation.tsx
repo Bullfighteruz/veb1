@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, MouseEvent, TouchEvent } from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, GaugeCircle, TrendingUp } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const STEPS = [
   {
     label: "Your Current",
     days: 64,
     margin: 1750,
-    context: "Industry-typical idle time. Cash trapped in steel.",
+    context: "Typical idle times trap substantial cash flow in depreciating metal assets on the lot.",
     tone: "red",
     color: "#FF4D4D",
   },
@@ -15,38 +15,38 @@ const STEPS = [
     label: "Industry Average",
     days: 55,
     margin: 2100,
-    context: "What competitors achieve with basic sourcing.",
+    context: "The benchmark most independent dealers reach using standard local sourcing channels.",
     tone: "amber",
     color: "#FFB347",
   },
   {
     label: "Revu Target",
-    days: 48,
+    days: 42,
     margin: 2400,
-    context: "Achievable in 3 months with Revu's AI-driven system.",
+    context: "Accelerated retail velocity achieved by matching pre-sold buyers with optimal vehicle supply.",
     tone: "green",
-    color: "#00FFAA",
+    color: "#00F0B0",
   },
 ] as const;
 
 const IMPACT = [
   {
+    idKey: "saved" as const,
     label: "Days saved",
-    value: "16",
-    detail: "days saved",
-    Icon: CalendarDays,
+    value: "22",
+    detail: "days saved per car on average lot time",
   },
   {
+    idKey: "turnover" as const,
     label: "Turnover",
-    value: "25%",
-    detail: "faster turnover",
-    Icon: GaugeCircle,
+    value: "34%",
+    detail: "faster capital recycling velocity",
   },
   {
+    idKey: "profit" as const,
     label: "Margin lift",
     value: "+$650",
-    detail: "margin per car",
-    Icon: TrendingUp,
+    detail: "incremental margin per retail car",
   },
 ] as const;
 
@@ -288,45 +288,52 @@ export default function Transformation() {
       id="numbers"
       ref={sectionRef}
       data-section="transformation"
-      className="relative isolate scroll-mt-24 overflow-hidden bg-[#0A0C10] pb-20 pt-16 md:pb-28 md:pt-24"
+      className="relative isolate scroll-mt-24 overflow-hidden bg-[#0A0C10] pb-24 pt-20 md:pb-32 md:pt-28 border-t border-white/[0.04]"
     >
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.045]"
+      {/* ─── AESTHETIC BACKGROUND ELEMENTS ─── */}
+      {/* 1. Dual-Layer Technical Grid Patterns */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.012)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.012)_1px,transparent_1px)] bg-[size:96px_96px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none -z-10" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.005)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.005)_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_60%,transparent_100%)] pointer-events-none -z-10" />
+
+      {/* 2. Floating Ambient Glow Orbs */}
+      <div className="absolute -left-40 top-12 h-[550px] w-[550px] rounded-full bg-[#FF4D4D]/[0.012] pointer-events-none -z-10 animate-drift-1" style={{ filter: "blur(140px)" }} />
+      <div className="absolute -right-40 bottom-12 h-[550px] w-[550px] rounded-full bg-[#00F0B0]/[0.012] pointer-events-none -z-10 animate-drift-2" style={{ filter: "blur(140px)" }} />
+      <div 
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[450px] w-[450px] rounded-full pointer-events-none -z-10 transition-all duration-1000"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)",
-          backgroundSize: "76px 76px",
-          maskImage: "linear-gradient(180deg, transparent, black 15%, black 82%, transparent)",
+          background: `radial-gradient(circle, ${activeStep.color}15, transparent 70%)`,
+          filter: "blur(130px)",
         }}
-        aria-hidden
       />
-      <div
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[520px] w-[min(920px,100vw)] -translate-x-1/2 rounded-full bg-rev-green/[0.055] blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-rev-green/55 to-transparent"
-        aria-hidden
+      
+      {/* 3. Fine tactile noise texture */}
+      <div 
+        className="absolute inset-0 opacity-[0.012] pointer-events-none -z-10 mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
+        }}
       />
 
       <div className="container">
+        {/* Section Header */}
         <div className="reveal mx-auto max-w-4xl text-center">
-          <div className="mb-4 text-[11px] uppercase tracking-[0.32em] text-white/42">
+          <div className="mb-4 text-[10px] font-bold uppercase tracking-[0.35em] text-[#00F0B0]">
             04 - The transformation
           </div>
-          <h2 className="font-display text-balance text-4xl font-semibold leading-[1.04] tracking-tightest md:text-6xl">
-            From <span className="text-white/58">stuck</span> to{" "}
-            <span className="text-[#00FFAA]">scaling.</span>
+          <h2 className="font-display text-balance text-4xl font-semibold leading-[1.04] tracking-tightest md:text-6xl text-white">
+            From <span className="text-white/40">stuck</span> to{" "}
+            <span className="bg-gradient-to-r from-[#00F0B0] to-[#FFB347] bg-clip-text text-transparent">scaling.</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-[16px] leading-relaxed text-white/58">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-white/60">
             A cleaner path from idle inventory to faster retail turns, built around realistic
             passenger-car benchmarks for independent dealers.
           </p>
         </div>
 
+        {/* Carousel Track */}
         <div
           ref={trackRef}
-          className="scrollbar-none mt-12 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-4 active:cursor-grabbing md:gap-7 lg:gap-8 lg:pb-0"
+          className="scrollbar-none mt-16 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-4 active:cursor-grabbing md:gap-7 lg:gap-8 lg:pb-0"
           style={{ touchAction: "pan-y", scrollPaddingInline: "1px" }}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
@@ -352,6 +359,7 @@ export default function Transformation() {
           })}
         </div>
 
+        {/* Control HUD Deck */}
         <ControlDeck
           activeIndex={activeIndex}
           activeStep={activeStep}
@@ -363,7 +371,8 @@ export default function Transformation() {
           onSelect={(index) => scrollToStep(index)}
         />
 
-        <div className="reveal mt-9 grid gap-4 md:grid-cols-3">
+        {/* Bottom Diagnostics Grid */}
+        <div className="reveal mt-10 grid gap-4 md:grid-cols-3">
           {IMPACT.map((item) => (
             <ImpactPanel key={item.label} {...item} />
           ))}
@@ -386,9 +395,26 @@ function StepCard({
   days: number;
   margin: number;
 }) {
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setCoords({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   const style = {
     "--step-color": step.color,
     "--step-shadow": `${step.color}24`,
+    borderColor: isActive || isHovered ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.05)",
+    boxShadow: isActive
+      ? `0 30px 90px -10px ${step.color}20, 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)`
+      : isHovered
+      ? `0 25px 70px -12px ${step.color}15, 0 15px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)`
+      : "0 12px 30px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.025)",
   } as CSSProperties;
 
   return (
@@ -396,62 +422,112 @@ function StepCard({
       data-step-card
       aria-current={isActive ? "step" : undefined}
       style={style}
-      className={`group relative flex min-h-[370px] flex-[0_0_86vw] snap-center flex-col overflow-hidden rounded-[28px] border p-8 transition-[background,border-color,box-shadow,opacity,transform] duration-500 will-change-transform hover:scale-[1.02] hover:border-[color:var(--step-color)] hover:shadow-[0_26px_90px_var(--step-shadow)] md:min-h-[390px] md:flex-[0_0_46vw] md:px-8 md:py-9 lg:min-h-[430px] lg:flex-[0_0_calc((100%-4rem)/3)] lg:px-10 lg:py-10 ${
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`group relative flex min-h-[390px] flex-[0_0_86vw] snap-center flex-col overflow-hidden rounded-[28px] border p-8 transition-[background,border-color,box-shadow,opacity,transform] duration-500 will-change-transform hover:scale-[1.02] md:min-h-[410px] md:flex-[0_0_46vw] md:px-8 md:py-9 lg:min-h-[450px] lg:flex-[0_0_calc((100%-4rem)/3)] lg:px-10 lg:py-10 ${
         isActive
-          ? "border-[color:var(--step-color)] bg-[rgba(20,22,27,0.62)] opacity-100 shadow-[0_28px_100px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.08)]"
-          : "border-white/[0.08] bg-[rgba(20,22,27,0.48)] opacity-78 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]"
+          ? "bg-[rgba(16,18,23,0.72)] opacity-100"
+          : "bg-[rgba(16,18,23,0.42)] opacity-78"
       }`}
     >
+      {/* Spotlight overlay that tracks mouse cursor */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-80 backdrop-blur-[8px]"
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{
-          background:
-            "linear-gradient(145deg, color-mix(in srgb, var(--step-color) 16%, transparent), transparent 42%), linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012))",
+          background: `radial-gradient(200px circle at ${coords.x}px ${coords.y}px, ${step.color}15, transparent 80%)`,
+        }}
+      />
+      {/* Subtle inside card grid backdrop */}
+      <div 
+        className="pointer-events-none absolute inset-0 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-500"
+        style={{
+          backgroundImage: `radial-gradient(circle, ${step.color} 1px, transparent 1px)`,
+          backgroundSize: "16px 16px",
+        }}
+      />
+      {/* Radial color backdrop */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-80 backdrop-blur-[24px]"
+        style={{
+          background: `linear-gradient(145deg, color-mix(in srgb, ${step.color} 12%, transparent), transparent 45%), linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.005))`,
         }}
         aria-hidden
       />
+      {/* Top hairline gradient border glow */}
       <div
-        className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/26 to-transparent"
+        className={`pointer-events-none absolute inset-x-0 top-0 h-[1.5px] transition-opacity duration-500 ${
+          isActive ? "animate-pulse-hairline" : ""
+        }`}
+        style={{
+          background: `linear-gradient(to right, transparent, ${step.color}, transparent)`,
+          opacity: isActive || isHovered ? 0.8 : 0,
+        }}
         aria-hidden
       />
-      <div
-        className="pointer-events-none absolute -right-16 -top-20 h-52 w-52 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-60"
-        style={{ background: "var(--step-color)" }}
-        aria-hidden
-      />
-
-      <div className="relative flex h-full flex-col">
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-white/42">
+      
+      <div className="relative flex h-full flex-col z-10">
+        {/* Monospace step header */}
+        <div className="flex items-center justify-between gap-4 border-b border-white/[0.04] pb-4">
+          <span className="text-[10px] font-mono tracking-widest text-white/40 uppercase">
             Step 0{index + 1}
           </span>
-          <span className="h-2 w-2 rounded-full bg-[color:var(--step-color)] shadow-[0_0_18px_var(--step-color)]" />
+          <div className="flex items-center gap-1.5">
+            <span 
+              className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${
+                isActive ? "animate-pulse" : "bg-white/10"
+              }`}
+              style={isActive ? { backgroundColor: step.color, boxShadow: `0 0 10px ${step.color}` } : undefined}
+            />
+          </div>
         </div>
 
-        <div className="mt-8">
-          <h3 className="text-[0.9rem] font-semibold uppercase tracking-[0.14em] text-white/56">
-            {step.label}
-          </h3>
-          <div
-            className="mt-5 font-display text-[4.15rem] font-semibold leading-none tracking-tightest tabular-nums md:text-[4.75rem]"
-            style={{ color: "var(--step-color)" }}
-          >
-            {days}d
-          </div>
-          <p className="mt-6 max-w-[14rem] text-[0.85rem] leading-relaxed text-white/58 md:max-w-[15rem]">
-            {step.context}
-          </p>
-        </div>
+        <div className="mt-6 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/60">
+              {step.label}
+            </h3>
+            
+            {/* Visual Days metric */}
+            <div className="mt-4 flex items-baseline select-none">
+              <span className="font-display text-[4.5rem] font-extrabold leading-none tracking-tightest text-white tabular-nums">
+                {days}
+              </span>
+              <span 
+                className="font-display text-[3.25rem] font-extrabold leading-none tracking-tightest ml-0.5"
+                style={{ 
+                  color: step.color,
+                  textShadow: isActive || isHovered ? `0 0 25px ${step.color}40` : "none" 
+                }}
+              >
+                d
+              </span>
+            </div>
 
-        <div className="mt-auto pt-10">
-          <div className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-white/36">
-            Avg margin / car
+            <p className="mt-5 text-[13px] leading-relaxed text-white/50">
+              {step.context}
+            </p>
           </div>
-          <div
-            className="mt-3 font-display text-[1.55rem] font-semibold leading-none tabular-nums"
-            style={{ color: "var(--step-color)" }}
-          >
-            {formatCurrency(margin)}
+
+          <div className="mt-8 pt-5 border-t border-white/[0.03]">
+            <div className="flex items-center justify-between">
+              <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/35">
+                Avg margin / car
+              </div>
+              {index > 0 && (
+                <span className="text-[10px] font-bold text-[#00F0B0] uppercase tracking-wider flex items-center">
+                  ↑ +${margin - 1750}
+                </span>
+              )}
+            </div>
+            <div className="flex items-baseline gap-2 mt-2">
+              <div
+                className="font-display text-[1.85rem] font-extrabold leading-none tabular-nums"
+                style={{ color: step.color }}
+              >
+                {formatCurrency(margin)}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -484,216 +560,420 @@ function ControlDeck({
     { x: 340, y: 68 },
     { x: 622, y: 40 },
   ];
-  const activePath = points
-    .slice(0, activeIndex + 1)
-    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
-    .join(" ");
   const activePoint = points[activeIndex] ?? points[0];
+  const activePct = activeIndex === 0 ? 35 : activeIndex === 1 ? 60 : 100;
 
   return (
     <div
       data-control-deck
-      className="mt-7 overflow-hidden rounded-[30px] border border-white/[0.085] bg-[linear-gradient(135deg,rgba(20,22,27,0.78),rgba(8,11,16,0.64))] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-[12px]"
+      className="mt-8 overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(20,22,27,0.78),rgba(8,11,16,0.64))] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-[12px]"
     >
+      {styleRadarSpin}
       <div className="grid gap-4 lg:grid-cols-[minmax(220px,0.72fr)_minmax(0,1.7fr)_auto] lg:items-stretch">
-        <div className="relative overflow-hidden rounded-[22px] border border-white/[0.065] bg-white/[0.025] p-5">
-          <div className="pointer-events-none absolute -right-12 -top-16 h-40 w-40 rounded-full bg-rev-green/10 blur-3xl" />
-          <div className="relative">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/36">
-              Active benchmark
-            </div>
-            <div className="mt-3 font-display text-2xl font-semibold leading-tight text-white">
-              {activeStep.label}
-            </div>
-            <div className="mt-1 text-[0.84rem] text-white/48">Passenger-car retail velocity</div>
-            <div className="mt-6 flex items-end gap-3">
-              <span
-                className="font-display text-5xl font-semibold leading-none tabular-nums"
-                style={{ color: activeStep.color }}
+        
+        {/* Left Column: Active Benchmark Status */}
+        <div className="relative overflow-hidden rounded-[22px] border border-white/[0.06] bg-[#101217]/50 p-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] flex flex-col items-center min-h-[220px]">
+          {/* L-brackets */}
+          <span className="absolute left-0 top-0 block h-3.5 w-3.5 border-l-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute right-0 top-0 block h-3.5 w-3.5 border-r-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute left-0 bottom-0 block h-3.5 w-3.5 border-l-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute right-0 bottom-0 block h-3.5 w-3.5 border-r-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+
+          <div className="w-full text-[9px] font-mono tracking-widest text-white/35 flex items-center justify-between mb-4">
+            <span>// TELEMETRY.EFFICIENCY</span>
+            <span className="flex h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: activeStep.color, boxShadow: `0 0 8px ${activeStep.color}` }} />
+          </div>
+
+          {/* SVG Radial Gauge */}
+          <div className="relative flex-1 flex items-center justify-center h-28 w-28">
+            <svg viewBox="0 0 100 100" className="h-full w-full">
+              {/* Background swept track */}
+              <path
+                d="M 23.13 76.87 A 38 38 0 1 1 76.87 76.87"
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.04)"
+                strokeWidth="5"
+                strokeLinecap="round"
+              />
+              
+              {/* Active swept progress track */}
+              <path
+                d="M 23.13 76.87 A 38 38 0 1 1 76.87 76.87"
+                fill="none"
+                stroke={activeStep.color}
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeDasharray="179.07"
+                strokeDashoffset={179.07 - (179.07 * activePct) / 100}
+                style={{
+                  transition: "stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease",
+                  filter: `drop-shadow(0 0 6px ${activeStep.color}50)`
+                }}
+              />
+
+              {/* Concentric tick lines around the circle (25 ticks, indices 0-24) */}
+              {Array.from({ length: 25 }).map((_, i) => {
+                const angle = 135 + i * 11.25;
+                const isMajor = i % 4 === 0;
+                const tickPct = (i / 24) * 100;
+                const isActiveTick = tickPct <= activePct;
+                const rStart = isMajor ? 34 : 36;
+                const rEnd = 39;
+                return (
+                  <line
+                    key={i}
+                    x1="50"
+                    y1={50 - rEnd}
+                    x2="50"
+                    y2={50 - rStart}
+                    stroke={isActiveTick ? activeStep.color : "rgba(255, 255, 255, 0.08)"}
+                    strokeWidth={isMajor ? "1.5" : "1"}
+                    transform={`rotate(${angle + 90} 50 50)`}
+                    style={{
+                      transition: "stroke 0.5s ease",
+                    }}
+                  />
+                );
+              })}
+
+              {/* Rotating Needle (pointing along positive x-axis and rotated dynamically) */}
+              <g 
+                transform={`rotate(${135 + (activePct / 100) * 270} 50 50)`}
+                style={{ transition: "transform 1s cubic-bezier(0.4, 0, 0.2, 1)" }}
               >
-                {activeStep.days}d
+                <polygon
+                  points="47,50 50,48.5 78,50 50,51.5"
+                  fill={activeStep.color}
+                  style={{
+                    filter: `drop-shadow(0 0 3px ${activeStep.color}60)`,
+                    transition: "fill 0.5s ease",
+                  }}
+                />
+              </g>
+
+              {/* Center Glass Pin */}
+              <circle
+                cx="50"
+                cy="50"
+                r="5"
+                fill="#101217"
+                stroke={activeStep.color}
+                strokeWidth="1.5"
+                style={{
+                  transition: "stroke 0.5s ease",
+                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"
+                }}
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="1.8"
+                fill="#FFFFFF"
+              />
+            </svg>
+            
+            {/* Value Indicator (Central percentage) */}
+            <div className="absolute flex flex-col items-center justify-center translate-y-7">
+              <span className="font-display text-base font-black text-white leading-none tabular-nums tracking-tight">
+                {activePct}%
               </span>
-              <span className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/36">
-                to sell
-              </span>
+              <span className="text-[6.5px] font-mono tracking-widest text-white/30 uppercase mt-0.5">SPEED</span>
             </div>
           </div>
         </div>
 
-        <div className="relative min-h-[190px] overflow-hidden rounded-[22px] border border-white/[0.065] bg-[#0A0F15]/70 px-5 py-5">
-          <div className="pointer-events-none absolute inset-0 opacity-[0.16]">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.28)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.28)_1px,transparent_1px)] bg-[length:44px_44px]" />
+        {/* Center Column: Velocity Corridor SVG */}
+        <div className="relative min-h-[190px] overflow-hidden rounded-[22px] border border-white/[0.06] bg-[#0A0F15]/80 px-5 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
+          {/* L-brackets */}
+          <span className="absolute left-0 top-0 block h-3.5 w-3.5 border-l-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute right-0 top-0 block h-3.5 w-3.5 border-r-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute left-0 bottom-0 block h-3.5 w-3.5 border-l-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute right-0 bottom-0 block h-3.5 w-3.5 border-r-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          
+          {/* Grid overlay */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[length:24px_24px]" />
           </div>
+
           <div className="relative mb-2 flex items-center justify-between gap-4">
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/34">
-                Velocity corridor
+              <div className="text-[9px] font-mono tracking-widest text-white/35 flex items-center gap-1.5">
+                <span>// VELOCITY CORRIDOR GRAPH</span>
+                <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/40">SYS_V2.0</span>
               </div>
-              <div className="mt-1 text-[0.84rem] text-white/52">64 days to 48 days, without benchmark confusion</div>
             </div>
-            <div className="hidden rounded-full border border-rev-green/20 bg-rev-green/[0.08] px-3 py-1.5 font-display text-sm font-semibold tabular-nums text-rev-green sm:block">
+            <div 
+              className="hidden rounded-full border px-3 py-1 font-mono text-[10px] font-bold tracking-widest uppercase tabular-nums transition-all duration-500 sm:block"
+              style={{
+                color: activeStep.color,
+                borderColor: `${activeStep.color}30`,
+                backgroundColor: `${activeStep.color}08`,
+                boxShadow: `0 0 10px ${activeStep.color}05`,
+              }}
+            >
               {activeStep.days}d active
             </div>
           </div>
 
+          {/* SVG Visualizer */}
           <div className="relative h-[128px]">
-            <svg viewBox="0 0 680 128" className="h-full w-full" aria-hidden>
+            <svg viewBox="0 0 680 128" className="h-full w-full overflow-visible" aria-hidden>
               <defs>
-                <linearGradient id="transformationPath" x1="58" y1="96" x2="622" y2="40" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="#FF4D4D" />
-                  <stop offset="0.52" stopColor="#FFB347" />
-                  <stop offset="1" stopColor="#00FFAA" />
+                <linearGradient id="transformationGlowGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#FF4D4D" />
+                  <stop offset="50%" stopColor="#FFB347" />
+                  <stop offset="100%" stopColor="#00F0B0" />
+                </linearGradient>
+                <linearGradient id="area-glow-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={activeStep.color} stopOpacity={activeIndex === 0 ? 0.08 : activeIndex === 1 ? 0.12 : 0.20} />
+                  <stop offset="100%" stopColor={activeStep.color} stopOpacity={0.0} />
                 </linearGradient>
                 <filter id="transformationGlow" x="-20%" y="-90%" width="140%" height="280%">
-                  <feGaussianBlur stdDeviation="5" result="blur" />
+                  <feGaussianBlur stdDeviation="3.5" result="blur" />
                   <feMerge>
                     <feMergeNode in="blur" />
                     <feMergeNode in="SourceGraphic" />
                   </feMerge>
                 </filter>
               </defs>
+
+              {/* Technical horizontal coordinate lines */}
+              {[40, 68, 96].map((lineY, i) => (
+                <line
+                  key={i}
+                  x1="30"
+                  x2="650"
+                  y1={lineY}
+                  y2={lineY}
+                  stroke="rgba(255, 255, 255, 0.035)"
+                  strokeWidth="0.8"
+                />
+              ))}
+
+              {/* Gradient glow area under the curve */}
               <path
-                d="M 58 96 L 340 68 L 622 40"
+                d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40 L 622 114 L 58 114 Z"
+                fill="url(#area-glow-grad)"
+                className="transition-all duration-700"
+              />
+
+              {/* Main Dotted Guide Line */}
+              <path
+                d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40"
                 fill="none"
-                stroke="rgba(255,255,255,0.14)"
-                strokeWidth="2"
-                strokeDasharray="6 10"
+                stroke="rgba(255,255,255,0.08)"
+                strokeWidth="1.5"
+                strokeDasharray="5 7"
                 strokeLinecap="round"
               />
+
+              {/* Underlaying static corridor path with gradient */}
               <path
-                d={activePath || "M 58 96"}
+                d="M 58 96 C 180 96, 220 68, 340 68 S 500 40, 622 40"
                 fill="none"
-                stroke="url(#transformationPath)"
-                strokeWidth="4"
+                stroke="url(#transformationGlowGrad)"
+                strokeWidth="3.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                filter="url(#transformationGlow)"
-                style={{
-                  strokeDasharray: 620,
-                  strokeDashoffset: isReady ? 0 : 620,
-                  transition: "stroke-dashoffset 850ms cubic-bezier(0.16, 1, 0.3, 1)",
-                }}
+                className="opacity-[0.08]"
               />
+
+              {/* Segment 1 comet trail */}
+              {activeIndex >= 1 && (
+                <g>
+                  {/* Trail 2 */}
+                  <circle r="3.5" fill="#FF4D4D" opacity="0.25" filter="url(#transformationGlow)">
+                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="0s" />
+                  </circle>
+                  {/* Trail 1 */}
+                  <circle r="2.5" fill="#FFB347" opacity="0.6" filter="url(#transformationGlow)">
+                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.06s" />
+                  </circle>
+                  {/* White-hot head */}
+                  <circle r="1.5" fill="#FFFFFF" opacity="0.95">
+                    <animateMotion dur="1.8s" repeatCount="indefinite" path="M 58 96 C 180 96, 220 68, 340 68" begin="-0.12s" />
+                  </circle>
+                </g>
+              )}
+
+              {/* Segment 2 comet trail */}
+              {activeIndex >= 2 && (
+                <g>
+                  {/* Trail 2 */}
+                  <circle r="3.5" fill="#FFB347" opacity="0.25" filter="url(#transformationGlow)">
+                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="0s" />
+                  </circle>
+                  {/* Trail 1 */}
+                  <circle r="2.5" fill="#00F0B0" opacity="0.6" filter="url(#transformationGlow)">
+                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.05s" />
+                  </circle>
+                  {/* White-hot head */}
+                  <circle r="1.5" fill="#FFFFFF" opacity="0.95">
+                    <animateMotion dur="1.6s" repeatCount="indefinite" path="M 340 68 C 460 68, 500 40, 622 40" begin="-0.10s" />
+                  </circle>
+                </g>
+              )}
+
+              {/* Step Nodes and Guides */}
               {points.map((point, index) => {
                 const step = STEPS[index];
                 const isActive = activeIndex === index;
 
                 return (
-                  <g key={step.label}>
+                  <g key={step.label} className="cursor-pointer" onClick={() => onSelect(index)}>
+                    {/* Vertical guidelines */}
                     <line
                       x1={point.x}
                       x2={point.x}
-                      y1={point.y + 16}
-                      y2="116"
-                      stroke="rgba(255,255,255,0.09)"
-                      strokeWidth="1"
+                      y1={point.y}
+                      y2="114"
+                      stroke={isActive ? step.color : "rgba(255,255,255,0.06)"}
+                      strokeWidth={isActive ? "1.5" : "1"}
+                      strokeDasharray={isActive ? "3 1" : "2 2"}
+                      className="transition-all duration-500"
+                      style={{ opacity: isActive ? 0.8 : 0.25 }}
                     />
+                    
+                    {/* Concentric radar circles on active node */}
+                    {isActive && (
+                      <>
+                        <circle cx={point.x} cy={point.y} r="5" fill="none" stroke={step.color} strokeWidth="1.5">
+                          <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" />
+                          <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" />
+                        </circle>
+                        <circle cx={point.x} cy={point.y} r="5" fill="none" stroke={step.color} strokeWidth="1.2">
+                          <animate attributeName="r" values="5;20" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                          <animate attributeName="opacity" values="0.85;0" dur="2.4s" repeatCount="indefinite" begin="1.2s" />
+                        </circle>
+                      </>
+                    )}
+
+                    {/* Rotating outer notch ring for active node */}
                     <circle
                       cx={point.x}
                       cy={point.y}
-                      r={isActive ? 8 : 5}
-                      fill={isActive ? step.color : "#0A0F15"}
+                      r={isActive ? 11 : 7}
+                      fill="none"
+                      stroke={isActive ? step.color : "rgba(255, 255, 255, 0.12)"}
+                      strokeWidth="1.2"
+                      strokeDasharray="3 3"
+                      className="transition-all duration-500"
+                      style={{
+                        opacity: isActive ? 0.95 : 0.4
+                      }}
+                    >
+                      {isActive && (
+                        <animateTransform
+                          attributeName="transform"
+                          type="rotate"
+                          from={`0 ${point.x} ${point.y}`}
+                          to={`360 ${point.x} ${point.y}`}
+                          dur="18s"
+                          repeatCount="indefinite"
+                        />
+                      )}
+                    </circle>
+                    
+                    {/* Inner core center */}
+                    <circle
+                      cx={point.x}
+                      cy={point.y}
+                      r={isActive ? 4.5 : 3}
+                      fill={isActive ? "#FFFFFF" : "#0A0F15"}
                       stroke={step.color}
-                      strokeWidth="2"
+                      strokeWidth={isActive ? 2.5 : 1.5}
+                      className="transition-all duration-500"
+                      style={{ filter: isActive ? `drop-shadow(0 0 3px ${step.color})` : "none" }}
                     />
-                    {isActive && (
-                      <circle
-                        cx={point.x}
-                        cy={point.y}
-                        r="19"
-                        fill="none"
-                        stroke={step.color}
-                        strokeOpacity="0.2"
-                        strokeWidth="2"
-                      />
-                    )}
+
+                    {/* Node tick text at bottom */}
                     <text
                       x={point.x}
                       y="124"
                       textAnchor="middle"
-                      fill={isActive ? step.color : "rgba(255,255,255,0.48)"}
-                      fontSize="11"
+                      fill={isActive ? step.color : "rgba(255,255,255,0.32)"}
+                      fontSize="9"
                       fontFamily="Space Grotesk, sans-serif"
-                      fontWeight="700"
-                      letterSpacing="1"
+                      fontWeight="800"
+                      className="transition-colors duration-500"
                     >
                       {step.days}D
                     </text>
+
+                    {/* Hitbox circle */}
+                    <circle cx={point.x} cy={point.y} r="25" fill="transparent" />
                   </g>
                 );
               })}
-              <g transform={`translate(${activePoint.x}, ${activePoint.y})`}>
-                <line
-                  x1="0"
-                  x2="0"
-                  y1="-28"
-                  y2="-10"
-                  stroke={activeStep.color}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path d="M -6 -30 L 0 -40 L 6 -30 Z" fill={activeStep.color} />
+
+              {/* Tactical Radar Target Lock Over active node */}
+              <g transform={`translate(${activePoint.x}, ${activePoint.y})`} className="pointer-events-none transition-all duration-500">
+                <circle cx="0" cy="0" r="16" fill="none" stroke={activeStep.color} strokeWidth="0.8" strokeDasharray="4 8">
+                  <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    from="0"
+                    to="360"
+                    dur="24s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                <line x1="-19" y1="0" x2="-13" y2="0" stroke={activeStep.color} strokeWidth="1" />
+                <line x1="13" y1="0" x2="19" y2="0" stroke={activeStep.color} strokeWidth="1" />
+                <line x1="0" y1="-19" x2="0" y2="-13" stroke={activeStep.color} strokeWidth="1" />
+                <line x1="0" y1="13" x2="0" y2="19" stroke={activeStep.color} strokeWidth="1" />
               </g>
             </svg>
-
-            {STEPS.map((step, index) => {
-              const point = points[index];
-
-              return (
-                <button
-                  key={step.label}
-                  type="button"
-                  onClick={() => onSelect(index)}
-                  aria-label={`Select ${step.label}`}
-                  aria-current={activeIndex === index ? "step" : undefined}
-                  className="absolute h-16 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rev-green/60"
-                  style={{
-                    left: `${(point.x / 680) * 100}%`,
-                    top: `${(point.y / 128) * 100}%`,
-                  }}
-                />
-              );
-            })}
           </div>
 
-          <div className="relative mt-1 h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+          {/* Active progress corridor bar */}
+          <div className="relative mt-2 h-1 overflow-hidden rounded-full bg-white/[0.04] border border-white/[0.02]">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#FF4D4D] via-[#FFB347] to-[#00FFAA] transition-[width] duration-700 ease-out"
+              className="h-full rounded-full bg-gradient-to-r from-[#FF4D4D] via-[#FFB347] to-[#00F0B0] transition-[width] duration-700 ease-out"
               style={{ width: isReady ? progressWidth : "0%" }}
             />
           </div>
-          <div className="relative mt-3 flex justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-white/28">
-            <span>Current</span>
-            <span>Industry</span>
-            <span>Target</span>
+          <div className="relative mt-2 flex justify-between text-[8px] font-mono font-bold uppercase tracking-widest text-white/20">
+            <span>[YOU // START]</span>
+            <span>[INDUSTRY // WALK]</span>
+            <span>[REVU // OPTIMAL]</span>
           </div>
         </div>
 
-        <div className="flex flex-col justify-between gap-4 rounded-[22px] border border-white/[0.065] bg-white/[0.025] p-4">
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+        {/* Right Column: HUD Interactive slider deck buttons */}
+        <div className="flex flex-col justify-between gap-4 rounded-[22px] border border-white/[0.06] bg-[#101217]/50 p-4 backdrop-blur-md relative overflow-hidden">
+          {/* L-brackets */}
+          <span className="absolute left-0 top-0 block h-3.5 w-3.5 border-l-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute right-0 top-0 block h-3.5 w-3.5 border-r-2 border-t-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute left-0 bottom-0 block h-3.5 w-3.5 border-l-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+          <span className="absolute right-0 bottom-0 block h-3.5 w-3.5 border-r-2 border-b-2 transition-colors duration-500" style={{ borderColor: activeStep.color }} />
+
+          <div className="flex items-center justify-center gap-3 lg:flex-col lg:justify-between">
             <button
               type="button"
               onClick={onPrev}
               disabled={!canGoPrev}
               aria-label="Previous benchmark"
-              className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] text-white/64 transition hover:border-rev-green/35 hover:bg-rev-green/[0.07] hover:text-white disabled:pointer-events-none disabled:opacity-30"
+              className="relative group overflow-hidden inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-white/50 transition duration-300 hover:scale-105 active:scale-95 hover:border-white/20 hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-20 backdrop-blur-md"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5 z-10" />
             </button>
             <button
               type="button"
               onClick={onNext}
               disabled={!canGoNext}
               aria-label="Next benchmark"
-              className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] text-white/64 transition hover:border-rev-green/35 hover:bg-rev-green/[0.07] hover:text-white disabled:pointer-events-none disabled:opacity-30"
+              className="relative group overflow-hidden inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-white/50 transition duration-300 hover:scale-105 active:scale-95 hover:border-white/20 hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-20 backdrop-blur-md"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 z-10" />
             </button>
           </div>
-          <div className="rounded-2xl border border-rev-green/14 bg-rev-green/[0.055] px-4 py-3 text-[10px] font-semibold uppercase leading-relaxed tracking-[0.2em] text-rev-green/78">
-            Drag, scroll, or swipe the cards.
+          <div className="rounded-2xl border border-rev-green/15 bg-rev-green/[0.04] px-4 py-3 text-[9px] font-mono font-semibold uppercase leading-relaxed tracking-[0.2em] text-[#00F0B0]/80 flex items-center justify-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#00F0B0] animate-pulse" />
+            <span>SWIPE CARDS</span>
           </div>
         </div>
+
       </div>
     </div>
   );
@@ -703,33 +983,130 @@ function ImpactPanel({
   label,
   value,
   detail,
-  Icon,
+  idKey,
 }: {
   label: string;
   value: string;
   detail: string;
-  Icon: typeof CalendarDays;
+  idKey: "saved" | "turnover" | "profit";
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const renderMicroGraphic = () => {
+    switch (idKey) {
+      case "saved":
+        return (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="transition-transform duration-700" style={{ transform: isHovered ? "rotate(-90deg)" : "rotate(0deg)" }}>
+            <circle cx="12" cy="12" r="9" stroke="#00F0B0" strokeWidth="1.5" strokeDasharray="3 3" className="opacity-40" />
+            <circle cx="12" cy="12" r="9" stroke="#00F0B0" strokeWidth="1.8" strokeDasharray="18 40" strokeLinecap="round" />
+            <path d="M 12 12 L 12 7" stroke="#00F0B0" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M 12 12 L 15.5 12" stroke="#00F0B0" strokeWidth="1.5" strokeLinecap="round" className="opacity-75" />
+          </svg>
+        );
+      case "turnover":
+        return (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="transition-transform duration-500" style={{ transform: isHovered ? "translateX(2px)" : "translateX(0px)" }}>
+            <path d="M 8 6 L 14 12 L 8 18" stroke="#00F0B0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M 14 6 L 20 12 L 14 18" stroke="#00F0B0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="opacity-40" />
+          </svg>
+        );
+      case "profit":
+        return (
+          <svg width="30" height="18" viewBox="0 0 32 20" fill="none">
+            <path d="M 4 16 L 10 10 L 16 13 L 26 4" stroke="#00F0B0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M 20 4 H 26 V 10" stroke="#00F0B0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            {isHovered && (
+              <path d="M 4 16 L 10 10 L 16 13 L 26 4" stroke="#00F0B0" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="opacity-20" style={{ filter: "blur(2.5px)" }} />
+            )}
+          </svg>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="group relative overflow-hidden rounded-[22px] border border-white/[0.075] bg-[rgba(20,22,27,0.54)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] backdrop-blur-[8px] transition hover:border-rev-green/35 hover:bg-rev-green/[0.045]">
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rev-green/45 to-transparent opacity-0 transition group-hover:opacity-100"
-        aria-hidden
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group rounded-[20px] border border-white/[0.04] hover:border-[#00F0B0]/25 bg-white/[0.015] p-6 transition-all duration-500 card-lift backdrop-blur-md relative overflow-hidden flex flex-col justify-between h-full"
+      style={{
+        boxShadow: isHovered
+          ? "0 20px 40px -10px rgba(0, 240, 176, 0.06), 0 12px 30px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.04)"
+          : "0 12px 30px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.025)",
+      }}
+    >
+      {/* Dynamic top hairline accent glimmer */}
+      <div 
+        className="absolute top-0 inset-x-0 h-[1.5px] transition-all duration-500"
+        style={{
+          background: "linear-gradient(to right, transparent, #00F0B0, transparent)",
+          opacity: isHovered ? 0.8 : 0
+        }}
       />
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/38">
-            {label}
-          </div>
-          <div className="mt-3 font-display text-3xl font-semibold leading-none tabular-nums text-white md:text-4xl">
+
+      {/* Dynamic glow effect overlay inside the card on hover */}
+      <div 
+        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"
+        style={{
+          background: "radial-gradient(130px circle at 50% 10%, rgba(0, 240, 176, 0.06), transparent 70%)",
+        }}
+      />
+
+      {/* Main Metric Value on Top & Micro-Graphic */}
+      <div>
+        <div className="flex items-start justify-between">
+          <div
+            className="font-bold font-display text-4xl md:text-5xl leading-none tracking-tight text-white transition-all duration-300"
+            style={{ 
+              textShadow: `0 0 ${isHovered ? "20px" : "12px"} rgba(0, 240, 176, ${isHovered ? "0.25" : "0.1"})`,
+              fontVariantNumeric: "tabular-nums"
+            }}
+          >
             {value}
           </div>
-          <div className="mt-2 text-[0.86rem] text-white/54">{detail}</div>
+          <div className="opacity-35 group-hover:opacity-75 transition-opacity duration-500 mt-1">
+            {renderMicroGraphic()}
+          </div>
         </div>
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-rev-green/18 bg-rev-green/[0.08] text-rev-green">
-          <Icon className="h-5 w-5" strokeWidth={1.8} />
-        </span>
+        
+        {/* Label underneath */}
+        <div className="text-[9.5px] font-bold uppercase tracking-[0.18em] text-white/35 mt-3 leading-relaxed">
+          // {label.toUpperCase()}
+        </div>
+      </div>
+
+      {/* Dynamic Detail caption at the bottom */}
+      <div className="mt-6 pt-3 border-t border-white/[0.02] text-[10.5px] text-white/45 group-hover:text-white/60 transition-colors leading-relaxed">
+        {detail}
       </div>
     </div>
   );
 }
+
+// Inline styles injector for animations
+const styleRadarSpin = (
+  <style dangerouslySetInnerHTML={{ __html: `
+    @keyframes rotate-slow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes rotate-reverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes pulse-hairline {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.95; }
+    }
+    .animate-rotate-slow {
+      animation: rotate-slow 18s linear infinite;
+    }
+    .animate-rotate-reverse {
+      animation: rotate-reverse 15s linear infinite;
+    }
+    .animate-pulse-hairline {
+      animation: pulse-hairline 2s ease-in-out infinite;
+    }
+  `}} />
+);

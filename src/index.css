@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -71,6 +73,7 @@
     text-wrap: pretty;
   }
 
+  /* ─── Glass ─────────────────────────────────────── */
   .glass {
     background: rgba(255, 255, 255, 0.025);
     backdrop-filter: blur(20px) saturate(140%);
@@ -85,6 +88,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  /* ─── Grain overlay ──────────────────────────────── */
   .grain {
     position: relative;
   }
@@ -98,12 +102,21 @@
     mix-blend-mode: overlay;
   }
 
+  /* ─── Glows ──────────────────────────────────────── */
   .glow-green {
     box-shadow:
       0 0 0 1px rgba(0, 240, 176, 0.18),
       0 10px 40px -10px rgba(0, 240, 176, 0.45);
   }
 
+  .glow-green-intense {
+    box-shadow:
+      0 0 0 1px rgba(0, 240, 176, 0.28),
+      0 0 24px rgba(0, 240, 176, 0.22),
+      0 14px 48px -10px rgba(0, 240, 176, 0.55);
+  }
+
+  /* ─── Hairline ───────────────────────────────────── */
   .hairline {
     background: linear-gradient(
       to right,
@@ -113,12 +126,22 @@
     );
   }
 
+  .hairline-green {
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(0, 240, 176, 0.45),
+      transparent
+    );
+  }
+
+  /* ─── Reveal animation ───────────────────────────── */
   .reveal {
     opacity: 0;
     transform: translateY(28px);
     transition:
-      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
     will-change: opacity, transform;
   }
   .reveal.is-visible {
@@ -126,6 +149,14 @@
     transform: translateY(0);
   }
 
+  /* Stagger helpers */
+  .reveal-d1 { --reveal-delay: 80ms; }
+  .reveal-d2 { --reveal-delay: 160ms; }
+  .reveal-d3 { --reveal-delay: 240ms; }
+  .reveal-d4 { --reveal-delay: 320ms; }
+  .reveal-d5 { --reveal-delay: 400ms; }
+
+  /* ─── Scrollbar hide ─────────────────────────────── */
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
@@ -134,6 +165,7 @@
     scrollbar-width: none;
   }
 
+  /* ─── Gradients ──────────────────────────────────── */
   .text-gradient {
     background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.55) 100%);
     -webkit-background-clip: text;
@@ -142,9 +174,131 @@
   }
 
   .text-gradient-green {
-    background: linear-gradient(180deg, #ffffff 0%, #00F0B0 120%);
+    background: linear-gradient(135deg, #ffffff 0%, #00F0B0 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
+
+  .text-gradient-warm {
+    background: linear-gradient(135deg, #FFD966 0%, #FFB347 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ─── Section separators ─────────────────────────── */
+  .section-glow-top {
+    position: relative;
+  }
+  .section-glow-top::before {
+    content: "";
+    position: absolute;
+    inset-x: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0, 240, 176, 0.4), transparent);
+    pointer-events: none;
+  }
+
+  /* ─── Pay plan tier bar ──────────────────────────── */
+  .tier-bar {
+    position: relative;
+    overflow: hidden;
+  }
+  .tier-bar::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* ─── Card hover lift ────────────────────────────── */
+  .card-lift {
+    transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1),
+                box-shadow 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1),
+                border-color 0.35s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-4px) scale(1.012);
+  }
+
+  /* ─── Marquee ────────────────────────────────────── */
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+  .animate-marquee-reverse {
+    animation: marquee-reverse 48s linear infinite;
+  }
+
+  /* ─── Float ──────────────────────────────────────── */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  .animate-float-slow {
+    animation: float 9s ease-in-out infinite;
+  }
+
+  /* ─── Tooltip chip ───────────────────────────────── */
+  .tooltip-chip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: rgba(0, 240, 176, 0.12);
+    border: 1px solid rgba(0, 240, 176, 0.3);
+    backdrop-filter: blur(12px);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: #00F0B0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateX(-50%) translateY(4px);
+    z-index: 10;
+  }
+  .tooltip-trigger:hover .tooltip-chip,
+  .tooltip-trigger:focus .tooltip-chip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ─── Ping slow animation ────────────────────────── */
+  @keyframes ping-slow {
+    0% {
+      transform: scale(0.95);
+      opacity: 0.85;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      transform: scale(1.65);
+      opacity: 0;
+    }
+  }
+
+  .animate-ping-slow {
+    transform-origin: center;
+    animation: ping-slow 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  @keyframes rotate-slow {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-rotate-slow {
+    animation: rotate-slow 12s linear infinite;
+  }
 }
+
