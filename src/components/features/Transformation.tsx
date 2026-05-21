@@ -607,7 +607,7 @@ function ControlDeck({
           </div>
 
           {/* SVG Radial Gauge */}
-          <div className="relative flex-1 flex items-center justify-center h-28 w-28">
+          <div className="relative flex-1 flex items-center justify-center h-36 w-36">
             <svg viewBox="0 0 100 100" className="h-full w-full">
               {/* Background swept track */}
               <path
@@ -661,10 +661,10 @@ function ControlDeck({
               {/* Center Text Readout */}
               <text
                 x="50"
-                y="70"
+                y="69"
                 textAnchor="middle"
                 fill="#FFFFFF"
-                fontSize="12"
+                fontSize="14"
                 fontFamily="Space Grotesk, sans-serif"
                 fontWeight="800"
               >
@@ -675,7 +675,7 @@ function ControlDeck({
                 y="78"
                 textAnchor="middle"
                 fill="rgba(255, 255, 255, 0.35)"
-                fontSize="5.5"
+                fontSize="6.2"
                 fontFamily="Space Grotesk, sans-serif"
                 fontWeight="700"
                 letterSpacing="0.1em"
